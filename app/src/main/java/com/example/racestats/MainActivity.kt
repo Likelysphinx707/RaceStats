@@ -73,23 +73,19 @@ fun progressBarAnimation(progressBar: ProgressBar, speed: TextView, mph: TextVie
     }
 
     // this will make the display flash 3 times when we hit a speed milestone
-    fun delay(timeMillis: Long) {
-        if(currentProgress == 60) {
-            times.visibility = View.INVISIBLE;
-            yellowTimesBar.visibility = View.INVISIBLE;
-            recTime1.visibility = View.INVISIBLE;
-        } else if(currentProgress == 100) {
-            recTime2.visibility = View.INVISIBLE;
-        } else if(currentProgress == 120) {
-            recTime3.visibility = View.INVISIBLE;
-        }
-    }
-
     Timer().schedule(500) {
         speed.setTextColor(Color.parseColor("#FFE222"))
         mph.setTextColor(Color.parseColor("#FFE222"))
         timer.setTextColor(Color.parseColor("#FFE222"))
-       delay(500)
+        if(currentProgress == 60) {
+            times.visibility = View.VISIBLE;
+            yellowTimesBar.visibility = View.VISIBLE;
+            recTime1.visibility = View.VISIBLE;
+        } else if(currentProgress == 100) {
+            recTime2.visibility = View.VISIBLE;
+        } else if(currentProgress == 120) {
+            recTime3.visibility = View.VISIBLE;
+        }
     }
     Timer().schedule(900) {
         speed.setTextColor(Color.parseColor("#FFFFFF"))
