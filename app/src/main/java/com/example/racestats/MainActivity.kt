@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.random.Random.Default.nextInt
+import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity() {
@@ -48,13 +48,13 @@ class MainActivity : AppCompatActivity() {
 
         // This wil handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
-            progressBarAnimation(progressBar, speed, mph, timer, recordedTimes, yellowTimesBar,  recordedTimeOne, recordedTimeTwo, recordedTimeThree)
+            uiAnimations(progressBar, speed, mph, timer, recordedTimes, yellowTimesBar,  recordedTimeOne, recordedTimeTwo, recordedTimeThree)
 
         }
     }
 }
 
-fun random(currentProgress: Int): Int {
+fun random(): Int {
     val rnds = (0..1).random() // generated random from 0 to 1 included
 
     if (rnds == 0) {
@@ -71,19 +71,45 @@ fun random(currentProgress: Int): Int {
  * Handles the Progress Bar Animation as the speed increases or decreases
  * @param progressBar takes the progressBar variable as a param so we can manipulate it in the UI
  */
-fun progressBarAnimation(progressBar: ProgressBar, speed: TextView, mph: TextView, timer: TextView, times: TextView, yellowTimesBar: View, recTime1: TextView, recTime2: TextView, recTime3: TextView) {
+fun uiAnimations(progressBar: ProgressBar, speed: TextView, mph: TextView, timer: TextView, times: TextView, yellowTimesBar: View, recTime1: TextView, recTime2: TextView, recTime3: TextView) {
+    val startMilli = System.currentTimeMillis()
+    val startMilliSeconds: Int = 0
+    val startSeconds: Int = (startMilli / 1000 % 60).toInt()
+    val startMinutes: Int = (startMilli / 1000 / 60).toInt()
+    val startTime = startMinutes + startSeconds + startMilliSeconds
+
+    var currentMilliSeconds: Int = 0
+    var currentSeconds: Int = 0
+    var currentMinutes: Int = 0
+    var currentTime : Long = 0
+
+
     // we will increase the max after each milestone has been hit
     progressBar.max = 60
     // need ot set currentProgress val equal to current speed
     var currentProgress = 0
 
+
     while (currentProgress <= progressBar.max) {
+        // Updates the mph
         speed.text = currentProgress.toString()
+        // Updates the timer
+        // calculate current time to display
+        var currentMilli = System.currentTimeMillis()
+        currentSeconds = (currentMilli / 1000 % 60).toInt() - startSeconds
+        currentMinutes = (currentMilli / 1000 / 60).toInt() - startMinutes
+
+        timer.text = "${currentMinutes}:${currentSeconds}.${currentMilliSeconds}"
+
         ObjectAnimator.ofInt(progressBar, "progress", currentProgress)
-            .setDuration(300)
+            .setDuration(100)
             .start()
 
-        currentProgress += random(currentProgress)
+
+
+        currentTime = System.currentTimeMillis()
+
+        currentProgress += random()
     }
 
     // makes the UI flash yellow and displays times to milestones in the corner when 'currentProgress' == progressBar.max
@@ -128,6 +154,7 @@ fun progressBarAnimation(progressBar: ProgressBar, speed: TextView, mph: TextVie
             times.visibility = View.VISIBLE
             yellowTimesBar.visibility = View.VISIBLE
             recTime1.visibility = View.VISIBLE
+            recTime1.text = "${currentMinutes}:${currentSeconds}.${currentMilliSeconds}"
         }
         100 -> recTime2.visibility = View.VISIBLE
         120 -> recTime3.visibility = View.VISIBLE
