@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordedTimeOne: TextView
     private lateinit var recordedTimeTwo: TextView
     private lateinit var recordedTimeThree: TextView
+    private var methodRunning = false
 
 
 
@@ -46,10 +46,25 @@ class MainActivity : AppCompatActivity() {
         recordedTimeThree = findViewById(R.id.recordedTimeThree)
 
 
+
+
+
         // This wil handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
-            uiAnimations(progressBar, speed, mph, timer, recordedTimes, yellowTimesBar,  recordedTimeOne, recordedTimeTwo, recordedTimeThree)
-
+            // Check to see if start button has already been clicked or not
+            if (!methodRunning) {
+                methodRunning = true
+                startStopTimer.text = "STOP"
+                // This wil handle our event when a user clicks the start or stop button
+                startStopTimer.setOnClickListener{
+                    uiAnimations(progressBar, speed, mph, timer, recordedTimes, yellowTimesBar,  recordedTimeOne, recordedTimeTwo, recordedTimeThree)
+                }
+                methodRunning = false
+                startStopTimer.text = "START"
+            } else {
+                methodRunning = false
+                startStopTimer.text = "START"
+            }
         }
     }
 }
@@ -78,9 +93,9 @@ fun uiAnimations(progressBar: ProgressBar, speed: TextView, mph: TextView, timer
     val startMinutes: Int = (startMilli / 1000 / 60).toInt()
     val startTime = startMinutes + startSeconds + startMilliSeconds
 
-    var currentMilliSeconds: Int = 0
-    var currentSeconds: Int = 0
-    var currentMinutes: Int = 0
+    var currentMilliSeconds = 0
+    var currentSeconds = 0
+    var currentMinutes = 0
     var currentTime : Long = 0
 
 
@@ -99,12 +114,11 @@ fun uiAnimations(progressBar: ProgressBar, speed: TextView, mph: TextView, timer
         currentSeconds = (currentMilli / 1000 % 60).toInt() - startSeconds
         currentMinutes = (currentMilli / 1000 / 60).toInt() - startMinutes
 
-        timer.text = "${currentMinutes}:${currentSeconds}.${currentMilliSeconds}"
+        timer.text = "0${currentMinutes}:0${currentSeconds}.${currentMilliSeconds}0"
 
         ObjectAnimator.ofInt(progressBar, "progress", currentProgress)
             .setDuration(100)
             .start()
-
 
 
         currentTime = System.currentTimeMillis()
@@ -149,16 +163,22 @@ fun uiAnimations(progressBar: ProgressBar, speed: TextView, mph: TextView, timer
         timer.setTextColor(Color.parseColor("#FFFFFF"))
     }
 
-    when (currentProgress) {
+    when (currentProgress - 1) {
         60 -> {
             times.visibility = View.VISIBLE
             yellowTimesBar.visibility = View.VISIBLE
             recTime1.visibility = View.VISIBLE
-            recTime1.text = "${currentMinutes}:${currentSeconds}.${currentMilliSeconds}"
+            recTime1.text = "0-60: ${currentMinutes}:0${currentSeconds}.0${currentMilliSeconds}"
         }
-        100 -> recTime2.visibility = View.VISIBLE
-        120 -> recTime3.visibility = View.VISIBLE
-    }
+        100 -> {
+            recTime2.visibility = View.VISIBLE
+            recTime2.text = "60-100: ${currentMinutes}:0${currentSeconds}.0${currentMilliSeconds}"
+        }
+        120 -> {
+            recTime3.visibility = View.VISIBLE
+            recTime2.text = "100-120: ${currentMinutes}:0${currentSeconds}.0${currentMilliSeconds}"
+        }
+        }
 }
 
 
