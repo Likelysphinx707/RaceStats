@@ -3,16 +3,14 @@ package com.example.racestats
 import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.time.Duration
 import java.util.*
 import kotlin.concurrent.schedule
+import kotlin.random.Random.Default.nextInt
+
 
 class MainActivity : AppCompatActivity() {
     // Import the variables we will be editing from the UI XML file
@@ -51,8 +49,21 @@ class MainActivity : AppCompatActivity() {
         // This wil handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
             progressBarAnimation(progressBar, speed, mph, timer, recordedTimes, yellowTimesBar,  recordedTimeOne, recordedTimeTwo, recordedTimeThree)
+
         }
     }
+}
+
+fun random(currentProgress: Int): Int {
+    val rnds = (0..1).random() // generated random from 0 to 1 included
+
+    if (rnds == 0) {
+        return 1
+    } else if (rnds == 1) {
+        return -1
+    }
+
+    return 0
 }
 
 
@@ -65,82 +76,81 @@ fun progressBarAnimation(progressBar: ProgressBar, speed: TextView, mph: TextVie
     progressBar.max = 60
     // need ot set currentProgress val equal to current speed
     var currentProgress = 0
-    while (currentProgress < progressBar.max) {
+
+    while (currentProgress <= progressBar.max) {
+        speed.text = currentProgress.toString()
         ObjectAnimator.ofInt(progressBar, "progress", currentProgress)
-            .setDuration(500)
+            .setDuration(300)
             .start()
-        currentProgress++
+
+        currentProgress += random(currentProgress)
     }
 
-    // this will make the display flash 3 times when we hit a speed milestone
-    Timer().schedule(500) {
+    // makes the UI flash yellow and displays times to milestones in the corner when 'currentProgress' == progressBar.max
+    Timer().schedule(400) {
         speed.setTextColor(Color.parseColor("#FFE222"))
         mph.setTextColor(Color.parseColor("#FFE222"))
         timer.setTextColor(Color.parseColor("#FFE222"))
-        if(currentProgress == 60) {
-            times.visibility = View.VISIBLE;
-            yellowTimesBar.visibility = View.VISIBLE;
-            recTime1.visibility = View.VISIBLE;
-        } else if(currentProgress == 100) {
-            recTime2.visibility = View.VISIBLE;
-        } else if(currentProgress == 120) {
-            recTime3.visibility = View.VISIBLE;
+    }
+
+    Timer().schedule(800) {
+        speed.setTextColor(Color.parseColor("#FFFFFF"))
+        mph.setTextColor(Color.parseColor("#FFFFFF"))
+        timer.setTextColor(Color.parseColor("#FFFFFF"))
+    }
+
+    Timer().schedule(1200) {
+        speed.setTextColor(Color.parseColor("#FFE222"))
+        mph.setTextColor(Color.parseColor("#FFE222"))
+        timer.setTextColor(Color.parseColor("#FFE222"))
+    }
+
+    Timer().schedule(1600) {
+        speed.setTextColor(Color.parseColor("#FFFFFF"))
+        mph.setTextColor(Color.parseColor("#FFFFFF"))
+        timer.setTextColor(Color.parseColor("#FFFFFF"))
+    }
+
+    Timer().schedule(2000) {
+        speed.setTextColor(Color.parseColor("#FFE222"))
+        mph.setTextColor(Color.parseColor("#FFE222"))
+        timer.setTextColor(Color.parseColor("#FFE222"))
+    }
+
+    Timer().schedule(2400) {
+        speed.setTextColor(Color.parseColor("#FFFFFF"))
+        mph.setTextColor(Color.parseColor("#FFFFFF"))
+        timer.setTextColor(Color.parseColor("#FFFFFF"))
+    }
+
+    when (currentProgress) {
+        60 -> {
+            times.visibility = View.VISIBLE
+            yellowTimesBar.visibility = View.VISIBLE
+            recTime1.visibility = View.VISIBLE
         }
-    }
-    Timer().schedule(900) {
-        speed.setTextColor(Color.parseColor("#FFFFFF"))
-        mph.setTextColor(Color.parseColor("#FFFFFF"))
-        timer.setTextColor(Color.parseColor("#FFFFFF"))
-    }
-    Timer().schedule(1300) {
-        // Changes text color
-        speed.setTextColor(Color.parseColor("#FFE222"))
-        mph.setTextColor(Color.parseColor("#FFE222"))
-        timer.setTextColor(Color.parseColor("#FFE222"))
-    }
-    Timer().schedule(1700) {
-        speed.setTextColor(Color.parseColor("#FFFFFF"))
-        mph.setTextColor(Color.parseColor("#FFFFFF"))
-        timer.setTextColor(Color.parseColor("#FFFFFF"))
-    }
-    Timer().schedule(2100) {
-        speed.setTextColor(Color.parseColor("#FFE222"))
-        mph.setTextColor(Color.parseColor("#FFE222"))
-        timer.setTextColor(Color.parseColor("#FFE222"))
-    }
-    Timer().schedule(2500) {
-        speed.setTextColor(Color.parseColor("#FFFFFF"))
-        mph.setTextColor(Color.parseColor("#FFFFFF"))
-        timer.setTextColor(Color.parseColor("#FFFFFF"))
+        100 -> recTime2.visibility = View.VISIBLE
+        120 -> recTime3.visibility = View.VISIBLE
     }
 }
 
 
-fun cpuTemperature(): Float {
-    val process: Process
-    return try {
-        process = Runtime.getRuntime().exec("cat sys/class/thermal/thermal_zone0/temp")
-        process.waitFor()
-        val reader = BufferedReader(InputStreamReader(process.inputStream))
-        val line: String = reader.readLine()
-        if (line != null) {
-            val temp = line.toFloat()
-            temp / 1000.0f
-        } else {
-            51.0f
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        0.0f
-    }
-}
-
-
-fun timer() {
-    var time = 0.00
-
-//    while(speed <= 60) {
 //
-//        speed += 1
+//fun cpuTemperature(): Float {
+//    val process: Process
+//    return try {
+//        process = Runtime.getRuntime().exec("cat sys/class/thermal/thermal_zone0/temp")
+//        process.waitFor()
+//        val reader = BufferedReader(InputStreamReader(process.inputStream))
+//        val line: String = reader.readLine()
+//        if (line != null) {
+//            val temp = line.toFloat()
+//            temp / 1000.0f
+//        } else {
+//            51.0f
+//        }
+//    } catch (e: Exception) {
+//        e.printStackTrace()
+//        0.0f
 //    }
-}
+//}
