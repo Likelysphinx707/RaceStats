@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -45,9 +47,7 @@ class MainActivity : AppCompatActivity() {
         recordedTimeTwo = findViewById(R.id.recordedTimeTwo)
         recordedTimeThree = findViewById(R.id.recordedTimeThree)
 
-
-
-
+        cpuTemperature()
 
         // This wil handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
@@ -182,22 +182,26 @@ fun uiAnimations(progressBar: ProgressBar, speed: TextView, mph: TextView, timer
 }
 
 
-//
-//fun cpuTemperature(): Float {
-//    val process: Process
-//    return try {
-//        process = Runtime.getRuntime().exec("cat sys/class/thermal/thermal_zone0/temp")
-//        process.waitFor()
-//        val reader = BufferedReader(InputStreamReader(process.inputStream))
-//        val line: String = reader.readLine()
-//        if (line != null) {
-//            val temp = line.toFloat()
-//            temp / 1000.0f
-//        } else {
-//            51.0f
-//        }
-//    } catch (e: Exception) {
-//        e.printStackTrace()
-//        0.0f
-//    }
-//}
+fun cpuTemperature(): Float {
+    val process: Process
+    return try {
+        process = Runtime.getRuntime().exec("cat /sys/class/thermal/thermal_zone1/temp")
+        process.waitFor()
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        val line: String = reader.readLine()
+        if (line != null) {
+            val temp = line.toFloat()
+            println(temp / 1000.0f)
+            temp / 1000.0f
+        } else {
+            println(51.0f)
+            51.0f
+        }
+    } catch (e: Exception) {
+        println("about to look for temp")
+        e.printStackTrace()
+        println("Temp is below")
+        println(0.0f)
+        0.0f
+    }
+}
