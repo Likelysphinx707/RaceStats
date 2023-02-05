@@ -1,18 +1,11 @@
 package com.example.racestats
 
-import android.animation.ObjectAnimator
-import android.graphics.Color
 import android.os.Bundle
-import android.system.Os
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
-import kotlin.concurrent.schedule
-//import kotlin.coroutines.jvm.internal.CompletedContinuation.context
-import kotlin.concurrent.timer
-import kotlin.text.Typography.times
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,8 +21,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordedTimeOne: TextView
     private lateinit var recordedTimeTwo: TextView
     private lateinit var recordedTimeThree: TextView
-    private var methodRunning = false
 
+    private var targetTime: Double = 120.0
+    private var methodRunning = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 startStopTimer.text = "STOP"
                 // This wil handle our event when a user clicks the start or stop button
                 startStopTimer.setOnClickListener{
-                    uiAnimations(progressBar, speed, timer)
+                    uiAnimations(targetTime, progressBar, speed, timer)
                 }
                 methodRunning = false
                 startStopTimer.text = "START"
@@ -71,12 +65,10 @@ class MainActivity : AppCompatActivity() {
 
 
 /**
- * Handles the Progress Bar Animation as the speed increases or decreases
+ * Handles the progress bar, mph, and timer UI display as the speed increases or decreases
  * @param progressBar takes the progressBar variable as a param so we can manipulate it in the UI
  */
-fun uiAnimations(progressBar: ProgressBar, speedTextView: TextView, timerTextView: TextView) {
-    println("starting of timing code")
-
+fun uiAnimations(targetTime: Double, progressBar: ProgressBar, speedTextView: TextView, timerTextView: TextView) {
     val timer = Timer()
     var speed = 0
     var time = 0
@@ -86,10 +78,10 @@ fun uiAnimations(progressBar: ProgressBar, speedTextView: TextView, timerTextVie
             speed += 2
             time += 132
 
-            val progress = (speed / 60.0) * 100
+            val progress = (speed / targetTime) * 100
 
             // updates the mph
-            speedTextView.text = "$speed mph"
+            speedTextView.text = "$speed"
 
             // updates progress bar code
             progressBar.progress = progress.toInt()
@@ -98,14 +90,13 @@ fun uiAnimations(progressBar: ProgressBar, speedTextView: TextView, timerTextVie
             val minutes = time / 60000
             val seconds = (time % 60000) / 1000
             val milliseconds = time % 1000
-            println(milliseconds)
             timerTextView.text = "${formatTime(minutes)}:${formatTime(seconds)}.${formatMilliseconds(milliseconds)}"
 
             println("Speed: $speed mph\tTime: $time ms\tProgress: $progress%")
 
-            if (speed >= 60) {
+            if (speed >= targetTime) {
 
-                println("Reached 60 mph in ${formatTime(minutes)}:${formatTime(seconds)}.${formatMilliseconds(milliseconds)}")
+                println("Reached ${targetTime.toInt()} mph in ${formatTime(minutes)}:${formatTime(seconds)}.${formatMilliseconds(milliseconds)}")
                 timer.cancel()
             }
         }
