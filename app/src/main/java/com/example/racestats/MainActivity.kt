@@ -2,6 +2,7 @@ package com.example.racestats
 
 import android.os.Bundle
 import android.view.View
+import android.widget.NumberPicker
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ class MainActivity : AppCompatActivity() {
     // Import the variables we will be editing from the UI XML file
     private lateinit var cpuTemp: TextView
     private lateinit var speed: TextView
+    private lateinit var targetTimeSetter: NumberPicker
     private lateinit var mph: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var timer: TextView
@@ -33,17 +35,23 @@ class MainActivity : AppCompatActivity() {
         // Declare are imported variables from the XML file
         cpuTemp = findViewById(R.id.cpuTemp)
         speed = findViewById(R.id.speed)
+        targetTimeSetter = findViewById(R.id.targetTimeSetter)
         mph = findViewById(R.id.mph)
         progressBar = findViewById(R.id.progressBar)
         timer = findViewById(R.id.timer)
         startStopTimer = findViewById(R.id.startStopTimer)
+
         recordedTimes = findViewById(R.id.recordedTimes)
         yellowTimesBar = findViewById(R.id.yellowTimesBar)
         recordedTimeOne = findViewById(R.id.recordedTimeOne)
         recordedTimeTwo = findViewById(R.id.recordedTimeTwo)
         recordedTimeThree = findViewById(R.id.recordedTimeThree)
 
-        // This wil handle our event when a user clicks the start or stop button
+        // set the min and max value a user can time from
+        targetTimeSetter.minValue = 1
+        targetTimeSetter.maxValue = 155
+
+        // This will handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
             // Check to see if start button has already been clicked or not
             if (!methodRunning) {
