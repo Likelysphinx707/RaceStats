@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
 import java.util.*
 import kotlin.concurrent.schedule
 //import kotlin.coroutines.jvm.internal.CompletedContinuation.context
@@ -50,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         recordedTimeTwo = findViewById(R.id.recordedTimeTwo)
         recordedTimeThree = findViewById(R.id.recordedTimeThree)
 
-
         // This wil handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
             // Check to see if start button has already been clicked or not
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 startStopTimer.text = "STOP"
                 // This wil handle our event when a user clicks the start or stop button
                 startStopTimer.setOnClickListener{
-                    uiAnimations(progressBar, speed, mph)
+                    uiAnimations(progressBar, speed, timer)
                 }
                 methodRunning = false
                 startStopTimer.text = "START"
@@ -127,23 +125,26 @@ fun formatTime(time: Int): String {
 }
 
 
-
-//
 //fun cpuTemperature(): Float {
 //    val process: Process
 //    return try {
-//        process = Runtime.getRuntime().exec("cat sys/class/thermal/thermal_zone0/temp")
+//        process = Runtime.getRuntime().exec("cat /sys/class/thermal/thermal_zone1/temp")
 //        process.waitFor()
 //        val reader = BufferedReader(InputStreamReader(process.inputStream))
 //        val line: String = reader.readLine()
 //        if (line != null) {
 //            val temp = line.toFloat()
+//            println(temp / 1000.0f)
 //            temp / 1000.0f
 //        } else {
+//            println(51.0f)
 //            51.0f
 //        }
 //    } catch (e: Exception) {
+//        println("about to look for temp")
 //        e.printStackTrace()
+//        println("Temp is below")
+//        println(0.0f)
 //        0.0f
 //    }
 //}
