@@ -3,12 +3,17 @@ package com.example.racestats
 import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.os.Bundle
+import android.system.Os
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import java.util.*
 import kotlin.concurrent.schedule
+//import kotlin.coroutines.jvm.internal.CompletedContinuation.context
+import kotlin.concurrent.timer
+import kotlin.text.Typography.times
 
 
 class MainActivity : AppCompatActivity() {
@@ -46,9 +51,6 @@ class MainActivity : AppCompatActivity() {
         recordedTimeThree = findViewById(R.id.recordedTimeThree)
 
 
-
-
-
         // This wil handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
             // Check to see if start button has already been clicked or not
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                 startStopTimer.text = "STOP"
                 // This wil handle our event when a user clicks the start or stop button
                 startStopTimer.setOnClickListener{
-                    uiAnimations(progressBar, speed, mph, timer, recordedTimes, yellowTimesBar,  recordedTimeOne, recordedTimeTwo, recordedTimeThree)
+                    uiAnimations(progressBar, speed, mph)
                 }
                 methodRunning = false
                 startStopTimer.text = "START"
@@ -69,117 +71,61 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-fun random(): Int {
-    val rnds = (0..1).random() // generated random from 0 to 1 included
-
-    if (rnds == 0) {
-        return 1
-    } else if (rnds == 1) {
-        return -1
-    }
-
-    return 0
-}
-
 
 /**
  * Handles the Progress Bar Animation as the speed increases or decreases
  * @param progressBar takes the progressBar variable as a param so we can manipulate it in the UI
  */
-fun uiAnimations(progressBar: ProgressBar, speed: TextView, mph: TextView, timer: TextView, times: TextView, yellowTimesBar: View, recTime1: TextView, recTime2: TextView, recTime3: TextView) {
-    val startMilli = System.currentTimeMillis()
-    val startMilliSeconds: Int = 0
-    val startSeconds: Int = (startMilli / 1000 % 60).toInt()
-    val startMinutes: Int = (startMilli / 1000 / 60).toInt()
-    val startTime = startMinutes + startSeconds + startMilliSeconds
+fun uiAnimations(progressBar: ProgressBar, speedTextView: TextView, timerTextView: TextView) {
+    println("starting of timing code")
 
-    var currentMilliSeconds = 0
-    var currentSeconds = 0
-    var currentMinutes = 0
-    var currentTime : Long = 0
+    val timer = Timer()
+    var speed = 0
+    var time = 0
 
+    timer.scheduleAtFixedRate(object : TimerTask() {
+        override fun run() {
+            speed += 2
+            time += 132
 
-    // we will increase the max after each milestone has been hit
-    progressBar.max = 60
-    // need ot set currentProgress val equal to current speed
-    var currentProgress = 0
+            val progress = (speed / 60.0) * 100
 
+            // updates the mph
+            speedTextView.text = "$speed mph"
 
-    while (currentProgress <= progressBar.max) {
-        // Updates the mph
-        speed.text = currentProgress.toString()
-        // Updates the timer
-        // calculate current time to display
-        var currentMilli = System.currentTimeMillis()
-        currentSeconds = (currentMilli / 1000 % 60).toInt() - startSeconds
-        currentMinutes = (currentMilli / 1000 / 60).toInt() - startMinutes
+            // updates progress bar code
+            progressBar.progress = progress.toInt()
 
-        timer.text = "0${currentMinutes}:0${currentSeconds}.${currentMilliSeconds}0"
+            // updates the display time
+            val minutes = time / 60000
+            val seconds = (time % 60000) / 1000
+            val milliseconds = time % 1000
+            println(milliseconds)
+            timerTextView.text = "${formatTime(minutes)}:${formatTime(seconds)}.${formatMilliseconds(milliseconds)}"
 
-        ObjectAnimator.ofInt(progressBar, "progress", currentProgress)
-            .setDuration(100)
-            .start()
+            println("Speed: $speed mph\tTime: $time ms\tProgress: $progress%")
 
+            if (speed >= 60) {
 
-        currentTime = System.currentTimeMillis()
-
-        currentProgress += random()
-    }
-
-    // makes the UI flash yellow and displays times to milestones in the corner when 'currentProgress' == progressBar.max
-    Timer().schedule(400) {
-        speed.setTextColor(Color.parseColor("#FFE222"))
-        mph.setTextColor(Color.parseColor("#FFE222"))
-        timer.setTextColor(Color.parseColor("#FFE222"))
-    }
-
-    Timer().schedule(800) {
-        speed.setTextColor(Color.parseColor("#FFFFFF"))
-        mph.setTextColor(Color.parseColor("#FFFFFF"))
-        timer.setTextColor(Color.parseColor("#FFFFFF"))
-    }
-
-    Timer().schedule(1200) {
-        speed.setTextColor(Color.parseColor("#FFE222"))
-        mph.setTextColor(Color.parseColor("#FFE222"))
-        timer.setTextColor(Color.parseColor("#FFE222"))
-    }
-
-    Timer().schedule(1600) {
-        speed.setTextColor(Color.parseColor("#FFFFFF"))
-        mph.setTextColor(Color.parseColor("#FFFFFF"))
-        timer.setTextColor(Color.parseColor("#FFFFFF"))
-    }
-
-    Timer().schedule(2000) {
-        speed.setTextColor(Color.parseColor("#FFE222"))
-        mph.setTextColor(Color.parseColor("#FFE222"))
-        timer.setTextColor(Color.parseColor("#FFE222"))
-    }
-
-    Timer().schedule(2400) {
-        speed.setTextColor(Color.parseColor("#FFFFFF"))
-        mph.setTextColor(Color.parseColor("#FFFFFF"))
-        timer.setTextColor(Color.parseColor("#FFFFFF"))
-    }
-
-    when (currentProgress - 1) {
-        60 -> {
-            times.visibility = View.VISIBLE
-            yellowTimesBar.visibility = View.VISIBLE
-            recTime1.visibility = View.VISIBLE
-            recTime1.text = "0-60: ${currentMinutes}:0${currentSeconds}.0${currentMilliSeconds}"
+                println("Reached 60 mph in ${formatTime(minutes)}:${formatTime(seconds)}.${formatMilliseconds(milliseconds)}")
+                timer.cancel()
+            }
         }
-        100 -> {
-            recTime2.visibility = View.VISIBLE
-            recTime2.text = "60-100: ${currentMinutes}:0${currentSeconds}.0${currentMilliSeconds}"
-        }
-        120 -> {
-            recTime3.visibility = View.VISIBLE
-            recTime2.text = "100-120: ${currentMinutes}:0${currentSeconds}.0${currentMilliSeconds}"
-        }
-        }
+    }, 0, 100)
 }
+
+fun formatMilliseconds(time: Int): String {
+    return String.format("%02d", time/10)
+}
+
+fun formatTime(time: Int): String {
+    return if (time < 10) {
+        "0$time"
+    } else {
+        "$time"
+    }
+}
+
 
 
 //
