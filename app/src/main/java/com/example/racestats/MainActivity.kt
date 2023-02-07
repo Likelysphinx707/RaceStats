@@ -1,11 +1,20 @@
 package com.example.racestats
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.NumberPicker
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import java.io.RandomAccessFile
 import java.util.*
 
 
@@ -26,7 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     private var targetTime: Double = 120.0
     private var methodRunning = false
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +58,8 @@ class MainActivity : AppCompatActivity() {
         // set the min and max value a user can time from
         targetTimeSetter.minValue = 1
         targetTimeSetter.maxValue = 155
+
+        cpuTemperature(this)
 
         // This will handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
@@ -123,27 +133,34 @@ fun formatTime(time: Int): String {
     }
 }
 
+fun cpuTemperature(activity: Activity): Float {
+    val permissionCheck = ContextCompat.checkSelfPermission(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE)
 
-//fun cpuTemperature(): Float {
-//    val process: Process
-//    return try {
-//        process = Runtime.getRuntime().exec("cat /sys/class/thermal/thermal_zone1/temp")
-//        process.waitFor()
-//        val reader = BufferedReader(InputStreamReader(process.inputStream))
-//        val line: String = reader.readLine()
-//        if (line != null) {
-//            val temp = line.toFloat()
-//            println(temp / 1000.0f)
-//            temp / 1000.0f
-//        } else {
-//            println(51.0f)
-//            51.0f
-//        }
-//    } catch (e: Exception) {
-//        println("about to look for temp")
-//        e.printStackTrace()
-//        println("Temp is below")
-//        println(0.0f)
-//        0.0f
-//    }
-//}
+    if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
+            Toast.makeText(activity, "This permission is required to access the CPU temperature.", Toast.LENGTH_LONG).show()
+        }
+        ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE), 1)
+        return 0.0f
+    }
+
+    val process: Process
+    return try {
+        val reader = RandomAccessFile("/sys/devices/virtual/thermal/thermal_zone0/temp", "r")
+        val line: String = reader.readLine()
+        if (line != null) {
+            val temp = line.toFloat()
+            println(temp / 1000.0f)
+            temp / 1000.0f
+        } else {
+            println(51.0f)
+            51.0f
+        }
+    } catch (e: Exception) {
+        println("about to look for temp")
+        e.printStackTrace()
+        println("Temp is below")
+        println(0.0f)
+        0.0f
+    }
+}
