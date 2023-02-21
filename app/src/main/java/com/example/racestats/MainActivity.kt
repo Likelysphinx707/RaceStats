@@ -2,6 +2,7 @@ package com.example.racestats
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -59,7 +60,10 @@ class MainActivity : AppCompatActivity() {
         targetTimeSetter.minValue = 1
         targetTimeSetter.maxValue = 155
 
-        cpuTemperature(this)
+        println("printing temp?")
+        cpuTemperature(this) { result ->
+            println(result)
+        }
 
         // This will handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
@@ -133,34 +137,53 @@ fun formatTime(time: Int): String {
     }
 }
 
-fun cpuTemperature(activity: Activity): Float {
+/**
+ * This function will set the CPU Temp in are UI and will handles all things associated with the CPU temp.
+ */
+fun cpuTemperature(activity: Activity, callback: (Float) -> Unit) {
     val permissionCheck = ContextCompat.checkSelfPermission(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE)
 
     if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
             Toast.makeText(activity, "This permission is required to access the CPU temperature.", Toast.LENGTH_LONG).show()
         }
-        ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE), 1)
-        return 0.0f
-    }
 
-    val process: Process
+        val alertDialogBuilder = AlertDialog.Builder(activity)
+        alertDialogBuilder.setTitle("Permission Request")
+        alertDialogBuilder.setMessage("The app needs access to external storage to read the CPU temperature. Do you allow this permission?")
+        alertDialogBuilder.setPositiveButton("Allow") { _, _ ->
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_INTERNAL_STORAGE), 1)
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+            getCpuTemperature(callback)
+        }
+        alertDialogBuilder.setNegativeButton("Deny") { dialog, _ ->
+            dialog.dismiss()
+            // set cpu temp to be invisible
+        }
+        alertDialogBuilder.show()
+    } else {
+        getCpuTemperature(callback)
+    }
+}
+
+fun getCpuTemperature(callback: (Float) -> Unit) {
     return try {
         val reader = RandomAccessFile("/sys/devices/virtual/thermal/thermal_zone0/temp", "r")
         val line: String = reader.readLine()
         if (line != null) {
             val temp = line.toFloat()
             println(temp / 1000.0f)
-            temp / 1000.0f
+            callback(temp / 1000.0f)
         } else {
             println(51.0f)
-            51.0f
+            callback(51.0f)
         }
     } catch (e: Exception) {
         println("about to look for temp")
         e.printStackTrace()
         println("Temp is below")
         println(0.0f)
-        0.0f
+        callback(0.0f)
     }
 }
+
