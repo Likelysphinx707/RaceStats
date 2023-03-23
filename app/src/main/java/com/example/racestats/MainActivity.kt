@@ -9,8 +9,10 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -63,6 +65,7 @@ class MainActivity : AppCompatActivity() {
 //            println(result)
 //        }
 
+
         // Allows the user to set the desired target time
         speed.setOnClickListener {
             val dialog = NumberPicker(this)
@@ -72,10 +75,14 @@ class MainActivity : AppCompatActivity() {
             dialog.wrapSelectorWheel = false
             dialog.textColor = Color.WHITE // Set the text color to white
             dialog.setBackgroundColor(Color.BLACK) // Set the background color to black
+            dialog.setPadding(0, 20, 0, 20) // Add padding to the number picker
+
             val lp = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
+            lp.setMargins(50, 0, 50, 0) // Add margin to the number picker
+
             dialog.setOnValueChangedListener { _, _, newVal ->
                 targetTime = newVal
             }
@@ -89,9 +96,15 @@ class MainActivity : AppCompatActivity() {
                 .show()
 
             alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.BLACK))
+            alertDialog.window?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            ) // Set the dialog window to take up the entire screen
+
             val positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
-            positiveButton.setTextColor(Color.YELLOW)
-            positiveButton.setBackgroundColor(Color.BLACK)
+            positiveButton.setTextColor(Color.BLACK)
+            positiveButton.setBackgroundColor(Color.YELLOW)
+            positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f) // Set the text size of the positive button
         }
 
 
