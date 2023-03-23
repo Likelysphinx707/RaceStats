@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -96,6 +97,7 @@ class MainActivity : AppCompatActivity() {
                 .show()
 
             alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.BLACK))
+            alertDialog.window?.setGravity(Gravity.CENTER) // Center the dialog window
             alertDialog.window?.setLayout(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT
