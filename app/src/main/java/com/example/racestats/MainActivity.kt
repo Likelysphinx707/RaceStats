@@ -3,19 +3,20 @@ package com.example.racestats
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.NumberPicker
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.io.RandomAccessFile
+import java.io.*
 import java.util.*
 
 
@@ -23,7 +24,6 @@ class MainActivity : AppCompatActivity() {
     // Import the variables we will be editing from the UI XML file
     private lateinit var cpuTemp: TextView
     private lateinit var speed: TextView
-    private lateinit var targetTimeSetter: NumberPicker
     private lateinit var mph: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var timer: TextView
@@ -34,9 +34,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordedTimeTwo: TextView
     private lateinit var recordedTimeThree: TextView
 
-    private var targetTime: Double = 120.0
+    private var targetTime: Int = 120
     private var methodRunning = false
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         // Declare are imported variables from the XML file
         cpuTemp = findViewById(R.id.cpuTemp)
         speed = findViewById(R.id.speed)
-        targetTimeSetter = findViewById(R.id.targetTimeSetter)
         mph = findViewById(R.id.mph)
         progressBar = findViewById(R.id.progressBar)
         timer = findViewById(R.id.timer)
@@ -56,14 +56,46 @@ class MainActivity : AppCompatActivity() {
         recordedTimeTwo = findViewById(R.id.recordedTimeTwo)
         recordedTimeThree = findViewById(R.id.recordedTimeThree)
 
-        // set the min and max value a user can time from
-        targetTimeSetter.minValue = 1
-        targetTimeSetter.maxValue = 155
 
-        println("printing temp?")
-        cpuTemperature(this) { result ->
-            println(result)
+        // Come back to last once we have it running on the pi
+//        println("printing temp?")
+//        cpuTemperature(this) { result ->
+//            println(result)
+//        }
+
+        // Allows the user to set the desired target time
+        speed.setOnClickListener {
+            val dialog = NumberPicker(this)
+            dialog.minValue = 1
+            dialog.maxValue = 200
+            dialog.value = targetTime
+            dialog.wrapSelectorWheel = false
+            dialog.textColor = Color.WHITE // Set the text color to white
+            dialog.setBackgroundColor(Color.BLACK) // Set the background color to black
+            val lp = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            dialog.setOnValueChangedListener { _, _, newVal ->
+                targetTime = newVal
+            }
+
+            dialog.layoutParams = lp
+
+            val alertDialog = AlertDialog.Builder(this)
+                .setTitle("Select Target Speed (mph)")
+                .setView(dialog)
+                .setPositiveButton("SET", null)
+                .show()
+
+            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.BLACK))
+            val positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            positiveButton.setTextColor(Color.YELLOW)
+            positiveButton.setBackgroundColor(Color.BLACK)
         }
+
+
+
 
         // This will handle our event when a user clicks the start or stop button
         startStopTimer.setOnClickListener{
@@ -90,7 +122,7 @@ class MainActivity : AppCompatActivity() {
  * Handles the progress bar, mph, and timer UI display as the speed increases or decreases
  * @param progressBar takes the progressBar variable as a param so we can manipulate it in the UI
  */
-fun uiAnimations(targetTime: Double, progressBar: ProgressBar, speedTextView: TextView, timerTextView: TextView) {
+fun uiAnimations(targetTime: Int, progressBar: ProgressBar, speedTextView: TextView, timerTextView: TextView) {
     val timer = Timer()
     var speed = 0
     var time = 0
@@ -152,7 +184,7 @@ fun cpuTemperature(activity: Activity, callback: (Float) -> Unit) {
         alertDialogBuilder.setTitle("Permission Request")
         alertDialogBuilder.setMessage("The app needs access to external storage to read the CPU temperature. Do you allow this permission?")
         alertDialogBuilder.setPositiveButton("Allow") { _, _ ->
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_INTERNAL_STORAGE), 1)
+//            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACTION_MANAGE_ALL_SIM_PROFILES_SETTINGS), 1)
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
             getCpuTemperature(callback)
         }
@@ -186,4 +218,3 @@ fun getCpuTemperature(callback: (Float) -> Unit) {
         callback(0.0f)
     }
 }
-
