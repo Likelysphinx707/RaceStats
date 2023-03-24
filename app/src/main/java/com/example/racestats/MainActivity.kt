@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordedTimeTwo: TextView
     private lateinit var recordedTimeThree: TextView
 
-    private var targetTime: Int = 120
+    private var targetTime: Double = 120.0
     private var methodRunning = false
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -72,20 +73,24 @@ class MainActivity : AppCompatActivity() {
             val dialog = NumberPicker(this)
             dialog.minValue = 1
             dialog.maxValue = 200
-            dialog.value = targetTime
+            dialog.value = targetTime.toInt()
             dialog.wrapSelectorWheel = false
             dialog.textColor = Color.WHITE // Set the text color to white
             dialog.setBackgroundColor(Color.BLACK) // Set the background color to black
             dialog.setPadding(0, 20, 0, 20) // Add padding to the number picker
 
+            val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+            val pickerHeight = (screenHeight * 0.9).toInt()
+
             val lp = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                pickerHeight
             )
+
             lp.setMargins(50, 0, 50, 0) // Add margin to the number picker
 
             dialog.setOnValueChangedListener { _, _, newVal ->
-                targetTime = newVal
+                targetTime = newVal.toDouble()
             }
 
             dialog.layoutParams = lp
@@ -104,12 +109,13 @@ class MainActivity : AppCompatActivity() {
             ) // Set the dialog window to take up the entire screen
 
             val positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            val layoutParams = positiveButton.layoutParams as LinearLayout.LayoutParams
+            layoutParams.gravity = Gravity.CENTER // Set the gravity of the button to center
+            positiveButton.layoutParams = layoutParams
             positiveButton.setTextColor(Color.BLACK)
             positiveButton.setBackgroundColor(Color.YELLOW)
             positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f) // Set the text size of the positive button
         }
-
-
 
 
         // This will handle our event when a user clicks the start or stop button
@@ -137,14 +143,14 @@ class MainActivity : AppCompatActivity() {
  * Handles the progress bar, mph, and timer UI display as the speed increases or decreases
  * @param progressBar takes the progressBar variable as a param so we can manipulate it in the UI
  */
-fun uiAnimations(targetTime: Int, progressBar: ProgressBar, speedTextView: TextView, timerTextView: TextView) {
+fun uiAnimations(targetTime: Double, progressBar: ProgressBar, speedTextView: TextView, timerTextView: TextView) {
     val timer = Timer()
     var speed = 0
     var time = 0
 
     timer.scheduleAtFixedRate(object : TimerTask() {
         override fun run() {
-            speed += 2
+            speed += 1
             time += 132
 
             val progress = (speed / targetTime) * 100

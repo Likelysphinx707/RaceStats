@@ -37,24 +37,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.016" />
 
-
-<!--    <NumberPicker-->
-<!--        android:id="@+id/targetTimeSetter"-->
-<!--        android:layout_width="541dp"-->
-<!--        android:layout_height="227dp"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textAllCaps="true"-->
-<!--        android:textSize="140sp"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:showDividers="none"-->
-<!--        android:theme="@style/Theme.RaceStats"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/speed"-->
-<!--        app:layout_constraintVertical_bias="0.0" />-->
-
     <TextView
         android:id="@+id/mph"
         android:layout_width="138dp"

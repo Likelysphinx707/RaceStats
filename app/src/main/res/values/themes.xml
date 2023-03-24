@@ -12,10 +12,5 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/black</item>
         <item name="android:navigationBarColor">@color/black</item>
-        <!-- Number picker styles -->
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textSize">140sp</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:showDividers">none</item>
     </style>
 </resources>
