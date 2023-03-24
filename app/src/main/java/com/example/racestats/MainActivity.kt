@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.Color.parseColor
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
@@ -68,7 +69,6 @@ class MainActivity : AppCompatActivity() {
 //        }
 
 
-        // Allows the user to set the desired target time
         speed.setOnClickListener {
             val dialog = NumberPicker(this)
             dialog.minValue = 1
@@ -77,7 +77,6 @@ class MainActivity : AppCompatActivity() {
             dialog.wrapSelectorWheel = false
             dialog.textColor = Color.WHITE // Set the text color to white
             dialog.setBackgroundColor(Color.BLACK) // Set the background color to black
-            dialog.setPadding(0, 20, 0, 20) // Add padding to the number picker
 
             val screenHeight = Resources.getSystem().displayMetrics.heightPixels
             val pickerHeight = (screenHeight * 0.9).toInt()
@@ -87,39 +86,56 @@ class MainActivity : AppCompatActivity() {
                 pickerHeight
             )
 
-            lp.setMargins(50, 0, 50, 0) // Add margin to the number picker
-
             dialog.setOnValueChangedListener { _, _, newVal ->
                 targetTime = newVal.toDouble()
             }
 
             dialog.layoutParams = lp
 
-            val alertDialog = AlertDialog.Builder(this)
-                .setTitle("Select Target Speed (mph)")
+            val title = TextView(this).apply {
+                text = "Select Target Speed (mph)"
+                textSize = 30f // Set the text size of the title
+                setTextColor(Color.WHITE) // Set the text color to white
+                gravity = Gravity.CENTER // Center the title text
+            }
+
+            val alertDialog: AlertDialog = AlertDialog.Builder(this)
+                .setCustomTitle(title) // Set the customized title
                 .setView(dialog)
                 .setPositiveButton("SET", null)
-                .show()
+                .create()
+
+            alertDialog.show()
 
             alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.BLACK))
-            alertDialog.window?.setGravity(Gravity.CENTER) // Center the dialog window
             alertDialog.window?.setLayout(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT
             ) // Set the dialog window to take up the entire screen
 
             val positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
-            val layoutParams = positiveButton.layoutParams as LinearLayout.LayoutParams
-            layoutParams.gravity = Gravity.CENTER // Set the gravity of the button to center
+
+            // Set layout parameters for the positive button
+            val layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+
+            // Set the gravity of the button to center and set the margins
+            layoutParams.gravity = Gravity.CENTER
+            layoutParams.setMargins(430, 10, 430, 10) // Set the margins (left, top, right, bottom)
+
+            // Set the layout parameters of the positive button
             positiveButton.layoutParams = layoutParams
+
             positiveButton.setTextColor(Color.BLACK)
-            positiveButton.setBackgroundColor(Color.YELLOW)
-            positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f) // Set the text size of the positive button
+            positiveButton.setBackgroundColor(parseColor("#FFE222"))
+            positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f) // Set the text size of the positive button
         }
 
 
         // This will handle our event when a user clicks the start or stop button
-        startStopTimer.setOnClickListener{
+        startStopTimer.setOnClickListener {
             // Check to see if start button has already been clicked or not
             if (!methodRunning) {
                 methodRunning = true
