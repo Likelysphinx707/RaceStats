@@ -3,14 +3,18 @@ package com.example.racestats
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Color.parseColor
+import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -69,17 +73,19 @@ class MainActivity : AppCompatActivity() {
 //        }
 
 
+        /**
+         * Class that is in charge of the pop dialog that allows the user to set the target mph for the timer.
+         */
         speed.setOnClickListener {
-            val dialog = NumberPicker(this)
+            val dialog = SpacedNumberPicker(this)
             dialog.minValue = 1
             dialog.maxValue = 200
             dialog.value = targetTime.toInt()
-            dialog.wrapSelectorWheel = false
             dialog.textColor = Color.WHITE // Set the text color to white
-            dialog.setBackgroundColor(Color.BLACK) // Set the background color to black
+
 
             val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-            val pickerHeight = (screenHeight * 0.9).toInt()
+            val pickerHeight = (screenHeight * 0.75).toInt()
 
             val lp = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -150,6 +156,36 @@ class MainActivity : AppCompatActivity() {
                 methodRunning = false
                 startStopTimer.text = "START"
             }
+        }
+    }
+}
+
+/**
+ * custom number picker I had to make to space the numbers out when selecting a target speed.
+ */
+class SpacedNumberPicker @JvmOverloads constructor (
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : NumberPicker(context, attrs, defStyleAttr) {
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private val spacing: Int = (textSize * 0.25f).toInt()
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private val textPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+        textSize = this@SpacedNumberPicker.textSize
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+        canvas?.let {
+            val x = width / 20f
+            val y = height / 20f
+
+            it.drawText(" ", x, y - spacing, textPaint)
+            it.drawText(" ", x, y + spacing, textPaint)
         }
     }
 }
