@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Canvas
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordedTimeOne: TextView
     private lateinit var recordedTimeTwo: TextView
     private lateinit var recordedTimeThree: TextView
+    private lateinit var serviceRecords: Button
 
     private var targetTime: Double = 120.0
     private var methodRunning = false
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Declare are imported variables from the XML file
+        serviceRecords = findViewById(R.id.serviceRecords)
         cpuTemp = findViewById(R.id.cpuTemp)
         speed = findViewById(R.id.speed)
         mph = findViewById(R.id.mph)
@@ -71,6 +74,14 @@ class MainActivity : AppCompatActivity() {
 //        cpuTemperature(this) { result ->
 //            println(result)
 //        }
+
+        /**
+         * Will allow us to view the Service Records page
+         */
+        serviceRecords.setOnClickListener {
+            val intent = Intent(this, ServiceRecords::class.java)
+            startActivity(intent)
+        }
 
 
         /**

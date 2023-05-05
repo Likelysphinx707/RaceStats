@@ -16,7 +16,8 @@
             android:gravity="center"
             android:text="Maintenance Records"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="42sp"
+            android:layout_marginTop="10dp"
             android:textStyle="bold" />
 
         <!-- Three columns for service, mileage, and date -->
@@ -31,110 +32,83 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Service Done"
+                android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textSize="22sp"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Mileage"
+                android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textSize="22sp"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Date Completed"
+                android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textSize="22sp"/>
         </LinearLayout>
 
         <!-- Placeholder for service records data, to be populated programmatically -->
         <LinearLayout
             android:id="@+id/service_records_list"
             android:layout_width="match_parent"
-            android:layout_height="439dp"
+            android:layout_height="386dp"
             android:orientation="vertical"
             android:padding="16dp">
 
             <!-- Dummy TextView to ensure the layout takes up the full height of the screen -->
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="991dp"
+                android:layout_height="320dp"
                 android:visibility="invisible" />
 
         </LinearLayout>
 
-        <!-- Buttons to save and add new records -->
+        <!-- Buttons to save, edit, and add new records -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:layout_marginHorizontal="40dp"
+            >
 
             <Button
+                android:id="@+id/save_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Save"
+                android:textSize="22sp" />
+
+            <Button
+                android:id="@+id/edit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                android:textSize="22sp"
+                android:layout_marginHorizontal="50dp"
                 android:layout_weight="1" />
 
             <Button
+                android:id="@+id/add_new_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add New"
+                android:textSize="22sp"
                 android:layout_weight="1" />
         </LinearLayout>
 
     </LinearLayout>
 
 </ScrollView>
-
-
-    <!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:background="@color/black"-->
-<!--    tools:context=".ServiceRecords">-->
-
-<!--    <ScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="1000dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/cpuTemp"-->
-<!--        android:layout_width="139dp"-->
-<!--        android:layout_height="23dp"-->
-<!--        android:text="CPU Temp: °00 C"-->
-<!--        android:textColor="#FFFFFF"-->
-<!--        android:textSize="18sp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.99"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.012" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/textView"-->
-<!--        android:layout_width="524dp"-->
-<!--        android:layout_height="69dp"-->
-<!--        android:background="#FFE222"-->
-<!--        android:text="Maintenance Records"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textColor="#000"-->
-<!--        android:textSize="48sp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.117" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
-
-
