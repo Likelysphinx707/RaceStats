@@ -68,6 +68,15 @@
                 android:textColorHint="@color/white"
                 android:textSize="22sp" />
 
+            <!-- Delete button with "x" icon -->
+            <Button
+                android:id="@+id/delete_button_x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="x"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
         </LinearLayout>
 
         <!-- List where records are stored -->
