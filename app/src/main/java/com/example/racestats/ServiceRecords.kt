@@ -16,14 +16,15 @@ class ServiceRecords : AppCompatActivity() {
     private lateinit var mileageEditText: EditText
     private lateinit var dateEditText: EditText
     private lateinit var recordViews: MutableList<View>
-    private lateinit var deleteButtonX: Button
+    private lateinit var deleteButtons: MutableList<Button>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service_records)
 
-        // Initialize the recordViews list
+        // Initialize the recordViews and deleteButtons lists
         recordViews = mutableListOf()
+        deleteButtons = mutableListOf()
 
         // find the service_records_list LinearLayout
         val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
@@ -32,7 +33,6 @@ class ServiceRecords : AppCompatActivity() {
         addButton = findViewById(R.id.add_new_button)
         editButton = findViewById(R.id.edit_button)
         deleteButton = findViewById(R.id.delete_button)
-        deleteButtonX = findViewById(R.id.delete_button_x)
 
         // find the EditTexts
         serviceEditText = findViewById(R.id.service_edittext)
@@ -61,7 +61,7 @@ class ServiceRecords : AppCompatActivity() {
                     }
                 }
             } else {
-                // Change the addButtons text from add New to save
+                // Change the addButton's text from "Add New" to "Save"
                 addButton.text = "Save"
 
                 // Create a new LinearLayout to represent the record
@@ -106,75 +106,78 @@ class ServiceRecords : AppCompatActivity() {
                 )
                 dateTextView.gravity = Gravity.CENTER // set text alignment to center
 
+                // Create the "x" button to delete the record
                 val deleteButtonX = Button(this)
                 deleteButtonX.text = "x"
                 deleteButtonX.setTextColor(resources.getColor(R.color.white))
                 deleteButtonX.textSize = 22f
-                deleteButtonX.visibility = View.GONE
                 deleteButtonX.layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
+                deleteButtonX.visibility = View.INVISIBLE // initially set as not visible
                 deleteButtonX.setOnClickListener {
                     // Remove the record LinearLayout from the service_records_list LinearLayout
                     serviceRecordsList.removeView(recordLayout)
                     // Remove the record view from the recordViews list
                     recordViews.remove(recordLayout)
+                    // Remove the delete button from the deleteButtons list
+                    deleteButtons.remove(deleteButtonX)
+                    Toast.makeText(this, "Record Deleted", Toast.LENGTH_LONG).show()
                 }
                 deleteButtonX.gravity = Gravity.CENTER // set text alignment to center
 
-                // Check if all three EditText fields have values
-                if (serviceEditText.text.isNotEmpty() || mileageEditText.text.isNotEmpty() || dateEditText.text.isNotEmpty()) {
-                    // Add the TextViews to the record LinearLayout
-                    recordLayout.addView(serviceTextView)
-                    recordLayout.addView(mileageTextView)
-                    recordLayout.addView(dateTextView)
-                    recordLayout.addView(deleteButtonX)
-
-                    // Let the user know that the record was added successfully
-                    Toast.makeText(this, "Record Added Successfully!", Toast.LENGTH_LONG).show();
-                } else {
-                    // Show a message to the user indicating that all three fields are required
-                    Toast.makeText(
-                        this,
-                        "Please fill in at least one field to create a new record",
-                        Toast.LENGTH_LONG
-                    ).show();
-                }
+                // Add the TextViews and the "x" button to the record LinearLayout
+                recordLayout.addView(serviceTextView)
+                recordLayout.addView(mileageTextView)
+                recordLayout.addView(dateTextView)
+                recordLayout.addView(deleteButtonX)
 
                 // Add the record LinearLayout to the service_records_list LinearLayout
                 serviceRecordsList.addView(recordLayout)
+
+                // Add the record view to the recordViews list
                 recordViews.add(recordLayout)
 
-                // Reset the EditText fields, hide the new record layout and set "Save" back to "Add New"
-                addButton.text = "Add New"
+                // Add the delete button to the deleteButtons list
+                deleteButtons.add(deleteButtonX)
 
+                // Clear the EditText fields
                 serviceEditText.text.clear()
                 mileageEditText.text.clear()
                 dateEditText.text.clear()
+
+                // Toggle the visibility of the new record layout
                 newRecordLayout.visibility = View.GONE
 
-                // Reset the layout and button text
-                newRecordLayout.visibility = View.GONE
+                // Reset the button text
                 addButton.text = "Add New"
                 editButton.text = "Edit"
                 deleteButton.visibility = View.VISIBLE
+
+                Toast.makeText(this, "New Record Added", Toast.LENGTH_LONG).show()
             }
         }
 
+        // set onClickListener on the delete button
         deleteButton.setOnClickListener {
-            if (deleteButtonX.visibility == View.GONE) {
-                // Show all delete buttons
-                for (recordView in recordViews) {
-                    deleteButtonX.visibility = View.VISIBLE
+            if (deleteButton.text == "Delete") {
+                // Change the delete button text to "Done"
+                deleteButton.text = "Done"
+
+                // Show the "x" delete buttons
+                for (button in deleteButtons) {
+                    button.visibility = View.VISIBLE
                 }
             } else {
-                // Hide delete buttons for all records
-                for (recordView in recordViews) {
-                    deleteButtonX.visibility = View.GONE
+                // Change the delete button text to "Delete"
+                deleteButton.text = "Delete"
+
+                // Hide the "x" delete buttons
+                for (button in deleteButtons) {
+                    button.visibility = View.INVISIBLE
                 }
             }
         }
-
     }
 }
