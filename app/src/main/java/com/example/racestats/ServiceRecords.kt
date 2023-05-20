@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 
 class ServiceRecords : AppCompatActivity() {
     private lateinit var addButton: Button
+    private lateinit var editButton: Button
+    private lateinit var deleteButton: Button
     private lateinit var newRecordLayout: LinearLayout
     private lateinit var serviceEditText: EditText
     private lateinit var mileageEditText: EditText
@@ -22,6 +24,8 @@ class ServiceRecords : AppCompatActivity() {
 
         // find the "Add New" button
         addButton = findViewById(R.id.add_new_button)
+        editButton = findViewById(R.id.edit_button)
+        deleteButton = findViewById(R.id.delete_button)
 
         // find the EditTexts
         serviceEditText = findViewById(R.id.service_edittext)
@@ -36,6 +40,19 @@ class ServiceRecords : AppCompatActivity() {
             // Toggle the visibility of the new record layout
             if (newRecordLayout.visibility == View.GONE) {
                 newRecordLayout.visibility = View.VISIBLE
+                addButton.text = "Confirm"
+                editButton.text = "Cancel"
+                deleteButton.visibility = View.GONE
+                editButton.setOnClickListener {
+                    if (newRecordLayout.visibility == View.VISIBLE) {
+                        // If the new record layout is visible, hide it and reset the button text
+                        newRecordLayout.visibility = View.GONE
+                        addButton.text = "Add New"
+                        editButton.text = "Edit"
+                        deleteButton.visibility = View.VISIBLE
+                        Toast.makeText(this, "Canceled New Record", Toast.LENGTH_LONG).show();
+                    }
+                }
             } else {
                 // Change the addButtons text from add New to save
                 addButton.text = "Save"
@@ -106,6 +123,12 @@ class ServiceRecords : AppCompatActivity() {
                 mileageEditText.text.clear()
                 dateEditText.text.clear()
                 newRecordLayout.visibility = View.GONE
+
+                // Reset the layout and button text
+                newRecordLayout.visibility = View.GONE
+                addButton.text = "Add New"
+                editButton.text = "Edit"
+                deleteButton.visibility = View.VISIBLE
             }
         }
     }
