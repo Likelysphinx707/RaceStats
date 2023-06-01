@@ -79,7 +79,7 @@
             <LinearLayout
                 android:id="@+id/service_records_list"
                 android:layout_width="match_parent"
-                android:layout_height="358dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="16dp" />
 
@@ -119,6 +119,32 @@
                 android:textSize="22sp" />
 
         </LinearLayout>
+
+        <!-- TextViews to display selected record details -->
+        <TextView
+            android:id="@+id/service_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/mileage_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/date_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
 
     </LinearLayout>
 

@@ -50,6 +50,7 @@ class ServiceRecords : AppCompatActivity() {
                 addButton.text = "Confirm"
                 editButton.text = "Cancel"
                 deleteButton.visibility = View.GONE
+
                 editButton.setOnClickListener {
                     if (newRecordLayout.visibility == View.VISIBLE) {
                         // If the new record layout is visible, hide it and reset the button text
@@ -57,7 +58,23 @@ class ServiceRecords : AppCompatActivity() {
                         addButton.text = "Add New"
                         editButton.text = "Edit"
                         deleteButton.visibility = View.VISIBLE
-                        Toast.makeText(this, "Canceled New Record", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Canceled New Record", Toast.LENGTH_LONG).show()
+                    } else {
+                        // Enable editing of the existing records
+                        for (recordView in recordViews) {
+                            val serviceTextView =
+                                recordView.findViewById<TextView>(R.id.service_textview)
+                            val mileageTextView =
+                                recordView.findViewById<TextView>(R.id.mileage_textview)
+                            val dateTextView = recordView.findViewById<TextView>(R.id.date_textview)
+
+                            // Enable editing of the record values
+                            serviceTextView.isEnabled = true
+                            mileageTextView.isEnabled = true
+                            dateTextView.isEnabled = true
+                        }
+
+                        editButton.text = "Save"
                     }
                 }
             } else {
@@ -74,6 +91,7 @@ class ServiceRecords : AppCompatActivity() {
 
                 // Create three TextViews to display the service, mileage, and date
                 val serviceTextView = TextView(this)
+                serviceTextView.id = R.id.service_textview
                 serviceTextView.text = serviceEditText.text
                 serviceTextView.setTextColor(resources.getColor(R.color.white))
                 serviceTextView.textSize = 22f
@@ -83,8 +101,10 @@ class ServiceRecords : AppCompatActivity() {
                     1F
                 )
                 serviceTextView.gravity = Gravity.CENTER // set text alignment to center
+                serviceTextView.isEnabled = false // disable editing initially
 
                 val mileageTextView = TextView(this)
+                mileageTextView.id = R.id.mileage_textview
                 mileageTextView.text = mileageEditText.text
                 mileageTextView.setTextColor(resources.getColor(R.color.white))
                 mileageTextView.textSize = 22f
@@ -94,8 +114,10 @@ class ServiceRecords : AppCompatActivity() {
                     1F
                 )
                 mileageTextView.gravity = Gravity.CENTER // set text alignment to center
+                mileageTextView.isEnabled = false // disable editing initially
 
                 val dateTextView = TextView(this)
+                dateTextView.id = R.id.date_textview
                 dateTextView.text = dateEditText.text
                 dateTextView.setTextColor(resources.getColor(R.color.white))
                 dateTextView.textSize = 22f
@@ -105,6 +127,7 @@ class ServiceRecords : AppCompatActivity() {
                     1F
                 )
                 dateTextView.gravity = Gravity.CENTER // set text alignment to center
+                dateTextView.isEnabled = false // disable editing initially
 
                 // Create the "x" button to delete the record
                 val deleteButtonX = Button(this)
@@ -177,6 +200,44 @@ class ServiceRecords : AppCompatActivity() {
                 for (button in deleteButtons) {
                     button.visibility = View.INVISIBLE
                 }
+            }
+        }
+
+// set onClickListener on the edit button
+        editButton.setOnClickListener {
+            if (editButton.text == "Edit") {
+                // Change the edit button text to "Done"
+                editButton.text = "Done"
+
+                // Enable editing for all the records
+                for (view in recordViews) {
+                    val serviceTextView = view.findViewById<TextView>(R.id.service_textview)
+                    val mileageTextView = view.findViewById<TextView>(R.id.mileage_textview)
+                    val dateTextView = view.findViewById<TextView>(R.id.date_textview)
+
+                    serviceTextView.isEnabled = true
+                    mileageTextView.isEnabled = true
+                    dateTextView.isEnabled = true
+                }
+            } else {
+                // Change the edit button text to "Edit"
+                editButton.text = "Edit"
+
+                // Disable editing for all the records
+                for (view in recordViews) {
+                    val serviceTextView = view.findViewById<TextView>(R.id.service_textview)
+                    val mileageTextView = view.findViewById<TextView>(R.id.mileage_textview)
+                    val dateTextView = view.findViewById<TextView>(R.id.date_textview)
+
+                    serviceTextView.isEnabled = false
+                    mileageTextView.isEnabled = false
+                    dateTextView.isEnabled = false
+                }
+
+                // Change the save button text to "Edit"
+                addButton.text = "Add New"
+                editButton.text = "Edit"
+                deleteButton.visibility = View.VISIBLE
             }
         }
     }
