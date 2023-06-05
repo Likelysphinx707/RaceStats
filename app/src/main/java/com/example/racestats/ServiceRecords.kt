@@ -249,6 +249,9 @@ class ServiceRecords : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
 
+                // Assign the id as a tag to the recordLayout
+                recordLayout.tag = id
+
                 // Create three TextViews to display the service, mileage, and date
                 val serviceTextView = TextView(this)
                 serviceTextView.id = R.id.service_textview
