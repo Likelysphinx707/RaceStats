@@ -171,6 +171,10 @@ class ServiceRecords : AppCompatActivity() {
                 // Add the delete button to the deleteButtons list
                 deleteButtons.add(deleteButtonX)
 
+
+
+
+
                 // Save the record to the database
                 val service = serviceEditText.text.toString()
                 val mileage = mileageEditText.text.toString()
@@ -178,6 +182,21 @@ class ServiceRecords : AppCompatActivity() {
                 val db = databaseHelper.writableDatabase
                 val insertQuery = "INSERT INTO service_records (service, mileage, date) VALUES ('$service', '$mileage', '$date')"
                 db.execSQL(insertQuery)
+
+                // Grab Id for new record
+                val selectQuery = "SELECT id FROM service_records ORDER BY id DESC LIMIT 1"
+                val cursor = db.rawQuery(selectQuery, null)
+                var submmitedId: Long? = null
+
+                if (cursor.moveToFirst()) {
+                    submmitedId = cursor.getLong(0)
+                    // add the id into our list
+                    idList.add(submmitedId)
+                    // Assign the id as a tag to the recordLayout
+                    recordLayout.tag = submmitedId
+                }
+
+                cursor.close()
                 db.close()
 
                 // Clear the EditText fields
