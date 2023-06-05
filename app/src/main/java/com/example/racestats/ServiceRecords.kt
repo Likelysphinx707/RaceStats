@@ -17,6 +17,7 @@ class ServiceRecords : AppCompatActivity() {
     private lateinit var dateEditText: EditText
     private lateinit var recordViews: MutableList<View>
     private lateinit var deleteButtons: MutableList<Button>
+    private lateinit var idList: MutableList<Long>
     private lateinit var databaseHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +27,7 @@ class ServiceRecords : AppCompatActivity() {
         // Initialize the recordViews and deleteButtons lists
         recordViews = mutableListOf()
         deleteButtons = mutableListOf()
+        idList = mutableListOf()
 
         // Initialize the database helper
         databaseHelper = DatabaseHelper(this)
@@ -225,16 +227,19 @@ class ServiceRecords : AppCompatActivity() {
         val selectQuery = "SELECT * FROM service_records"
         val cursor = db.rawQuery(selectQuery, null)
 
+        val columnIndexId = cursor.getColumnIndex("id")
         val columnIndexService = cursor.getColumnIndex("service")
         val columnIndexMileage = cursor.getColumnIndex("mileage")
         val columnIndexDate = cursor.getColumnIndex("date")
 
         if (cursor.moveToFirst()) {
             do {
-                // Ignore these errors its a none issue
+                val id = cursor.getLong(columnIndexId)
                 val service = cursor.getString(columnIndexService)
                 val mileage = cursor.getString(columnIndexMileage)
                 val date = cursor.getString(columnIndexDate)
+
+                idList.add(id)
 
                 // Create a new LinearLayout to represent the record
                 val recordLayout = LinearLayout(this)
