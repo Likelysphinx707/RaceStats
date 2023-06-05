@@ -17,6 +17,7 @@ class ServiceRecords : AppCompatActivity() {
     private lateinit var dateEditText: EditText
     private lateinit var recordViews: MutableList<View>
     private lateinit var deleteButtons: MutableList<Button>
+    private lateinit var databaseHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +26,9 @@ class ServiceRecords : AppCompatActivity() {
         // Initialize the recordViews and deleteButtons lists
         recordViews = mutableListOf()
         deleteButtons = mutableListOf()
+
+        // Initialize the database helper
+        databaseHelper = DatabaseHelper(this)
 
         // find the service_records_list LinearLayout
         val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
@@ -165,6 +169,15 @@ class ServiceRecords : AppCompatActivity() {
                 // Add the delete button to the deleteButtons list
                 deleteButtons.add(deleteButtonX)
 
+                // Save the record to the database
+                val service = serviceEditText.text.toString()
+                val mileage = mileageEditText.text.toString()
+                val date = dateEditText.text.toString()
+                val db = databaseHelper.writableDatabase
+                val insertQuery = "INSERT INTO service_records (service, mileage, date) VALUES ('$service', '$mileage', '$date')"
+                db.execSQL(insertQuery)
+                db.close()
+
                 // Clear the EditText fields
                 serviceEditText.text.clear()
                 mileageEditText.text.clear()
@@ -203,42 +216,115 @@ class ServiceRecords : AppCompatActivity() {
             }
         }
 
-// set onClickListener on the edit button
-        editButton.setOnClickListener {
-            if (editButton.text == "Edit") {
-                // Change the edit button text to "Done"
-                editButton.text = "Done"
+        // Load the saved records from the database
+        loadSavedRecords()
+    }
 
-                // Enable editing for all the records
-                for (view in recordViews) {
-                    val serviceTextView = view.findViewById<TextView>(R.id.service_textview)
-                    val mileageTextView = view.findViewById<TextView>(R.id.mileage_textview)
-                    val dateTextView = view.findViewById<TextView>(R.id.date_textview)
+    private fun loadSavedRecords() {
+        val db = databaseHelper.readableDatabase
+        val selectQuery = "SELECT * FROM service_records"
+        val cursor = db.rawQuery(selectQuery, null)
 
-                    serviceTextView.isEnabled = true
-                    mileageTextView.isEnabled = true
-                    dateTextView.isEnabled = true
+        val columnIndexService = cursor.getColumnIndex("service")
+        val columnIndexMileage = cursor.getColumnIndex("mileage")
+        val columnIndexDate = cursor.getColumnIndex("date")
+
+        if (cursor.moveToFirst()) {
+            do {
+                // Ignore these errors its a none issue
+                val service = cursor.getString(columnIndexService)
+                val mileage = cursor.getString(columnIndexMileage)
+                val date = cursor.getString(columnIndexDate)
+
+                // Create a new LinearLayout to represent the record
+                val recordLayout = LinearLayout(this)
+                recordLayout.orientation = LinearLayout.HORIZONTAL
+                recordLayout.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+
+                // Create three TextViews to display the service, mileage, and date
+                val serviceTextView = TextView(this)
+                serviceTextView.id = R.id.service_textview
+                serviceTextView.text = service
+                serviceTextView.setTextColor(resources.getColor(R.color.white))
+                serviceTextView.textSize = 22f
+                serviceTextView.layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1F
+                )
+                serviceTextView.gravity = Gravity.CENTER // set text alignment to center
+                serviceTextView.isEnabled = false // disable editing initially
+
+                val mileageTextView = TextView(this)
+                mileageTextView.id = R.id.mileage_textview
+                mileageTextView.text = mileage
+                mileageTextView.setTextColor(resources.getColor(R.color.white))
+                mileageTextView.textSize = 22f
+                mileageTextView.layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1F
+                )
+                mileageTextView.gravity = Gravity.CENTER // set text alignment to center
+                mileageTextView.isEnabled = false // disable editing initially
+
+                val dateTextView = TextView(this)
+                dateTextView.id = R.id.date_textview
+                dateTextView.text = date
+                dateTextView.setTextColor(resources.getColor(R.color.white))
+                dateTextView.textSize = 22f
+                dateTextView.layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1F
+                )
+                dateTextView.gravity = Gravity.CENTER // set text alignment to center
+                dateTextView.isEnabled = false // disable editing initially
+
+                // Create the "x" button to delete the record
+                val deleteButtonX = Button(this)
+                deleteButtonX.text = "x"
+                deleteButtonX.setTextColor(resources.getColor(R.color.white))
+                deleteButtonX.textSize = 22f
+                deleteButtonX.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                deleteButtonX.visibility = View.INVISIBLE // initially set as not visible
+                deleteButtonX.setOnClickListener {
+                    // Remove the record LinearLayout from the service_records_list LinearLayout
+                    val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
+                    serviceRecordsList.removeView(recordLayout)
+                    // Remove the record view from the recordViews list
+                    recordViews.remove(recordLayout)
+                    // Remove the delete button from the deleteButtons list
+                    deleteButtons.remove(deleteButtonX)
+                    Toast.makeText(this, "Record Deleted", Toast.LENGTH_LONG).show()
                 }
-            } else {
-                // Change the edit button text to "Edit"
-                editButton.text = "Edit"
+                deleteButtonX.gravity = Gravity.CENTER // set text alignment to center
 
-                // Disable editing for all the records
-                for (view in recordViews) {
-                    val serviceTextView = view.findViewById<TextView>(R.id.service_textview)
-                    val mileageTextView = view.findViewById<TextView>(R.id.mileage_textview)
-                    val dateTextView = view.findViewById<TextView>(R.id.date_textview)
+                // Add the TextViews and the "x" button to the record LinearLayout
+                recordLayout.addView(serviceTextView)
+                recordLayout.addView(mileageTextView)
+                recordLayout.addView(dateTextView)
+                recordLayout.addView(deleteButtonX)
 
-                    serviceTextView.isEnabled = false
-                    mileageTextView.isEnabled = false
-                    dateTextView.isEnabled = false
-                }
+                // Add the record LinearLayout to the service_records_list LinearLayout
+                val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
+                serviceRecordsList.addView(recordLayout)
 
-                // Change the save button text to "Edit"
-                addButton.text = "Add New"
-                editButton.text = "Edit"
-                deleteButton.visibility = View.VISIBLE
-            }
+                // Add the record view to the recordViews list
+                recordViews.add(recordLayout)
+
+                // Add the delete button to the deleteButtons list
+                deleteButtons.add(deleteButtonX)
+            } while (cursor.moveToNext())
         }
+
+        cursor.close()
+        db.close()
     }
 }
