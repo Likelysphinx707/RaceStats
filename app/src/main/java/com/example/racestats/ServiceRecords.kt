@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
+
 class ServiceRecords : AppCompatActivity() {
     // Declare private properties for the buttons, layouts, and EditTexts
     private lateinit var addButton: Button
@@ -173,7 +174,8 @@ class ServiceRecords : AppCompatActivity() {
                 val mileage = mileageEditText.text.toString()
                 val date = dateEditText.text.toString()
                 val db = databaseHelper.writableDatabase
-                val insertQuery = "INSERT INTO service_records (service, mileage, date) VALUES ('$service', '$mileage', '$date')"
+                val insertQuery =
+                    "INSERT INTO service_records (service, mileage, date) VALUES ('$service', '$mileage', '$date')"
                 db.execSQL(insertQuery)
 
                 // Grab Id for new record
@@ -236,6 +238,10 @@ class ServiceRecords : AppCompatActivity() {
         loadSavedRecords()
     }
 
+
+    /**
+     *  This function will populate the UI with all of the records that are currently in the DataBase
+     */
     private fun loadSavedRecords() {
         val db = databaseHelper.readableDatabase
         val selectQuery = "SELECT * FROM service_records"
@@ -345,6 +351,9 @@ class ServiceRecords : AppCompatActivity() {
     }
 
 
+    /**
+     * This function can be called to delete the records for both the UI and the DataBase
+     */
     private fun deleteRecord(recordLayout: LinearLayout, recordId: Long) {
         // Remove the record LinearLayout from the service_records_list LinearLayout
         val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
@@ -366,6 +375,13 @@ class ServiceRecords : AppCompatActivity() {
         db.close()
 
         Toast.makeText(this, "Record Deleted", Toast.LENGTH_LONG).show()
+    }
+
+    /**
+     * This function that will be used to edit records both on the UI and the DataBase
+     */
+    private fun editRecord(recordLayout: LinearLayout, recordId: Long) {
+
     }
 
 }
