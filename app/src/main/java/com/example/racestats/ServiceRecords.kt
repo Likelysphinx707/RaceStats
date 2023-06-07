@@ -95,6 +95,7 @@ class ServiceRecords : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
 
+
                 // Create three TextViews to display the service, mileage, and date
                 val serviceTextView = TextView(this)
                 serviceTextView.id = R.id.service_textview
@@ -146,13 +147,8 @@ class ServiceRecords : AppCompatActivity() {
                 )
                 deleteButtonX.visibility = View.INVISIBLE // initially set as not visible
                 deleteButtonX.setOnClickListener {
-                    // Remove the record LinearLayout from the service_records_list LinearLayout
-                    serviceRecordsList.removeView(recordLayout)
-                    // Remove the record view from the recordViews list
-                    recordViews.remove(recordLayout)
-                    // Remove the delete button from the deleteButtons list
-                    deleteButtons.remove(deleteButtonX)
-                    Toast.makeText(this, "Record Deleted", Toast.LENGTH_LONG).show()
+                    val recordId = recordLayout.tag as Long
+                    deleteRecord(recordLayout, recordId)
                 }
                 deleteButtonX.gravity = Gravity.CENTER // set text alignment to center
 
@@ -170,9 +166,6 @@ class ServiceRecords : AppCompatActivity() {
 
                 // Add the delete button to the deleteButtons list
                 deleteButtons.add(deleteButtonX)
-
-
-
 
 
                 // Save the record to the database
@@ -198,6 +191,8 @@ class ServiceRecords : AppCompatActivity() {
 
                 cursor.close()
                 db.close()
+
+                recordLayout.tag = submmitedId
 
                 // Clear the EditText fields
                 serviceEditText.text.clear()
@@ -322,14 +317,8 @@ class ServiceRecords : AppCompatActivity() {
                 )
                 deleteButtonX.visibility = View.INVISIBLE // initially set as not visible
                 deleteButtonX.setOnClickListener {
-                    // Remove the record LinearLayout from the service_records_list LinearLayout
-                    val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
-                    serviceRecordsList.removeView(recordLayout)
-                    // Remove the record view from the recordViews list
-                    recordViews.remove(recordLayout)
-                    // Remove the delete button from the deleteButtons list
-                    deleteButtons.remove(deleteButtonX)
-                    Toast.makeText(this, "Record Deleted", Toast.LENGTH_LONG).show()
+                    val recordId = recordLayout.tag as Long
+                    deleteRecord(recordLayout, recordId)
                 }
                 deleteButtonX.gravity = Gravity.CENTER // set text alignment to center
 
@@ -354,4 +343,29 @@ class ServiceRecords : AppCompatActivity() {
         cursor.close()
         db.close()
     }
+
+
+    private fun deleteRecord(recordLayout: LinearLayout, recordId: Long) {
+        // Remove the record LinearLayout from the service_records_list LinearLayout
+        val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
+        serviceRecordsList.removeView(recordLayout)
+
+        // Remove the record view from the recordViews list
+        recordViews.remove(recordLayout)
+
+        // Remove the delete button from the deleteButtons list
+        val deleteButton = deleteButtons.firstOrNull { it.tag == recordId }
+        deleteButton?.let {
+            deleteButtons.remove(it)
+        }
+
+        // Delete the record from the database
+        val db = databaseHelper.writableDatabase
+        val deleteQuery = "DELETE FROM service_records WHERE id = $recordId"
+        db.execSQL(deleteQuery)
+        db.close()
+
+        Toast.makeText(this, "Record Deleted", Toast.LENGTH_LONG).show()
+    }
+
 }
