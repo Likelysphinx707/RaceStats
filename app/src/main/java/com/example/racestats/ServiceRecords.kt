@@ -1,14 +1,19 @@
 package com.example.racestats
 
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import org.w3c.dom.Text
+import kotlin.math.log
 
 
 class ServiceRecords : AppCompatActivity() {
     // Declare private properties for the buttons, layouts, and EditTexts
+    private lateinit var titleTextView: TextView
     private lateinit var addButton: Button
     private lateinit var editButton: Button
     private lateinit var deleteButton: Button
@@ -27,7 +32,7 @@ class ServiceRecords : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service_records)
 
-        // Initialize the recordViews and deleteButtons lists
+        // Initialize the lists
         recordViews = mutableListOf()
         deleteButtons = mutableListOf()
         editButtonIcons = mutableListOf()
@@ -39,13 +44,14 @@ class ServiceRecords : AppCompatActivity() {
         // find the service_records_list LinearLayout
         val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
 
-        // find the "Add New" button
+        // find the UI buttons and assign them to their vars
         addButton = findViewById(R.id.add_new_button)
         editButton = findViewById(R.id.edit_button)
         deleteButton = findViewById(R.id.delete_button)
         cancelButton = findViewById(R.id.cancel_button)
 
         // find the EditTexts
+        titleTextView = findViewById(R.id.title_textview)
         serviceEditText = findViewById(R.id.service_edittext)
         mileageEditText = findViewById(R.id.mileage_edittext)
         dateEditText = findViewById(R.id.date_edittext)
@@ -55,24 +61,34 @@ class ServiceRecords : AppCompatActivity() {
 
         // set onClickListener on the button
         addButton.setOnClickListener {
+
             // Toggle the visibility of the new record layout
             if (newRecordLayout.visibility == View.GONE) {
+//                toggleRecordLayoutVisibility(newRecordLayout, addButton, recordViews, titleTextView, editButton, deleteButton, cancelButton)
                 newRecordLayout.visibility = View.VISIBLE
                 addButton.text = "Confirm"
+                for (record in recordViews) {
+                    record.visibility = View.GONE
+                }
+                titleTextView.text = "Add New Record"
                 editButton.visibility = View.GONE
                 deleteButton.visibility = View.GONE
                 cancelButton.visibility = View.VISIBLE
 
                 cancelButton.setOnClickListener {
                     if (newRecordLayout.visibility == View.VISIBLE) {
-                        // If the new record layout is visible, hide it and reset the button text
                         newRecordLayout.visibility = View.GONE
                         addButton.text = "Add New"
+                        for (record in recordViews) {
+                            record.visibility = View.VISIBLE
+                        }
+                        titleTextView.text = "Maintenance Records"
                         editButton.visibility = View.VISIBLE
                         deleteButton.visibility = View.VISIBLE
                         cancelButton.visibility = View.GONE
                     }
                 }
+
             } else {
                 // Change the addButton's text from "Add New" to "Save"
                 addButton.text = "Save"
@@ -128,8 +144,9 @@ class ServiceRecords : AppCompatActivity() {
                 // Create the "x" button to delete the record
                 val deleteButtonX = Button(this)
                 deleteButtonX.text = "x"
-                deleteButtonX.setTextColor(resources.getColor(R.color.white))
-                deleteButtonX.textSize = 22f
+                deleteButtonX.setBackgroundColor(Color.BLACK)
+                deleteButtonX.setTextColor(Color.RED)
+                deleteButtonX.textSize = 30f
                 deleteButtonX.layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -350,8 +367,9 @@ class ServiceRecords : AppCompatActivity() {
                 // Create the "x" button to delete the record
                 val deleteButtonX = Button(this)
                 deleteButtonX.text = "x"
-                deleteButtonX.setTextColor(resources.getColor(R.color.white))
-                deleteButtonX.textSize = 22f
+                deleteButtonX.setBackgroundColor(Color.BLACK)
+                deleteButtonX.setTextColor(Color.RED)
+                deleteButtonX.textSize = 30f
                 deleteButtonX.layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -402,6 +420,32 @@ class ServiceRecords : AppCompatActivity() {
 
         cursor.close()
         db.close()
+    }
+
+    private fun toggleRecordLayoutVisibility(newRecordLayout: View, addButton: Button, recordViews: List<View>, titleTextView: TextView, editButton: Button, deleteButton: Button, cancelButton: Button) {
+        newRecordLayout.visibility = View.VISIBLE
+        addButton.text = "Confirm"
+        for (record in recordViews) {
+            record.visibility = View.GONE
+        }
+        titleTextView.text = "Add New Record"
+        editButton.visibility = View.GONE
+        deleteButton.visibility = View.GONE
+        cancelButton.visibility = View.VISIBLE
+
+        cancelButton.setOnClickListener {
+            if (newRecordLayout.visibility == View.VISIBLE) {
+                newRecordLayout.visibility = View.GONE
+                addButton.text = "Add New"
+                for (record in recordViews) {
+                    record.visibility = View.VISIBLE
+                }
+                titleTextView.text = "Maintenance Records"
+                editButton.visibility = View.VISIBLE
+                deleteButton.visibility = View.VISIBLE
+                cancelButton.visibility = View.GONE
+            }
+        }
     }
 
 
