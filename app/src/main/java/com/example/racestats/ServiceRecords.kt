@@ -12,6 +12,7 @@ class ServiceRecords : AppCompatActivity() {
     private lateinit var addButton: Button
     private lateinit var editButton: Button
     private lateinit var deleteButton: Button
+    private lateinit var cancelButton: Button
     private lateinit var newRecordLayout: LinearLayout
     private lateinit var serviceEditText: EditText
     private lateinit var mileageEditText: EditText
@@ -42,6 +43,7 @@ class ServiceRecords : AppCompatActivity() {
         addButton = findViewById(R.id.add_new_button)
         editButton = findViewById(R.id.edit_button)
         deleteButton = findViewById(R.id.delete_button)
+        cancelButton = findViewById(R.id.cancel_button)
 
         // find the EditTexts
         serviceEditText = findViewById(R.id.service_edittext)
@@ -58,16 +60,17 @@ class ServiceRecords : AppCompatActivity() {
                 newRecordLayout.visibility = View.VISIBLE
                 addButton.text = "Confirm"
                 editButton.visibility = View.GONE
-                deleteButton.text = "Cancel"
+                deleteButton.visibility = View.GONE
+                cancelButton.visibility = View.VISIBLE
 
-                deleteButton.setOnClickListener {
+                cancelButton.setOnClickListener {
                     if (newRecordLayout.visibility == View.VISIBLE) {
                         // If the new record layout is visible, hide it and reset the button text
                         newRecordLayout.visibility = View.GONE
                         addButton.text = "Add New"
                         editButton.visibility = View.VISIBLE
-                        deleteButton.text = "Delete"
-                        Toast.makeText(this, "Canceled New Record", Toast.LENGTH_LONG).show()
+                        deleteButton.visibility = View.VISIBLE
+                        cancelButton.visibility = View.GONE
                     }
                 }
             } else {
@@ -219,7 +222,8 @@ class ServiceRecords : AppCompatActivity() {
                 // Reset the button text
                 addButton.text = "Add New"
                 editButton.visibility = View.VISIBLE
-                deleteButton.text = "Delete"
+                deleteButton.visibility = View.VISIBLE
+                cancelButton.visibility = View.GONE
             }
         }
 
@@ -435,56 +439,49 @@ class ServiceRecords : AppCompatActivity() {
         val serviceTextView = recordLayout.findViewById<TextView>(R.id.service_textview)
         val mileageTextView = recordLayout.findViewById<TextView>(R.id.mileage_textview)
         val dateTextView = recordLayout.findViewById<TextView>(R.id.date_textview)
-        val editButtonIcon = recordLayout.findViewById<Button>(R.id.delete_button)
 
-        // Check if the TextViews are already in edit mode
-        val isEditable = serviceTextView.isEnabled
+        // Enable editing for the TextViews
+        serviceTextView.isEnabled = true
+        mileageTextView.isEnabled = true
+        dateTextView.isEnabled = true
 
-        if (!isEditable) {
-            // Enable editing of the record values
-            serviceTextView.isEnabled = true
-            mileageTextView.isEnabled = true
-            dateTextView.isEnabled = true
+        // Change the edit button text to "Save"
+        editButton.text = "Save"
 
-            // Change the button background to the "save" icon
-            editButtonIcon.setBackgroundResource(R.drawable.save)
+        // Show the save icons
+        for (button in editButtonIcons) {
+            button.visibility = View.VISIBLE
+        }
 
-            // Change the button's click listener to save the changes
-            editButtonIcon.setOnClickListener {
-                // Save the changes to the database
-                val service = serviceTextView.text.toString()
-                val mileage = mileageTextView.text.toString()
-                val date = dateTextView.text.toString()
+        // Find the save button for the current record
+        val saveButton = editButtonIcons.firstOrNull { it.tag == recordId }
+        saveButton?.setOnClickListener {
+            // Get the updated values from the TextViews
+            val updatedService = serviceTextView.text.toString()
+            val updatedMileage = mileageTextView.text.toString()
+            val updatedDate = dateTextView.text.toString()
 
-                val db = databaseHelper.writableDatabase
-                val updateQuery = "UPDATE service_records SET service='$service', mileage='$mileage', date='$date' WHERE id=$recordId"
-                db.execSQL(updateQuery)
-                db.close()
+            // Update the record in the database
+            val db = databaseHelper.writableDatabase
+            val updateQuery = "UPDATE service_records SET service = '$updatedService', mileage = '$updatedMileage', date = '$updatedDate' WHERE id = $recordId"
+            db.execSQL(updateQuery)
+            db.close()
 
-                // Disable editing of the record values
-                serviceTextView.isEnabled = false
-                mileageTextView.isEnabled = false
-                dateTextView.isEnabled = false
-
-                // Change the button background back to the "edit" icon
-                editButtonIcon.setBackgroundResource(R.drawable.edit)
-                // Change the button's click listener back to the editRecord function
-                editButtonIcon.setOnClickListener {
-                    editRecord(recordLayout, recordId)
-                }
-            }
-        } else {
-            // Disable editing of the record values
+            // Disable editing for the TextViews
             serviceTextView.isEnabled = false
             mileageTextView.isEnabled = false
             dateTextView.isEnabled = false
 
-            // Change the button background back to the "edit" icon
-            editButtonIcon.setBackgroundResource(R.drawable.edit)
-            // Change the button's click listener back to the editRecord function
-            editButtonIcon.setOnClickListener {
-                editRecord(recordLayout, recordId)
+            // Change the edit button text to "Edit"
+            editButton.text = "Edit"
+
+            // Hide the save icons
+            for (button in editButtonIcons) {
+                button.visibility = View.GONE
             }
+
+            Toast.makeText(this, "Record Updated", Toast.LENGTH_LONG).show()
         }
     }
+
 }
