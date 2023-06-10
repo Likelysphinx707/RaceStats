@@ -68,20 +68,6 @@ class ServiceRecords : AppCompatActivity() {
                         editButton.visibility = View.VISIBLE
                         deleteButton.text = "Delete"
                         Toast.makeText(this, "Canceled New Record", Toast.LENGTH_LONG).show()
-                    } else {
-                        // Enable editing of the existing records
-                        for (recordView in recordViews) {
-                            val serviceTextView = recordView.findViewById<TextView>(R.id.service_textview)
-                            val mileageTextView = recordView.findViewById<TextView>(R.id.mileage_textview)
-                            val dateTextView = recordView.findViewById<TextView>(R.id.date_textview)
-
-                            // Enable editing of the record values
-                            serviceTextView.isEnabled = true
-                            mileageTextView.isEnabled = true
-                            dateTextView.isEnabled = true
-                        }
-
-                        editButton.text = "Save"
                     }
                 }
             } else {
@@ -187,31 +173,40 @@ class ServiceRecords : AppCompatActivity() {
                 editButtonIcons.add(editButtonIcon)
 
 
-                // Save the record to the database
-                val service = serviceEditText.text.toString()
-                val mileage = mileageEditText.text.toString()
-                val date = dateEditText.text.toString()
-                val db = databaseHelper.writableDatabase
-                val insertQuery = "INSERT INTO service_records (service, mileage, date) VALUES ('$service', '$mileage', '$date')"
-                db.execSQL(insertQuery)
+                // Check if any of the fields are null if they are new recored will not be submitted and the user will be show an error alert
+                if (serviceEditText.text.isNullOrBlank() || mileageEditText.text.isNullOrBlank() || dateEditText.text.isNullOrBlank()) {
+                    // One or more fields are null, handle the error or display a message
+                    Toast.makeText(this, "You most fill in and least one field to add a new record", Toast.LENGTH_LONG).show()
+                } else {
+                    // Save the record to the database
+                    val service = serviceEditText.text.toString()
+                    val mileage = mileageEditText.text.toString()
+                    val date = dateEditText.text.toString()
+                    val db = databaseHelper.writableDatabase
+                    val insertQuery =
+                        "INSERT INTO service_records (service, mileage, date) VALUES ('$service', '$mileage', '$date')"
+                    db.execSQL(insertQuery)
 
-                // Grab Id for new record
-                val selectQuery = "SELECT id FROM service_records ORDER BY id DESC LIMIT 1"
-                val cursor = db.rawQuery(selectQuery, null)
-                var submmitedId: Long? = null
+                    // Grab Id for new record
+                    val selectQuery = "SELECT id FROM service_records ORDER BY id DESC LIMIT 1"
+                    val cursor = db.rawQuery(selectQuery, null)
+                    var submittedId: Long? = null
 
-                if (cursor.moveToFirst()) {
-                    submmitedId = cursor.getLong(0)
-                    // add the id into our list
-                    idList.add(submmitedId)
-                    // Assign the id as a tag to the recordLayout
-                    recordLayout.tag = submmitedId
+                    if (cursor.moveToFirst()) {
+                        submittedId = cursor.getLong(0)
+                        // Add the id into our list
+                        idList.add(submittedId)
+                        // Assign the id as a tag to the recordLayout
+                        recordLayout.tag = submittedId
+                    }
+
+                    cursor.close()
+                    db.close()
+
+                    recordLayout.tag = submittedId
+
+                    Toast.makeText(this, "New Record Added", Toast.LENGTH_LONG).show()
                 }
-
-                cursor.close()
-                db.close()
-
-                recordLayout.tag = submmitedId
 
                 // Clear the EditText fields
                 serviceEditText.text.clear()
@@ -223,10 +218,8 @@ class ServiceRecords : AppCompatActivity() {
 
                 // Reset the button text
                 addButton.text = "Add New"
-                editButton.text = "Edit"
-                deleteButton.visibility = View.VISIBLE
-
-                Toast.makeText(this, "New Record Added", Toast.LENGTH_LONG).show()
+                editButton.visibility = View.VISIBLE
+                deleteButton.text = "Delete"
             }
         }
 
@@ -373,7 +366,7 @@ class ServiceRecords : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                editButtonIcon.visibility = View.VISIBLE // initially set as not visible
+                editButtonIcon.visibility = View.GONE // initially set as not visible
                 editButtonIcon.setOnClickListener {
                     val recordId = recordLayout.tag as Long
                     editRecord(recordLayout, recordId)
