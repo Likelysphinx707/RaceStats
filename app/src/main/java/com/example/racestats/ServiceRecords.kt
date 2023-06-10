@@ -19,6 +19,7 @@ class ServiceRecords : AppCompatActivity() {
     private lateinit var recordViews: MutableList<View>
     private lateinit var deleteButtons: MutableList<Button>
     private lateinit var idList: MutableList<Long>
+    private lateinit var editButtonIcons: MutableList<Button>
     private lateinit var databaseHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +29,7 @@ class ServiceRecords : AppCompatActivity() {
         // Initialize the recordViews and deleteButtons lists
         recordViews = mutableListOf()
         deleteButtons = mutableListOf()
+        editButtonIcons = mutableListOf()
         idList = mutableListOf()
 
         // Initialize the database helper
@@ -55,24 +57,22 @@ class ServiceRecords : AppCompatActivity() {
             if (newRecordLayout.visibility == View.GONE) {
                 newRecordLayout.visibility = View.VISIBLE
                 addButton.text = "Confirm"
-                editButton.text = "Cancel"
-                deleteButton.visibility = View.GONE
+                editButton.visibility = View.GONE
+                deleteButton.text = "Cancel"
 
-                editButton.setOnClickListener {
+                deleteButton.setOnClickListener {
                     if (newRecordLayout.visibility == View.VISIBLE) {
                         // If the new record layout is visible, hide it and reset the button text
                         newRecordLayout.visibility = View.GONE
                         addButton.text = "Add New"
-                        editButton.text = "Edit"
-                        deleteButton.visibility = View.VISIBLE
+                        editButton.visibility = View.VISIBLE
+                        deleteButton.text = "Delete"
                         Toast.makeText(this, "Canceled New Record", Toast.LENGTH_LONG).show()
                     } else {
                         // Enable editing of the existing records
                         for (recordView in recordViews) {
-                            val serviceTextView =
-                                recordView.findViewById<TextView>(R.id.service_textview)
-                            val mileageTextView =
-                                recordView.findViewById<TextView>(R.id.mileage_textview)
+                            val serviceTextView = recordView.findViewById<TextView>(R.id.service_textview)
+                            val mileageTextView = recordView.findViewById<TextView>(R.id.mileage_textview)
                             val dateTextView = recordView.findViewById<TextView>(R.id.date_textview)
 
                             // Enable editing of the record values
@@ -95,7 +95,6 @@ class ServiceRecords : AppCompatActivity() {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-
 
                 // Create three TextViews to display the service, mileage, and date
                 val serviceTextView = TextView(this)
@@ -146,18 +145,34 @@ class ServiceRecords : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                deleteButtonX.visibility = View.INVISIBLE // initially set as not visible
+                deleteButtonX.visibility = View.GONE // initially set as not visible
                 deleteButtonX.setOnClickListener {
                     val recordId = recordLayout.tag as Long
                     deleteRecord(recordLayout, recordId)
                 }
                 deleteButtonX.gravity = Gravity.CENTER // set text alignment to center
 
+                val editButtonIcon = Button(this)
+                editButtonIcon.id = R.id.delete_button
+                editButtonIcon.setBackgroundResource(R.drawable.save) // Set the button background to the save.xml icon
+                editButtonIcon.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                editButtonIcon.visibility = View.GONE // initially set as not visible
+                editButtonIcon.setOnClickListener {
+                    val recordId = recordLayout.tag as Long
+                    editRecord(recordLayout, recordId)
+                }
+                editButtonIcon.gravity = Gravity.CENTER // set text alignment to center
+
+
                 // Add the TextViews and the "x" button to the record LinearLayout
                 recordLayout.addView(serviceTextView)
                 recordLayout.addView(mileageTextView)
                 recordLayout.addView(dateTextView)
                 recordLayout.addView(deleteButtonX)
+                recordLayout.addView(editButtonIcon)
 
                 // Add the record LinearLayout to the service_records_list LinearLayout
                 serviceRecordsList.addView(recordLayout)
@@ -168,14 +183,16 @@ class ServiceRecords : AppCompatActivity() {
                 // Add the delete button to the deleteButtons list
                 deleteButtons.add(deleteButtonX)
 
+                // Add the edit button to the editButtonList
+                editButtonIcons.add(editButtonIcon)
+
 
                 // Save the record to the database
                 val service = serviceEditText.text.toString()
                 val mileage = mileageEditText.text.toString()
                 val date = dateEditText.text.toString()
                 val db = databaseHelper.writableDatabase
-                val insertQuery =
-                    "INSERT INTO service_records (service, mileage, date) VALUES ('$service', '$mileage', '$date')"
+                val insertQuery = "INSERT INTO service_records (service, mileage, date) VALUES ('$service', '$mileage', '$date')"
                 db.execSQL(insertQuery)
 
                 // Grab Id for new record
@@ -229,7 +246,28 @@ class ServiceRecords : AppCompatActivity() {
 
                 // Hide the "x" delete buttons
                 for (button in deleteButtons) {
-                    button.visibility = View.INVISIBLE
+                    button.visibility = View.GONE
+                }
+            }
+        }
+
+        editButton.setOnClickListener {
+            if(editButton.text == "Edit") {
+                // Change the delete button text to "Save"
+                editButton.text = "Save"
+
+
+                // Show the edit Icons
+                for (button in editButtonIcons) {
+                    button.visibility = View.VISIBLE
+                }
+            } else {
+                // Change the edit button text to "Edit"
+                editButton.text = "Edit"
+
+                // Hid the edit icons
+                for (button in editButtonIcons) {
+                    button.visibility = View.GONE
                 }
             }
         }
@@ -321,18 +359,33 @@ class ServiceRecords : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                deleteButtonX.visibility = View.INVISIBLE // initially set as not visible
+                deleteButtonX.visibility = View.GONE // initially set as not visible
                 deleteButtonX.setOnClickListener {
                     val recordId = recordLayout.tag as Long
                     deleteRecord(recordLayout, recordId)
                 }
                 deleteButtonX.gravity = Gravity.CENTER // set text alignment to center
 
+                val editButtonIcon = Button(this)
+                editButtonIcon.id = R.id.delete_button
+                editButtonIcon.setBackgroundResource(R.drawable.save) // Set the button background to the save.xml icon
+                editButtonIcon.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                editButtonIcon.visibility = View.VISIBLE // initially set as not visible
+                editButtonIcon.setOnClickListener {
+                    val recordId = recordLayout.tag as Long
+                    editRecord(recordLayout, recordId)
+                }
+                editButtonIcon.gravity = Gravity.CENTER // set text alignment to center
+
                 // Add the TextViews and the "x" button to the record LinearLayout
                 recordLayout.addView(serviceTextView)
                 recordLayout.addView(mileageTextView)
                 recordLayout.addView(dateTextView)
                 recordLayout.addView(deleteButtonX)
+                recordLayout.addView(editButtonIcon)
 
                 // Add the record LinearLayout to the service_records_list LinearLayout
                 val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
@@ -343,6 +396,10 @@ class ServiceRecords : AppCompatActivity() {
 
                 // Add the delete button to the deleteButtons list
                 deleteButtons.add(deleteButtonX)
+
+                // Add the edit button to the editButtonList
+                editButtonIcons.add(editButtonIcon)
+
             } while (cursor.moveToNext())
         }
 
@@ -381,7 +438,60 @@ class ServiceRecords : AppCompatActivity() {
      * This function that will be used to edit records both on the UI and the DataBase
      */
     private fun editRecord(recordLayout: LinearLayout, recordId: Long) {
+        // Find the TextViews and Button in the recordLayout
+        val serviceTextView = recordLayout.findViewById<TextView>(R.id.service_textview)
+        val mileageTextView = recordLayout.findViewById<TextView>(R.id.mileage_textview)
+        val dateTextView = recordLayout.findViewById<TextView>(R.id.date_textview)
+        val editButtonIcon = recordLayout.findViewById<Button>(R.id.delete_button)
 
+        // Check if the TextViews are already in edit mode
+        val isEditable = serviceTextView.isEnabled
+
+        if (!isEditable) {
+            // Enable editing of the record values
+            serviceTextView.isEnabled = true
+            mileageTextView.isEnabled = true
+            dateTextView.isEnabled = true
+
+            // Change the button background to the "save" icon
+            editButtonIcon.setBackgroundResource(R.drawable.save)
+
+            // Change the button's click listener to save the changes
+            editButtonIcon.setOnClickListener {
+                // Save the changes to the database
+                val service = serviceTextView.text.toString()
+                val mileage = mileageTextView.text.toString()
+                val date = dateTextView.text.toString()
+
+                val db = databaseHelper.writableDatabase
+                val updateQuery = "UPDATE service_records SET service='$service', mileage='$mileage', date='$date' WHERE id=$recordId"
+                db.execSQL(updateQuery)
+                db.close()
+
+                // Disable editing of the record values
+                serviceTextView.isEnabled = false
+                mileageTextView.isEnabled = false
+                dateTextView.isEnabled = false
+
+                // Change the button background back to the "edit" icon
+                editButtonIcon.setBackgroundResource(R.drawable.edit)
+                // Change the button's click listener back to the editRecord function
+                editButtonIcon.setOnClickListener {
+                    editRecord(recordLayout, recordId)
+                }
+            }
+        } else {
+            // Disable editing of the record values
+            serviceTextView.isEnabled = false
+            mileageTextView.isEnabled = false
+            dateTextView.isEnabled = false
+
+            // Change the button background back to the "edit" icon
+            editButtonIcon.setBackgroundResource(R.drawable.edit)
+            // Change the button's click listener back to the editRecord function
+            editButtonIcon.setOnClickListener {
+                editRecord(recordLayout, recordId)
+            }
+        }
     }
-
 }

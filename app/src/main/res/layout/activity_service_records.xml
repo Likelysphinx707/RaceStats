@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="16dp" />
+                android:padding="22dp" />
 
         </ScrollView>
 
@@ -97,6 +97,7 @@
                 android:id="@+id/add_new_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
                 android:layout_weight="1"
                 android:text="Add New"
                 android:textSize="22sp" />
@@ -105,7 +106,6 @@
                 android:id="@+id/edit_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
                 android:layout_weight="1"
                 android:text="Edit"
                 android:textSize="22sp" />
@@ -114,6 +114,7 @@
                 android:id="@+id/delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
                 android:layout_weight="1"
                 android:text="Delete"
                 android:textSize="22sp" />
