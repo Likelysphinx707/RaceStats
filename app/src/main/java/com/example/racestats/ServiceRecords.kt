@@ -64,31 +64,7 @@ class ServiceRecords : AppCompatActivity() {
 
             // Toggle the visibility of the new record layout
             if (newRecordLayout.visibility == View.GONE) {
-//                toggleRecordLayoutVisibility(newRecordLayout, addButton, recordViews, titleTextView, editButton, deleteButton, cancelButton)
-                newRecordLayout.visibility = View.VISIBLE
-                addButton.text = "Confirm"
-                for (record in recordViews) {
-                    record.visibility = View.GONE
-                }
-                titleTextView.text = "Add New Record"
-                editButton.visibility = View.GONE
-                deleteButton.visibility = View.GONE
-                cancelButton.visibility = View.VISIBLE
-
-                cancelButton.setOnClickListener {
-                    if (newRecordLayout.visibility == View.VISIBLE) {
-                        newRecordLayout.visibility = View.GONE
-                        addButton.text = "Add New"
-                        for (record in recordViews) {
-                            record.visibility = View.VISIBLE
-                        }
-                        titleTextView.text = "Maintenance Records"
-                        editButton.visibility = View.VISIBLE
-                        deleteButton.visibility = View.VISIBLE
-                        cancelButton.visibility = View.GONE
-                    }
-                }
-
+                toggleRecordLayoutVisibility(newRecordLayout, addButton, recordViews, titleTextView, editButton, deleteButton, cancelButton)
             } else {
                 // Change the addButton's text from "Add New" to "Save"
                 addButton.text = "Save"
@@ -241,6 +217,10 @@ class ServiceRecords : AppCompatActivity() {
                 editButton.visibility = View.VISIBLE
                 deleteButton.visibility = View.VISIBLE
                 cancelButton.visibility = View.GONE
+                for (record in recordViews) {
+                    record.visibility = View.VISIBLE
+                }
+                titleTextView.text = "Maintenance Records"
             }
         }
 

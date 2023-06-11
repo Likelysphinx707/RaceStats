@@ -28,8 +28,11 @@
             android:id="@+id/new_record_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
             android:orientation="horizontal"
             android:padding="0dp"
+            android:textAlignment="center"
             android:visibility="gone">
 
             <!-- EditTexts for user input -->
@@ -37,10 +40,13 @@
                 android:id="@+id/service_edittext"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:hint="Enter Service Here"
                 android:inputType="textAutoCorrect"
                 android:textAlignment="center"
+
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
                 android:textSize="22sp" />
@@ -49,7 +55,9 @@
                 android:id="@+id/mileage_edittext"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:hint="Enter Mileage Here"
                 android:inputType="number"
                 android:textAlignment="center"
@@ -61,7 +69,9 @@
                 android:id="@+id/date_edittext"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:hint="Enter Date Here"
                 android:inputType="date"
                 android:textAlignment="center"
@@ -72,6 +82,9 @@
         </LinearLayout>
 
         <!-- List where records are stored -->
+
+        <!-- Buttons to save, edit, and add new records -->
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="274dp"
@@ -86,7 +99,6 @@
 
         </ScrollView>
 
-        <!-- Buttons to save, edit, and add new records -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,9 +128,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:visibility="gone"
                 android:text="Cancel"
-                android:textSize="22sp" />
+                android:textSize="22sp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/delete_button"
