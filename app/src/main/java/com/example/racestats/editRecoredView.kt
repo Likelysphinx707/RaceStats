@@ -2,6 +2,7 @@ package com.example.racestats
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 
@@ -17,12 +18,17 @@ class editRecoredView : AppCompatActivity() {
         val dateText = intent.getStringExtra("dateText")
         val recordId = intent.getLongExtra("recordId", -1)
 
+        Log.d( "serviceText", serviceText.toString())
+        Log.d( "mileageText", mileageText.toString())
+        Log.d( "dateText", dateText.toString())
+        Log.d( "recordId", recordId.toString())
+
         // Find the UI values
         val serviceEditText = findViewById<EditText>(R.id.service_edittext)
         val mileageEditText = findViewById<EditText>(R.id.mileage_edittext)
         val dateEditText = findViewById<EditText>(R.id.date_edittext)
 
-        // Use these values to display the details in the UI
+        // Now you can use these values to display the details in the UI
         serviceEditText.text = Editable.Factory.getInstance().newEditable(serviceText ?: "")
         mileageEditText.text = Editable.Factory.getInstance().newEditable(mileageText ?: "")
         dateEditText.text = Editable.Factory.getInstance().newEditable(dateText ?: "")

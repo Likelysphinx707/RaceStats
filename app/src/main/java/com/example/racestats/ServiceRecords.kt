@@ -146,7 +146,7 @@ class ServiceRecords : AppCompatActivity() {
                     val mileageText = mileageTextView.text.toString()
                     val dateText = dateTextView.text.toString()
 
-                    // Create an Intent to start the ServiceRecordDetailActivity
+                    // Create an Intent to start the editRecoredView activity
                     val intent = Intent(this, editRecoredView::class.java).apply {
                         putExtra("serviceText", serviceText)
                         putExtra("mileageText", mileageText)
