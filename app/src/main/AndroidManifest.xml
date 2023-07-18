@@ -26,6 +26,7 @@
 
         </activity>
 
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -39,6 +40,11 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity
+            android:name=".editRecoredView"
+            android:label="Service Record Detail Activity"
+            />
 
     </application>
 

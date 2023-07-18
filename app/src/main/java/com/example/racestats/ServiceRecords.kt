@@ -1,14 +1,12 @@
 package com.example.racestats
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import org.w3c.dom.Text
-import kotlin.math.log
 
 
 class ServiceRecords : AppCompatActivity() {
@@ -144,7 +142,20 @@ class ServiceRecords : AppCompatActivity() {
                 editButtonIcon.visibility = View.GONE // initially set as not visible
                 editButtonIcon.setOnClickListener {
                     val recordId = recordLayout.tag as Long
-                    editRecord(recordLayout, recordId)
+                    val serviceText = serviceTextView.text.toString()
+                    val mileageText = mileageTextView.text.toString()
+                    val dateText = dateTextView.text.toString()
+
+                    // Create an Intent to start the ServiceRecordDetailActivity
+                    val intent = Intent(this, editRecoredView::class.java).apply {
+                        putExtra("serviceText", serviceText)
+                        putExtra("mileageText", mileageText)
+                        putExtra("dateText", dateText)
+                        putExtra("recordId", recordId)
+                    }
+
+                    // Start the new activity
+                    startActivity(intent)
                 }
                 editButtonIcon.gravity = Gravity.CENTER // set text alignment to center
 
@@ -371,7 +382,20 @@ class ServiceRecords : AppCompatActivity() {
                 editButtonIcon.visibility = View.GONE // initially set as not visible
                 editButtonIcon.setOnClickListener {
                     val recordId = recordLayout.tag as Long
-                    editRecord(recordLayout, recordId)
+                    val serviceText = serviceEditText.text.toString()
+                    val mileageText = mileageEditText.text.toString()
+                    val dateText = dateEditText.text.toString()
+
+                    // Create an Intent to start the editRecoredView
+                    val intent = Intent(this, editRecoredView::class.java).apply {
+                        putExtra("serviceText", serviceText)
+                        putExtra("mileageText", mileageText)
+                        putExtra("dateText", dateText)
+                        putExtra("recordId", recordId)
+                    }
+
+                    // Start the new activity
+                    startActivity(intent)
                 }
                 editButtonIcon.gravity = Gravity.CENTER // set text alignment to center
 
@@ -455,57 +479,57 @@ class ServiceRecords : AppCompatActivity() {
         Toast.makeText(this, "Record Deleted", Toast.LENGTH_LONG).show()
     }
 
-    /**
-     * This function that will be used to edit records both on the UI and the DataBase
-     */
-    private fun editRecord(recordLayout: LinearLayout, recordId: Long) {
-        // Find the TextViews and Button in the recordLayout
-        val serviceTextView = recordLayout.findViewById<TextView>(R.id.service_textview)
-        val mileageTextView = recordLayout.findViewById<TextView>(R.id.mileage_textview)
-        val dateTextView = recordLayout.findViewById<TextView>(R.id.date_textview)
-
-        // Enable editing for the TextViews
-        serviceTextView.isEnabled = true
-        mileageTextView.isEnabled = true
-        dateTextView.isEnabled = true
-
-        // Change the edit button text to "Save"
-        editButton.text = "Save"
-
-        // Show the save icons
-        for (button in editButtonIcons) {
-            button.visibility = View.VISIBLE
-        }
-
-        // Find the save button for the current record
-        val saveButton = editButtonIcons.firstOrNull { it.tag == recordId }
-        saveButton?.setOnClickListener {
-            // Get the updated values from the TextViews
-            val updatedService = serviceTextView.text.toString()
-            val updatedMileage = mileageTextView.text.toString()
-            val updatedDate = dateTextView.text.toString()
-
-            // Update the record in the database
-            val db = databaseHelper.writableDatabase
-            val updateQuery = "UPDATE service_records SET service = '$updatedService', mileage = '$updatedMileage', date = '$updatedDate' WHERE id = $recordId"
-            db.execSQL(updateQuery)
-            db.close()
-
-            // Disable editing for the TextViews
-            serviceTextView.isEnabled = false
-            mileageTextView.isEnabled = false
-            dateTextView.isEnabled = false
-
-            // Change the edit button text to "Edit"
-            editButton.text = "Edit"
-
-            // Hide the save icons
-            for (button in editButtonIcons) {
-                button.visibility = View.GONE
-            }
-
-            Toast.makeText(this, "Record Updated", Toast.LENGTH_LONG).show()
-        }
-    }
+//    /**
+//     * This function that will be used to edit records both on the UI and the DataBase
+//     */
+//    private fun editRecord(recordLayout: LinearLayout, recordId: Long) {
+//        // Find the TextViews and Button in the recordLayout
+//        val serviceTextView = recordLayout.findViewById<TextView>(R.id.service_textview)
+//        val mileageTextView = recordLayout.findViewById<TextView>(R.id.mileage_textview)
+//        val dateTextView = recordLayout.findViewById<TextView>(R.id.date_textview)
+//
+//        // Enable editing for the TextViews
+//        serviceTextView.isEnabled = true
+//        mileageTextView.isEnabled = true
+//        dateTextView.isEnabled = true
+//
+//        // Change the edit button text to "Save"
+//        editButton.text = "Save"
+//
+//        // Show the save icons
+//        for (button in editButtonIcons) {
+//            button.visibility = View.VISIBLE
+//        }
+//
+//        // Find the save button for the current record
+//        val saveButton = editButtonIcons.firstOrNull { it.tag == recordId }
+//        saveButton?.setOnClickListener {
+//            // Get the updated values from the TextViews
+//            val updatedService = serviceTextView.text.toString()
+//            val updatedMileage = mileageTextView.text.toString()
+//            val updatedDate = dateTextView.text.toString()
+//
+//            // Update the record in the database
+//            val db = databaseHelper.writableDatabase
+//            val updateQuery = "UPDATE service_records SET service = '$updatedService', mileage = '$updatedMileage', date = '$updatedDate' WHERE id = $recordId"
+//            db.execSQL(updateQuery)
+//            db.close()
+//
+//            // Disable editing for the TextViews
+//            serviceTextView.isEnabled = false
+//            mileageTextView.isEnabled = false
+//            dateTextView.isEnabled = false
+//
+//            // Change the edit button text to "Edit"
+//            editButton.text = "Edit"
+//
+//            // Hide the save icons
+//            for (button in editButtonIcons) {
+//                button.visibility = View.GONE
+//            }
+//
+//            Toast.makeText(this, "Record Updated", Toast.LENGTH_LONG).show()
+//        }
+//    }
 
 }
