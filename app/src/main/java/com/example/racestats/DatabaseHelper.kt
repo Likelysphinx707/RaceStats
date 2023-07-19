@@ -1,5 +1,6 @@
 package com.example.racestats
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -18,5 +19,28 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         // Implement if you need to upgrade the database schema in the future
+    }
+
+    // Function to update a record in the database
+    fun updateRecord(recordId: Long, newService: String, newMileage: String, newDate: String): Int {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("service", newService)
+            put("mileage", newMileage)
+            put("date", newDate)
+        }
+
+        // The update method returns the number of rows affected by the update
+        val rowsAffected = db.update(
+            "service_records",
+            values,
+            "id = ?",
+            arrayOf(recordId.toString())
+        )
+
+        // Close the database after the operation
+        db.close()
+
+        return rowsAffected
     }
 }

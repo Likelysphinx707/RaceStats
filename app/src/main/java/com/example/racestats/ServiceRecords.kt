@@ -164,8 +164,6 @@ class ServiceRecords : AppCompatActivity() {
                         Log.e("View1", "Data is missing or invalid.")
                     }
                 }
-                // Start the new activity
-                startActivity(intent)
                 editButtonIcon.gravity = Gravity.CENTER // set text alignment to center
 
 
@@ -189,7 +187,7 @@ class ServiceRecords : AppCompatActivity() {
                 editButtonIcons.add(editButtonIcon)
 
 
-                // Check if any of the fields are null if they are new recored will not be submitted and the user will be show an error alert
+                // Check if any of the fields are null if they are new record will not be submitted and the user will be shown an error alert
                 if (serviceEditText.text.isNullOrBlank() || mileageEditText.text.isNullOrBlank() || dateEditText.text.isNullOrBlank()) {
                     // One or more fields are null, handle the error or display a message
                     Toast.makeText(this, "You most fill in and least one field to add a new record", Toast.LENGTH_LONG).show()
