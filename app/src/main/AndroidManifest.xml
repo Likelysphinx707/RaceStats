@@ -42,7 +42,7 @@
         </activity>
 
         <activity
-            android:name=".editRecoredView"
+            android:name=".EditRecordView"
             android:label="Service Record Detail Activity"
             />
 

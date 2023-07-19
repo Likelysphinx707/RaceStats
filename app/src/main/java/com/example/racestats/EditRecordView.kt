@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 
-class editRecoredView : AppCompatActivity() {
+class EditRecordView : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,7 +17,9 @@ class editRecoredView : AppCompatActivity() {
         val mileageText = intent.getStringExtra("mileageText")
         val dateText = intent.getStringExtra("dateText")
         val recordId = intent.getLongExtra("recordId", -1)
+        val testVar = intent.getStringExtra("testVar")
 
+        Log.d("testVar", testVar.toString())
         Log.d( "serviceText", serviceText.toString())
         Log.d( "mileageText", mileageText.toString())
         Log.d( "dateText", dateText.toString())
