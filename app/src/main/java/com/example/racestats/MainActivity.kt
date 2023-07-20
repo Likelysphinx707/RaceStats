@@ -54,6 +54,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Set the activity to full-screen mode
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+
         // Declare are imported variables from the XML file
         serviceRecords = findViewById(R.id.serviceRecords)
         cpuTemp = findViewById(R.id.cpuTemp)

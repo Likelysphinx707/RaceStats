@@ -35,6 +35,9 @@ class ServiceRecords : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service_records)
 
+        // Set the activity to full-screen mode
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+
         // Initialize the lists
         recordViews = mutableListOf()
         deleteButtons = mutableListOf()
