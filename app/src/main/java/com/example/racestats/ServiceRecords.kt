@@ -273,8 +273,9 @@ class ServiceRecords : AppCompatActivity() {
         editButton.setOnClickListener {
             if(editButton.text == "Edit") {
                 // Change the delete button text to "Save"
-                editButton.text = "Done"
+                editButton.text = "Cancel"
                 deleteButton.visibility = View.GONE
+                addButton.visibility = View.GONE
 
                 // Show the edit Icons
                 for (button in editButtonIcons) {
@@ -284,6 +285,7 @@ class ServiceRecords : AppCompatActivity() {
                 // Change the edit button text to "Edit"
                 editButton.text = "Edit"
                 deleteButton.visibility = View.VISIBLE
+                addButton.visibility = View.VISIBLE
 
                 // Hide the edit icons
                 for (button in editButtonIcons) {
@@ -528,6 +530,8 @@ class ServiceRecords : AppCompatActivity() {
         }
 
         editButton.text = "Edit"
+        deleteButton.visibility = View.VISIBLE
+        addButton.visibility = View.VISIBLE
     }
 
 
