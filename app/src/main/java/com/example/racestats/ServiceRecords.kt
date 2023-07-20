@@ -27,6 +27,10 @@ class ServiceRecords : AppCompatActivity() {
     private lateinit var editButtonIcons: MutableList<Button>
     private lateinit var databaseHelper: DatabaseHelper
 
+    companion object {
+        const val EDIT_RECORD_REQUEST_CODE = 1
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service_records)
@@ -157,13 +161,14 @@ class ServiceRecords : AppCompatActivity() {
                             putExtra("recordId", recordId)
                         }
 
-                        // Start the new activity
-                        startActivity(intent)
+                        // Start the new activity with startActivityForResult
+                        startActivityForResult(intent, EDIT_RECORD_REQUEST_CODE)
                     } else {
                         // Handle the case where data is missing or invalid
                         Log.e("View1", "Data is missing or invalid.")
                     }
                 }
+
                 editButtonIcon.gravity = Gravity.CENTER // set text alignment to center
 
 
@@ -268,7 +273,6 @@ class ServiceRecords : AppCompatActivity() {
                 // Change the delete button text to "Save"
                 editButton.text = "Save"
 
-
                 // Show the edit Icons
                 for (button in editButtonIcons) {
                     button.visibility = View.VISIBLE
@@ -277,7 +281,7 @@ class ServiceRecords : AppCompatActivity() {
                 // Change the edit button text to "Edit"
                 editButton.text = "Edit"
 
-                // Hid the edit icons
+                // Hide the edit icons
                 for (button in editButtonIcons) {
                     button.visibility = View.GONE
                 }
@@ -403,13 +407,14 @@ class ServiceRecords : AppCompatActivity() {
                             putExtra("recordId", recordId)
                         }
 
-                        // Start the new activity
-                        startActivity(intent)
+                        // Start the new activity with startActivityForResult
+                        startActivityForResult(intent, EDIT_RECORD_REQUEST_CODE)
                     } else {
                         // Handle the case where data is missing or invalid
                         Log.e("View1", "Data is missing or invalid.")
                     }
                 }
+
                 editButtonIcon.gravity = Gravity.CENTER // set text alignment to center
 
                 // Add the TextViews and the "x" button to the record LinearLayout
@@ -491,5 +496,35 @@ class ServiceRecords : AppCompatActivity() {
 
         Toast.makeText(this, "Record Deleted", Toast.LENGTH_LONG).show()
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == EDIT_RECORD_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            // Extract the updated data from the result Intent
+            val serviceText = data.getStringExtra("serviceText")
+            val mileageText = data.getStringExtra("mileageText")
+            val dateText = data.getStringExtra("dateText")
+            val recordId = data.getLongExtra("recordId", -1)
+
+            // Find the record view by its tag (recordId)
+            val recordViewToUpdate = recordViews.firstOrNull { it.tag == recordId }
+
+            if (recordViewToUpdate != null) {
+                // Update the record view with the new data
+                recordViewToUpdate.findViewById<TextView>(R.id.service_textview).text = serviceText
+                recordViewToUpdate.findViewById<TextView>(R.id.mileage_textview).text = mileageText
+                recordViewToUpdate.findViewById<TextView>(R.id.date_textview).text = dateText
+            }
+        }
+
+        // Hide the edit icons
+        for (button in editButtonIcons) {
+            button.visibility = View.GONE
+        }
+
+        editButton.text = "Edit"
+    }
+
 
 }

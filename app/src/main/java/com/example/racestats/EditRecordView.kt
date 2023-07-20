@@ -39,6 +39,7 @@ class EditRecordView : AppCompatActivity() {
 
         // Will return us back to maintenance records view
         cancelButton.setOnClickListener {
+            // Set the result with the updated data and finish the activity
             finish()
         }
 
@@ -46,6 +47,9 @@ class EditRecordView : AppCompatActivity() {
             val service = serviceEditText.text.toString()
             val mileage = mileageEditText.text.toString()
             val date = dateEditText.text.toString()
+
+            // updates changes in the DB
+            updateRecordInDatabase(recordId, service, mileage, date)
 
             // Prepare the Intent to send the updated data back to ServiceRecords
             val resultIntent = Intent().apply {
