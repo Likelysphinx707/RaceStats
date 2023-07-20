@@ -39,10 +39,10 @@ class EditRecordView : AppCompatActivity() {
 
         // Will return us back to maintenance records view
         cancelButton.setOnClickListener {
-            // Set the result with the updated data and finish the activity
             finish()
         }
 
+        // Will update DB and UI with new values and return us back to Maintenance Records
         saveButton.setOnClickListener {
             val service = serviceEditText.text.toString()
             val mileage = mileageEditText.text.toString()
