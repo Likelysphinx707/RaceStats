@@ -8,6 +8,8 @@ import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.marginBottom
+import androidx.core.view.setPadding
 
 
 class ServiceRecords : AppCompatActivity() {
@@ -125,10 +127,11 @@ class ServiceRecords : AppCompatActivity() {
 
                 // Create the "x" button to delete the record
                 val deleteButtonX = Button(this)
-                deleteButtonX.text = "x"
-                deleteButtonX.setBackgroundColor(Color.BLACK)
-                deleteButtonX.setTextColor(Color.RED)
-                deleteButtonX.textSize = 30f
+                deleteButtonX.setBackgroundResource(R.drawable.x)
+//                deleteButtonX.text = "x"
+//                deleteButtonX.setBackgroundColor(Color.TRANSPARENT)
+//                deleteButtonX.setTextColor(Color.RED)
+//                deleteButtonX.textSize = 22f
                 deleteButtonX.layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -377,10 +380,11 @@ class ServiceRecords : AppCompatActivity() {
 
                 // Create the "x" button to delete the record
                 val deleteButtonX = Button(this)
-                deleteButtonX.text = "x"
-                deleteButtonX.setBackgroundColor(Color.BLACK)
-                deleteButtonX.setTextColor(Color.RED)
-                deleteButtonX.textSize = 30f
+//                deleteButtonX.text = "x"
+                deleteButtonX.setBackgroundResource(R.drawable.x)
+//                deleteButtonX.setBackgroundColor(Color.TRANSPARENT)
+//                deleteButtonX.setTextColor(Color.RED)
+//                deleteButtonX.textSize = 22f
                 deleteButtonX.layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
