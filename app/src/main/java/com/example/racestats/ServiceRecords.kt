@@ -1,15 +1,12 @@
 package com.example.racestats
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.marginBottom
-import androidx.core.view.setPadding
 
 
 class ServiceRecords : AppCompatActivity() {
