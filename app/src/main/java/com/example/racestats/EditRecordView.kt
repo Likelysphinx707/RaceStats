@@ -45,30 +45,33 @@ class EditRecordView : AppCompatActivity() {
             finish()
         }
 
-        // Will update DB and UI with new values and return us back to Maintenance Records
+        // Will update DB and UI with new values and return back to Maintenance Records
         saveButton.setOnClickListener {
             val service = serviceEditText.text.toString()
             val mileage = mileageEditText.text.toString()
             val date = dateEditText.text.toString()
 
-            // updates changes in the DB
-            updateRecordInDatabase(recordId, service, mileage, date)
+            // Check if any changes were made
+            if (service == serviceText && mileage == mileageText && date == dateText) {
+                // No changes were made, show toast message
+                Toast.makeText(this, "No changes were made. Record not saved.", Toast.LENGTH_LONG).show()
+            } else {
+                // Changes were made, update the record
+                updateRecordInDatabase(recordId, service, mileage, date)
 
-            // Prepare the Intent to send the updated data back to ServiceRecords
-            val resultIntent = Intent().apply {
-                putExtra("serviceText", service)
-                putExtra("mileageText", mileage)
-                putExtra("dateText", date)
-                putExtra("recordId", recordId)
+                // Prepare the Intent to send the updated data back to ServiceRecords
+                val resultIntent = Intent().apply {
+                    putExtra("serviceText", service)
+                    putExtra("mileageText", mileage)
+                    putExtra("dateText", date)
+                    putExtra("recordId", recordId)
+                }
+
+                // Set the result with the updated data and finish the activity
+                setResult(RESULT_OK, resultIntent)
+                finish()
             }
-
-            // Set the result with the updated data and finish the activity
-            setResult(RESULT_OK, resultIntent)
-            finish()
         }
-
-
-
     }
 
     // Function to update the record in the database when the user saves changes
@@ -82,5 +85,4 @@ class EditRecordView : AppCompatActivity() {
             Toast.makeText(this, "Failed to Update Record", Toast.LENGTH_LONG).show()
         }
     }
-
 }
