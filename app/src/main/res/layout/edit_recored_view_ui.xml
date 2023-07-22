@@ -21,25 +21,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/mileage_edittext"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:hint="Mileage"
-        android:inputType="number"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="32sp"
-        app:layout_constraintBottom_toBottomOf="@+id/mileage_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/mileage_title"
-        app:layout_constraintTop_toTopOf="@+id/mileage_title"
-        app:layout_constraintVertical_bias="0.648" />
-
-    <EditText
         android:id="@+id/service_edittext"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -63,19 +44,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="60dp"
         android:text="Mileage:"
         android:textColor="@color/white"
         android:textSize="32sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/service_title" />
 
+    <EditText
+        android:id="@+id/mileage_edittext"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Mileage"
+        android:inputType="number"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="@+id/mileage_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/mileage_title"
+        app:layout_constraintTop_toTopOf="@+id/mileage_title"
+        app:layout_constraintVertical_bias="0.567" />
+
     <TextView
         android:id="@+id/date_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="60dp"
         android:text="Date:"
         android:textColor="@color/white"
         android:textSize="32sp"
@@ -99,7 +99,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/date_title"
         app:layout_constraintTop_toTopOf="@+id/date_title"
-        app:layout_constraintVertical_bias="0.594" />
+        app:layout_constraintVertical_bias="0.54" />
 
     <TextView
         android:id="@+id/edit_record_title"
