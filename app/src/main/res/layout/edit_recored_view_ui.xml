@@ -105,7 +105,7 @@
         android:id="@+id/edit_record_title"
         android:layout_width="858dp"
         android:layout_height="70dp"
-        android:text="Edit Record Below"
+        android:text="Tap Fields Below To Edit"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="42sp"
