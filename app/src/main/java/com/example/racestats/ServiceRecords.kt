@@ -128,10 +128,6 @@ class ServiceRecords : AppCompatActivity() {
                 // Create the "x" button to delete the record
                 val deleteButtonX = Button(this)
                 deleteButtonX.setBackgroundResource(R.drawable.x)
-//                deleteButtonX.text = "x"
-//                deleteButtonX.setBackgroundColor(Color.TRANSPARENT)
-//                deleteButtonX.setTextColor(Color.RED)
-//                deleteButtonX.textSize = 22f
                 deleteButtonX.layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -259,6 +255,7 @@ class ServiceRecords : AppCompatActivity() {
                 // Change the delete button text to "Done"
                 deleteButton.text = "Done"
                 editButton.visibility = View.GONE
+                addButton.visibility = View.GONE
 
                 // Show the "x" delete buttons
                 for (button in deleteButtons) {
@@ -268,6 +265,7 @@ class ServiceRecords : AppCompatActivity() {
                 // Change the delete button text to "Delete"
                 deleteButton.text = "Delete"
                 editButton.visibility = View.VISIBLE
+                addButton.visibility = View.VISIBLE
 
                 // Hide the "x" delete buttons
                 for (button in deleteButtons) {
@@ -380,11 +378,7 @@ class ServiceRecords : AppCompatActivity() {
 
                 // Create the "x" button to delete the record
                 val deleteButtonX = Button(this)
-//                deleteButtonX.text = "x"
                 deleteButtonX.setBackgroundResource(R.drawable.x)
-//                deleteButtonX.setBackgroundColor(Color.TRANSPARENT)
-//                deleteButtonX.setTextColor(Color.RED)
-//                deleteButtonX.textSize = 22f
                 deleteButtonX.layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
