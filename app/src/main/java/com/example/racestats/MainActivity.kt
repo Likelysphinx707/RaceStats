@@ -16,7 +16,9 @@ import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -25,7 +27,6 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.io.*
 import java.util.*
@@ -48,6 +49,14 @@ class MainActivity : AppCompatActivity() {
 
     private var targetTime: Double = 120.0
     private var methodRunning = false
+
+    // will help us update cpu temp
+    private val handler = Handler()
+    private lateinit var cpuTempUpdateRunnable: Runnable
+    private val COLOR_YELLOW = Color.YELLOW
+    private val COLOR_ORANGE = Color.rgb(255, 165, 0) // Orange color
+    private val COLOR_RED = Color.RED
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,11 +82,35 @@ class MainActivity : AppCompatActivity() {
         recordedTimeThree = findViewById(R.id.recordedTimeThree)
 
 
-        // Come back to last once we have it running on the pi
-//        println("printing temp?")
-//        cpuTemperature(this) { result ->
-//            println(result)
-//        }
+        // cpuTemp update runnable
+// Create the cpuTemp update runnable
+        cpuTempUpdateRunnable = object : Runnable {
+            override fun run() {
+                getCpuTemperature { cpuTemperature ->
+                    // Round the cpuTemperature to the nearest integer
+                    val roundedTemp = cpuTemperature.toInt()
+
+                    // Update the cpuTemp TextView with the rounded temperature
+                    cpuTemp.text = "CPU Temp: ${roundedTemp}°C"
+
+                    // Update the text color based on the temperature range
+                    when {
+                        roundedTemp >= 85 -> cpuTemp.setTextColor(COLOR_RED)
+                        roundedTemp >= 76 -> cpuTemp.setTextColor(COLOR_ORANGE)
+                        roundedTemp >= 70 -> cpuTemp.setTextColor(COLOR_YELLOW)
+                        else -> cpuTemp.setTextColor(Color.WHITE) // Default color for temperatures below 70°C
+                    }
+                }
+
+                // Schedule the next update after 10 seconds
+                handler.postDelayed(this, 10000)
+            }
+        }
+
+
+        // Start the periodic updates for cpuTemp
+        handler.post(cpuTempUpdateRunnable)
+
 
         /**
          * Will allow us to view the Service Records page
@@ -173,6 +206,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Cancel the periodic updates when the activity is destroyed
+        handler.removeCallbacks(cpuTempUpdateRunnable)
+    }
 }
 
 /**
@@ -258,51 +297,21 @@ fun formatTime(time: Int): String {
 }
 
 /**
- * This function will set the CPU Temp in are UI and will handles all things associated with the CPU temp.
- */
-fun cpuTemperature(activity: Activity, callback: (Float) -> Unit) {
-    val permissionCheck = ContextCompat.checkSelfPermission(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE)
-
-    if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
-            Toast.makeText(activity, "This permission is required to access the CPU temperature.", Toast.LENGTH_LONG).show()
-        }
-
-        val alertDialogBuilder = AlertDialog.Builder(activity)
-        alertDialogBuilder.setTitle("Permission Request")
-        alertDialogBuilder.setMessage("The app needs access to external storage to read the CPU temperature. Do you allow this permission?")
-        alertDialogBuilder.setPositiveButton("Allow") { _, _ ->
-//            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACTION_MANAGE_ALL_SIM_PROFILES_SETTINGS), 1)
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
-            getCpuTemperature(callback)
-        }
-        alertDialogBuilder.setNegativeButton("Deny") { dialog, _ ->
-            dialog.dismiss()
-            // set cpu temp to be invisible
-        }
-        alertDialogBuilder.show()
-    } else {
-        getCpuTemperature(callback)
-    }
-}
-
+ * Will grab the CPU temp of the system for it to be displayed in the UI.
+*/
 fun getCpuTemperature(callback: (Float) -> Unit) {
     return try {
         val reader = RandomAccessFile("/sys/devices/virtual/thermal/thermal_zone0/temp", "r")
         val line: String = reader.readLine()
         if (line != null) {
-            val temp = line.toFloat()
-            println(temp / 1000.0f)
-            callback(temp / 1000.0f)
+            val temp = line.toFloat() / 1000 // Divide by 1000 to get the temperature in degrees Celsius
+            callback(temp) // Invoke the callback with the CPU temperature value
         } else {
-            println(51.0f)
-            callback(51.0f)
+            // Handle the case when reading the temperature fails
         }
+        reader.close()
     } catch (e: Exception) {
-        println("about to look for temp")
         e.printStackTrace()
-        println("Temp is below")
-        println(0.0f)
-        callback(0.0f)
     }
 }
+
