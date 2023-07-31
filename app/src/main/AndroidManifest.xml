@@ -17,7 +17,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RaceStats"
-
         tools:targetApi="31">
 
         <activity
@@ -45,6 +44,12 @@
             android:name=".EditRecordView"
             android:label="Service Record Detail Activity"
             />
+
+        <activity
+            android:name=".Navigation"
+            android:label="Navigation Activity">
+
+        </activity>
 
     </application>
 

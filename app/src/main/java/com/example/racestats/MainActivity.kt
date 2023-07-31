@@ -1,13 +1,11 @@
 package com.example.racestats
 
-import com.example.racestats.ServiceRecords as ServiceRecords
-import android.Manifest
-import android.app.Activity
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
@@ -18,7 +16,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -27,7 +24,7 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import java.io.*
 import java.util.*
 
@@ -45,8 +42,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordedTimeOne: TextView
     private lateinit var recordedTimeTwo: TextView
     private lateinit var recordedTimeThree: TextView
-    private lateinit var serviceRecords: Button
+    private lateinit var homeIcon: ImageView
+    private lateinit var vectorImageView: ImageView
 
+    // deals with 0-60 timer
     private var targetTime: Double = 120.0
     private var methodRunning = false
 
@@ -56,6 +55,9 @@ class MainActivity : AppCompatActivity() {
     private val COLOR_YELLOW = Color.YELLOW
     private val COLOR_ORANGE = Color.rgb(255, 165, 0) // Orange color
     private val COLOR_RED = Color.RED
+
+    // deals with menu animation
+    private var isHomeIconRotated = false
 
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -67,7 +69,8 @@ class MainActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
 
         // Declare are imported variables from the XML file
-        serviceRecords = findViewById(R.id.serviceRecords)
+        homeIcon = findViewById(R.id.homeIcon)
+
         cpuTemp = findViewById(R.id.cpuTemp)
         speed = findViewById(R.id.speed)
         mph = findViewById(R.id.mph)
@@ -83,7 +86,6 @@ class MainActivity : AppCompatActivity() {
 
 
         // cpuTemp update runnable
-// Create the cpuTemp update runnable
         cpuTempUpdateRunnable = object : Runnable {
             override fun run() {
                 getCpuTemperature { cpuTemperature ->
@@ -113,13 +115,42 @@ class MainActivity : AppCompatActivity() {
 
 
         /**
-         * Will allow us to view the Service Records page
+         * Navigation animation
          */
-        serviceRecords.setOnClickListener {
-            val intent = Intent(this, ServiceRecords::class.java)
+        // Set a click listener for the home icon
+        homeIcon.setOnClickListener {
+            // Rotate and change the drawable based on the rotation state
+            if (isHomeIconRotated) {
+                val rotationAnim = ObjectAnimator.ofFloat(homeIcon, "rotation", 55f, 0f)
+                val scaleXAnim = ObjectAnimator.ofFloat(homeIcon, "scaleX", 1.0f, 0.8f)
+                val scaleYAnim = ObjectAnimator.ofFloat(homeIcon, "scaleY", 1.0f, 0.8f)
+                val set = AnimatorSet()
+                set.playTogether(rotationAnim, scaleXAnim, scaleYAnim)
+                set.duration = 300
+                set.start()
+
+                // Set the bars icon drawable to the ImageView
+                val barsIconDrawable = VectorDrawableCompat.create(resources, R.drawable.home_icon, theme)
+                homeIcon.setImageDrawable(barsIconDrawable)
+            } else {
+                val rotationAnim = ObjectAnimator.ofFloat(homeIcon, "rotation", 0f, 90f)
+                val scaleXAnim = ObjectAnimator.ofFloat(homeIcon, "scaleX", 1.0f, 1.0f)
+                val scaleYAnim = ObjectAnimator.ofFloat(homeIcon, "scaleY", 1.0f, 1.0f)
+                val set = AnimatorSet()
+                set.playTogether(rotationAnim, scaleXAnim, scaleYAnim)
+                set.duration = 500
+                set.start()
+
+                // Set the X icon drawable to the ImageView
+                val xIconDrawable = VectorDrawableCompat.create(resources, R.drawable.ic_x_icon, theme)
+                homeIcon.setImageDrawable(xIconDrawable)
+            }
+            // Toggle the rotation state
+            isHomeIconRotated = !isHomeIconRotated
+
+            val intent = Intent(this, Navigation::class.java)
             startActivity(intent)
         }
-
 
         /**
          * Class that is in charge of the pop dialog that allows the user to set the target mph for the timer.
