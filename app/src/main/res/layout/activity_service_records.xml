@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/forgedcarbonbackground">
 
     <TextView
@@ -32,56 +32,106 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:padding="0dp"
         android:textAlignment="center"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_textview">
 
-        <!-- EditTexts for user input -->
-
-        <EditText
-            android:id="@+id/service_edittext"
-            android:layout_width="0dp"
+        <!-- Service Title and EditText -->
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="Enter Service Here"
-            android:inputType="textAutoCorrect"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:textSize="28sp" />
+            android:orientation="horizontal"
+            android:gravity="center">
 
-        <EditText
-            android:id="@+id/mileage_edittext"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="Enter Mileage Here"
-            android:inputType="number"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:textSize="28sp" />
+            <TextView
+                android:id="@+id/service_title_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service:"
+                android:textColor="@color/white"
+                android:textSize="28sp" />
 
-        <EditText
-            android:id="@+id/date_edittext"
-            android:layout_width="0dp"
+            <EditText
+                android:id="@+id/service_edittext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="Enter Service Here"
+                android:inputType="textAutoCorrect"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="28sp" />
+
+        </LinearLayout>
+
+        <!-- Mileage Title and EditText -->
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="Enter Date Here"
-            android:inputType="date"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:textSize="28sp" />
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/mileage_title_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mileage:"
+                android:textColor="@color/white"
+                android:textSize="28sp" />
+
+            <EditText
+                android:id="@+id/mileage_edittext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="Enter Mileage Here"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="28sp" />
+
+        </LinearLayout>
+
+        <!-- Date Title and EditText -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/date_title_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date:"
+                android:textColor="@color/white"
+                android:textSize="28sp" />
+
+            <EditText
+                android:id="@+id/date_edittext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="Enter Date Here"
+                android:inputType="date"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="28sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -172,9 +222,9 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="22sp"
-        app:layout_constraintTop_toBottomOf="@+id/mileage_textview"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/mileage_textview" />
 
     <TextView
         android:id="@+id/date_textview"
@@ -183,8 +233,8 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="22sp"
-        app:layout_constraintTop_toBottomOf="@+id/service_textview"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/service_textview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
