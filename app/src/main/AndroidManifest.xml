@@ -20,11 +20,24 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".ServiceRecords"
-            android:label="@string/app_name">
-
+            android:name=".DigitalDash"
+            android:label="Digital Dash Activity">
         </activity>
 
+        <activity
+            android:name=".EcuData"
+            android:label="ECU Data Activity">
+        </activity>
+
+        <activity
+            android:name=".EditRecordView"
+            android:label="Service Record Detail Activity"
+            />
+
+        <activity
+            android:name=".GMeter"
+            android:label="G Meter Activity">
+        </activity>
 
         <activity
             android:name=".MainActivity"
@@ -41,14 +54,18 @@
         </activity>
 
         <activity
-            android:name=".EditRecordView"
-            android:label="Service Record Detail Activity"
-            />
+            android:name=".ServiceRecords"
+            android:label="Service Records Activity">
+        </activity>
 
         <activity
-            android:name=".Navigation"
-            android:label="Navigation Activity">
+            android:name=".Settings"
+            android:label="Settings Activity">
+        </activity>
 
+        <activity
+            android:name=".ZeroToSixty"
+            android:label="0-60 Activity">
         </activity>
 
     </application>
