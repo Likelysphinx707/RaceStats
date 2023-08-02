@@ -43,7 +43,6 @@ class ZeroToSixty : AppCompatActivity() {
     private lateinit var recordedTimeTwo: TextView
     private lateinit var recordedTimeThree: TextView
     private lateinit var homeIcon: ImageView
-    private lateinit var vectorImageView: ImageView
 
     // deals with 0-60 timer
     private var targetTime: Double = 120.0

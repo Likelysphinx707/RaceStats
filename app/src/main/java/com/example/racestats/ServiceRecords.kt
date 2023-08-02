@@ -1,5 +1,7 @@
 package com.example.racestats
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 
 
 class ServiceRecords : AppCompatActivity() {
@@ -26,10 +29,14 @@ class ServiceRecords : AppCompatActivity() {
     private lateinit var idList: MutableList<Long>
     private lateinit var editButtonIcons: MutableList<Button>
     private lateinit var databaseHelper: DatabaseHelper
+    private lateinit var homeIcon: ImageView
 
     companion object {
         const val EDIT_RECORD_REQUEST_CODE = 1
     }
+
+    // deals with menu animation
+    private var isHomeIconRotated = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +65,7 @@ class ServiceRecords : AppCompatActivity() {
         editButton = findViewById(R.id.edit_button)
         deleteButton = findViewById(R.id.delete_button)
         cancelButton = findViewById(R.id.cancel_button)
+        homeIcon = findViewById(R.id.homeIcon)
 
         // find the EditTexts
         titleTextView = findViewById(R.id.title_textview)
@@ -260,6 +268,44 @@ class ServiceRecords : AppCompatActivity() {
             }
         }
 
+
+        /**
+         * Navigation animation
+         */
+        // Set a click listener for the home icon
+        homeIcon.setOnClickListener {
+            // Rotate and change the drawable based on the rotation state
+            if (isHomeIconRotated) {
+                val rotationAnim = ObjectAnimator.ofFloat(homeIcon, "rotation", 55f, 0f)
+                val scaleXAnim = ObjectAnimator.ofFloat(homeIcon, "scaleX", 1.0f, 0.8f)
+                val scaleYAnim = ObjectAnimator.ofFloat(homeIcon, "scaleY", 1.0f, 0.8f)
+                val set = AnimatorSet()
+                set.playTogether(rotationAnim, scaleXAnim, scaleYAnim)
+                set.duration = 300
+                set.start()
+
+                // Set the bars icon drawable to the ImageView
+                val barsIconDrawable = VectorDrawableCompat.create(resources, R.drawable.home_icon, theme)
+                homeIcon.setImageDrawable(barsIconDrawable)
+            } else {
+                val rotationAnim = ObjectAnimator.ofFloat(homeIcon, "rotation", 0f, 90f)
+                val scaleXAnim = ObjectAnimator.ofFloat(homeIcon, "scaleX", 1.0f, 1.0f)
+                val scaleYAnim = ObjectAnimator.ofFloat(homeIcon, "scaleY", 1.0f, 1.0f)
+                val set = AnimatorSet()
+                set.playTogether(rotationAnim, scaleXAnim, scaleYAnim)
+                set.duration = 500
+                set.start()
+
+                // Set the X icon drawable to the ImageView
+                val xIconDrawable = VectorDrawableCompat.create(resources, R.drawable.ic_x_icon, theme)
+                homeIcon.setImageDrawable(xIconDrawable)
+            }
+            // Toggle the rotation state
+            isHomeIconRotated = !isHomeIconRotated
+
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
 
         // set onClickListener on the delete button
         deleteButton.setOnClickListener {
