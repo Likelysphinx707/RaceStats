@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
@@ -46,8 +47,11 @@ class ServiceRecords : AppCompatActivity() {
         // Initialize the database helper
         databaseHelper = DatabaseHelper(this)
 
-        // find the service_records_list LinearLayout
-        val serviceRecordsList = findViewById<LinearLayout>(R.id.service_records_list)
+        // Find the LinearLayout for new record
+        val serviceTitleBox = findViewById<View>(R.id.serviceTitleBox)
+        val mileageContentBox = findViewById<View>(R.id.mileageContentBox)
+        val dateContentBox = findViewById<View>(R.id.dateContentBox)
+        val params = serviceTitleBox.layoutParams as ViewGroup.MarginLayoutParams
 
         // find the UI buttons and assign them to their vars
         addButton = findViewById(R.id.add_new_button)
@@ -68,8 +72,22 @@ class ServiceRecords : AppCompatActivity() {
         addButton.setOnClickListener {
             // Toggle the visibility of the new record layout
             if (newRecordLayout.visibility == View.GONE) {
+                // Set margins when new_record_layout is visible
+                params.setMargins(resources.getDimensionPixelSize(R.dimen.margin_40dp), resources.getDimensionPixelSize(R.dimen.margin_100dp), 0, 0)
+                serviceTitleBox.layoutParams = params
+
+                val marginValue = resources.getDimensionPixelSize(R.dimen.margin_40dp)
+                params.setMargins(marginValue, marginValue, 0, 0)
+                mileageContentBox.layoutParams = params
+                dateContentBox.layoutParams = params
                 toggleRecordLayoutVisibility(newRecordLayout, addButton, recordViews, titleTextView, editButton, deleteButton, cancelButton)
             } else {
+                // Set margins to 0 when new_record_layout is gone
+                params.setMargins(0, 0, 0, 0)
+                serviceTitleBox.layoutParams = params
+                mileageContentBox.layoutParams = params
+                dateContentBox.layoutParams = params
+
                 // Change the addButton's text from "Add New" to "Save"
                 addButton.text = "Save"
 
@@ -451,7 +469,7 @@ class ServiceRecords : AppCompatActivity() {
         for (record in recordViews) {
             record.visibility = View.GONE
         }
-        titleTextView.text = "Add New Record"
+        titleTextView.text = "Add New Record Below"
         editButton.visibility = View.GONE
         deleteButton.visibility = View.GONE
         cancelButton.visibility = View.VISIBLE

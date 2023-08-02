@@ -37,7 +37,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/service_title"
         app:layout_constraintTop_toTopOf="@+id/service_title"
-        app:layout_constraintVertical_bias="0.666" />
+        app:layout_constraintVertical_bias="0.666"
+        android:background="@null"/>
 
     <TextView
         android:id="@+id/mileage_title"
@@ -68,7 +69,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/mileage_title"
         app:layout_constraintTop_toTopOf="@+id/mileage_title"
-        app:layout_constraintVertical_bias="0.567" />
+        app:layout_constraintVertical_bias="0.567"
+        android:background="@null"/>
 
     <TextView
         android:id="@+id/date_title"
@@ -99,7 +101,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/date_title"
         app:layout_constraintTop_toTopOf="@+id/date_title"
-        app:layout_constraintVertical_bias="0.54" />
+        app:layout_constraintVertical_bias="0.54"
+        android:background="@null"/>
 
     <TextView
         android:id="@+id/edit_record_title"
