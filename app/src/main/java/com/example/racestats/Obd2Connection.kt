@@ -5,30 +5,40 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.*
 
 class Obd2Connection(private val context: Context, private val device: BluetoothDevice) {
     private var socket: BluetoothSocket? = null
-    private lateinit var obd2Communication: Obd2Communication
 
     fun connect() {
-        if (ContextCompat.checkSelfPermission(
+        val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+        if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.BLUETOOTH_CONNECT
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Handle the missing permission here
             return
         }
+        socket = device.createRfcommSocketToServiceRecord(uuid)
 
-        socket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
-        socket?.connect()
+        try {
+            socket?.connect()
+        } catch (e: IOException) {
+            // Handle connection error
+        }
+    }
 
-        val inputStream = socket!!.inputStream
-        val outputStream = socket!!.outputStream
+    fun getInputStream(): InputStream? {
+        return socket?.inputStream
+    }
 
-        obd2Communication = Obd2Communication(inputStream, outputStream)
+    fun getOutputStream(): OutputStream? {
+        return socket?.outputStream
     }
 
     fun isConnected(): Boolean {
@@ -37,9 +47,5 @@ class Obd2Connection(private val context: Context, private val device: Bluetooth
 
     fun close() {
         socket?.close()
-    }
-
-    fun getObd2Communication(): Obd2Communication {
-        return obd2Communication
     }
 }

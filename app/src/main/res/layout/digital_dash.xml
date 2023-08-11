@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:text="Engine RPM: "
         android:textSize="18sp"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/coolantTempTextView"
@@ -31,5 +31,5 @@
         android:layout_height="wrap_content"
         android:text="Coolant Temperature: "
         android:textSize="18sp"
-        android:visibility="gone" />
+        android:visibility="visible" />
 </LinearLayout>
