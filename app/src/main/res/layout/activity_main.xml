@@ -8,8 +8,8 @@
     android:background="@drawable/forgedcarbonbackground">
 
     <LinearLayout
-        android:layout_width="909dp"
-        android:layout_height="527dp"
+        android:layout_width="1114dp"
+        android:layout_height="705dp"
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
