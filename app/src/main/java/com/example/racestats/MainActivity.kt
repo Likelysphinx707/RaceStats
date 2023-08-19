@@ -1,9 +1,18 @@
 package com.example.racestats
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
     private lateinit var ecuInfo: View
@@ -13,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var zero_to_sixty: View
     private lateinit var settings: View
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,4 +70,37 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+//     Ask User for all needed permissions
+//    private val requestPermissionLauncher = registerForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) { isGranted: Boolean ->
+//        if (isGranted) {
+//            Log.i("Permission: ", "Granted")
+//        } else {
+//            Log.i("Permission: ", "Denied")
+//        }
+//    }
+//
+//    private fun requestPermission() {
+//        when {
+//            ContextCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.BLUETOOTH_CONNECT
+//            ) == PackageManager.PERMISSION_GRANTED -> {
+//                // Permission is granted
+//            }
+//            ActivityCompat.shouldShowRequestPermissionRationale(
+//                this,
+//                Manifest.permission.BLUETOOTH_CONNECT
+//            ) -> {
+//                // Additional rationale should be displayed
+//            }
+//            else -> {
+//                // Permission has not been asked yet
+//            }
+//        }
+//    }
+
+
 }

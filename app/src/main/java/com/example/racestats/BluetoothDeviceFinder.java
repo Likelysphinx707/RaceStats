@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat;
 import java.util.ArrayList;
 import java.util.Set;
 
+@RequiresApi(api = Build.VERSION_CODES.S)
 public class BluetoothDeviceFinder extends AppCompatActivity {
     private BluetoothAdapter bluetoothAdapter;
     private ArrayAdapter<String> devicesArrayAdapter;
@@ -36,8 +37,13 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (ActivityCompat.checkSelfPermission(BluetoothDeviceFinder.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(BluetoothDeviceFinder.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling ActivityCompat#requestPermissions here
+                    // to request the missing permissions, and then overriding
+                    // public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                        int[] grantResults)
+                    // to handle the case where the user grants the permission.
+                    // See the documentation for ActivityCompat#requestPermissions for more details.
                     return;
                 }
                 String deviceName = device.getName();
@@ -53,6 +59,8 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.paired_blue_tooth_list);
+
+        requestPermissions();
 
         ListView devicesListView = findViewById(R.id.devicesListView);
         devicesList = new ArrayList<>();
@@ -76,15 +84,31 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-                return;
-            }
             startActivityForResult(enableBtIntent, 1);
         }
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         for (BluetoothDevice device : pairedDevices) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             String deviceName = device.getName();
             String deviceAddress = device.getAddress();
             String deviceInfo = deviceName + "\n" + deviceAddress;
@@ -94,7 +118,40 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(bluetoothReceiver, filter);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         bluetoothAdapter.startDiscovery();
+    }
+
+    private void requestPermissions() {
+        if (getApplicationContext().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+            // Access granted
+            Log.d("Permissions", "Permission Already granted");
+        } else {
+            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Access granted
+                Log.d("Permissions", "Permission Granted to BluetoothConnect");
+            } else {
+                Log.d("Permissions", "Denied Permission to BluetoothConnect");
+            }
+        }
     }
 
     @Override
@@ -103,45 +160,27 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         unregisterReceiver(bluetoothReceiver);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 1) { // BLUETOOTH_CONNECT permission request
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, you can proceed with Bluetooth operations
-                startBluetoothDiscovery();
-            } else {
-                // Permission denied, handle accordingly
-            }
-        } else if (requestCode == 2) { // BLUETOOTH_SCAN permission request
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, you can proceed with starting Bluetooth discovery
-                startBluetoothDiscovery();
-            } else {
-                // Permission denied, handle accordingly
-            }
-        }
-    }
-
-
     private void refreshBluetoothDevices() {
         devicesList.clear();
         devicesArrayAdapter.notifyDataSetChanged();
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-        } else {
-            startBluetoothDiscovery();
-        }
+        startBluetoothDiscovery();
     }
 
     private void startBluetoothDiscovery() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         if (!bluetoothAdapter.isDiscovering()) {
             bluetoothAdapter.startDiscovery();
         }
     }
+
+
 }
