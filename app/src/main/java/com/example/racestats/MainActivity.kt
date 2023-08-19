@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         digital_dash.setOnClickListener {
-            val intent = Intent(this, DigitalDash::class.java)
+            val intent = Intent(this, BluetoothDeviceFinder::class.java)
             startActivity(intent)
         }
 
