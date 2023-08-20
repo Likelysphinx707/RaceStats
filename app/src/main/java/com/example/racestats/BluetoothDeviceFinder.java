@@ -28,8 +28,9 @@ import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
-import com.github.pires.obd.enums.AvailableCommandNames;
 import com.github.pires.obd.enums.ObdProtocols;
+import com.github.pires.obd.commands.control.VinCommand;
+import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -145,20 +146,24 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                     new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
                     new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
 
-                    // Create a command to retrieve the coolant temperature
-                    AvailableCommandNames coolantTempCmd = AvailableCommandNames.VIN;
+                    // Retrieve the engine coolant temperature
+                    EngineCoolantTemperatureCommand coolantTempCmd = new EngineCoolantTemperatureCommand();
+                    coolantTempCmd.run(socket.getInputStream(), socket.getOutputStream());
 
-                    System.out.println("system out : " + coolantTempCmd);
-                    Log.d("ran through temp", "temp found maybe check below");
-                    Log.d("Coolant Temp: ", coolantTempCmd.toString());
+                    VinCommand getVinCmd = new VinCommand();
+                    getVinCmd.run(socket.getInputStream(), socket.getOutputStream());
+
+                    // Get the temperature value
+                    String coolantTemp = coolantTempCmd.getFormattedResult();
+                    String vin = getVinCmd.getFormattedResult();
+
+                    Log.d("Coolant Temperature", coolantTemp);
+                    Log.d("Vin", vin);
                 } catch (Exception e) {
                     // handle errors
                     e.printStackTrace();
                     Log.e("Error", e.toString());
                 }
-
-                // Now you have the coolant temperature in Celsius
-//                Log.d("Coolant Temperature", coolantTempCelsius + " °C");
 
                 // Close the socket when done
                 socket.close();
@@ -166,7 +171,25 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                 Log.d("Bluetooth connection error", "Failed to connect and establish a connection with the OBD2 Scanner");
                 e.printStackTrace();
             }
+
+            Button disconnectButton = findViewById(R.id.disconnectButton);
+            BluetoothSocket finalSocket = socket;
+            disconnectButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (finalSocket != null) {
+                        try {
+                            finalSocket.close();
+                            Log.d("Disconnect", "Socket closed");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e("Disconnect Error", e.toString());
+                        }
+                    }
+                }
+            });
         });
+
     }
 
     private void requestPermissionsBlueToothScan(String[] strings, int i) {

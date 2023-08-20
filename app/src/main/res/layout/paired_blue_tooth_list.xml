@@ -54,4 +54,11 @@
         android:layout_height="65dp"
         android:layout_gravity="center"
         android:text="Refresh" />
+
+    <Button
+        android:id="@+id/disconnectButton"
+        android:layout_width="170dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center"
+        android:text="Disconnect" />
 </LinearLayout>
