@@ -117,7 +117,6 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionsBlueToothScan(new String[]{Manifest.permission.BLUETOOTH_SCAN}, 1);
             Log.d("Test", "Added Device to list 129 needs permission");
-            return;
         }
 
         Log.d("Test", "Added Device to list 132");
@@ -131,12 +130,10 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
             BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
             Log.d("selectedDevice BluetoothDevice", String.valueOf(selectedDevice));
-            System.out.println("test sys out");
 
             // Connect to the selected device
             BluetoothSocket socket = null;
             try {
-                System.out.println("test sys out");
                 Log.d("Trying socket connection", "searching");
                 socket = selectedDevice.createInsecureRfcommSocketToServiceRecord(selectedDevice.getUuids()[0].getUuid());
                 socket.connect();
@@ -149,11 +146,11 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                     new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
 
                     // Create a command to retrieve the coolant temperature
-                    String coolantTempCmd = AvailableCommandNames.ENGINE_COOLANT_TEMP.getValue();
+                    AvailableCommandNames coolantTempCmd = AvailableCommandNames.VIN;
 
                     System.out.println("system out : " + coolantTempCmd);
                     Log.d("ran through temp", "temp found maybe check below");
-                    Log.d("Coolant Temp: ", coolantTempCmd);
+                    Log.d("Coolant Temp: ", coolantTempCmd.toString());
                 } catch (Exception e) {
                     // handle errors
                     e.printStackTrace();
