@@ -9,6 +9,28 @@
     android:padding="16dp"
     tools:context=".BluetoothDeviceFinder">
 
+    <!-- Add loading icon and search status text -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/searchStatusTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text=""
+            android:visibility="gone"/>
+    </FrameLayout>
+
     <ListView
         android:id="@+id/devicesListView"
         android:layout_width="match_parent"
@@ -19,8 +41,8 @@
 
     <Button
         android:id="@+id/refreshButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="170dp"
+        android:layout_height="65dp"
         android:layout_gravity="center"
-        android:text="Refresh"/>
+        android:text="Refresh" />
 </LinearLayout>

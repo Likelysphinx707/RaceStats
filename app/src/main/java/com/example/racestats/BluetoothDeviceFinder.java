@@ -3,6 +3,7 @@ package com.example.racestats;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,14 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.github.pires.obd.commands.temperature.TemperatureCommand;
+import com.github.pires.obd.enums.AvailableCommandNames;
+
+// Imports for OBD2 class
+import pt.lighthouselabs.obd.commands.control.TemperatureCommand;
+import pt.lighthouselabs.obd.enums.AvailableCommandNames;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -129,6 +138,42 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             return;
         }
         bluetoothAdapter.startDiscovery();
+
+        devicesListView.setOnItemClickListener((parent, view, position, id) -> {
+            String deviceInfo = devicesArrayAdapter.getItem(position);
+            String[] deviceInfoArray = deviceInfo.split("\n");
+            String deviceAddress = deviceInfoArray[1];
+
+            BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
+
+            // Connect to the selected device
+            BluetoothSocket socket = null;
+            try {
+                socket = selectedDevice.createInsecureRfcommSocketToServiceRecord(selectedDevice.getUuids()[0].getUuid());
+                socket.connect();
+
+                // Request coolant temperature
+                TemperatureCommand tempCmd = new TemperatureCommand(AvailableCommandNames.COOLANT_TEMP);
+                tempCmd.run(socket.getInputStream(), socket.getOutputStream());
+                double coolantTempCelsius = tempCmd.getTemperature();
+
+                // Now you have the coolant temperature in Celsius
+                Log.d("Coolant Temperature", coolantTempCelsius + " °C");
+
+                // Close the socket when done
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+            // TODO: Connect to the selected device and request coolant temperature
+            // For OBD2 communication, you'll need to establish an appropriate protocol
+            // such as ELM327 commands over Bluetooth SPP or BLE.
+
+            // Example: You might want to use an OBD2 library to simplify the communication
+            // For instance, "https://github.com/pires/obd-java-api" is a popular Java library.
     }
 
     private void requestPermissions() {
@@ -181,6 +226,5 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             bluetoothAdapter.startDiscovery();
         }
     }
-
 
 }
