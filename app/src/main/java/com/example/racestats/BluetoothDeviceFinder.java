@@ -22,12 +22,13 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.github.pires.obd.commands.temperature.TemperatureCommand;
-import com.github.pires.obd.enums.AvailableCommandNames;
-
 // Imports for OBD2 class
-import pt.lighthouselabs.obd.commands.control.TemperatureCommand;
-import pt.lighthouselabs.obd.enums.AvailableCommandNames;
+import com.github.pires.obd.commands.protocol.EchoOffCommand;
+import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
+import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
+import com.github.pires.obd.commands.protocol.TimeoutCommand;
+import com.github.pires.obd.enums.AvailableCommandNames;
+import com.github.pires.obd.enums.ObdProtocols;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,6 +97,7 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             startActivityForResult(enableBtIntent, 1);
         }
 
+        Log.d("before werid return calls", "line 100");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -138,33 +140,51 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             return;
         }
         bluetoothAdapter.startDiscovery();
-
+        Log.d("Line 142","test");
         devicesListView.setOnItemClickListener((parent, view, position, id) -> {
+            Log.d("Line 145","Click detected");
             String deviceInfo = devicesArrayAdapter.getItem(position);
             String[] deviceInfoArray = deviceInfo.split("\n");
             String deviceAddress = deviceInfoArray[1];
 
             BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
+            Log.d("selectedDevice BluetoothDevice", String.valueOf(selectedDevice));
+            System.out.println("test sys out");
 
             // Connect to the selected device
             BluetoothSocket socket = null;
             try {
+                System.out.println("test sys out");
+                Log.d("Trying socket connection", "searching");
                 socket = selectedDevice.createInsecureRfcommSocketToServiceRecord(selectedDevice.getUuids()[0].getUuid());
                 socket.connect();
 
                 // Request coolant temperature
-                TemperatureCommand tempCmd = new TemperatureCommand(AvailableCommandNames.COOLANT_TEMP);
-                tempCmd.run(socket.getInputStream(), socket.getOutputStream());
-                double coolantTempCelsius = tempCmd.getTemperature();
+                try {
+                    new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+                    new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+                    new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+                    new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
+
+                    // Create a command to retrieve the coolant temperature
+                    String coolantTempCmd = AvailableCommandNames.ENGINE_COOLANT_TEMP.getValue();
+
+                    System.out.println("system out : " + coolantTempCmd);
+                    Log.d("ran through temp", "temp found maybe check below");
+                    Log.d("Coolant Temp: ", coolantTempCmd);
+                } catch (Exception e) {
+                    // handle errors
+                    e.printStackTrace();
+                    Log.e("Error", e.toString());
+                }
 
                 // Now you have the coolant temperature in Celsius
-                Log.d("Coolant Temperature", coolantTempCelsius + " °C");
+//                Log.d("Coolant Temperature", coolantTempCelsius + " °C");
 
                 // Close the socket when done
                 socket.close();
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+                Log.d("Bluetooth connection error", "Failed to connect and establish a connection with the OBD2 Scanner");
                 e.printStackTrace();
             }
         });
@@ -175,6 +195,7 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             // Example: You might want to use an OBD2 library to simplify the communication
             // For instance, "https://github.com/pires/obd-java-api" is a popular Java library.
     }
+
 
     private void requestPermissions() {
         if (getApplicationContext().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {

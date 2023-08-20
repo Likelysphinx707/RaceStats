@@ -9,6 +9,15 @@
     android:padding="16dp"
     tools:context=".BluetoothDeviceFinder">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Coolant temp goes here"
+        android:id="@+id/coolantTemp"
+        android:textColor="@color/white">
+
+    </TextView>
+
     <!-- Add loading icon and search status text -->
     <FrameLayout
         android:layout_width="match_parent"
@@ -27,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text=""
+            android:text="Searcing..."
             android:visibility="gone"/>
     </FrameLayout>
 
