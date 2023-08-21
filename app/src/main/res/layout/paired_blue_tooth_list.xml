@@ -9,15 +9,6 @@
     android:padding="16dp"
     tools:context=".BluetoothDeviceFinder">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Coolant temp goes here"
-        android:id="@+id/coolantTemp"
-        android:textColor="@color/white">
-
-    </TextView>
-
     <!-- Add loading icon and search status text -->
     <FrameLayout
         android:layout_width="match_parent"
@@ -29,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/searchStatusTextView"
@@ -37,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Searcing..."
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </FrameLayout>
 
     <ListView
@@ -47,6 +38,41 @@
         android:layout_weight="1"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"/>
+
+    <TextView
+        android:id="@+id/coolantTemp"
+        android:layout_width="170dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/oilTemp"
+        android:layout_width="170dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/vin"
+        android:layout_width="170dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/afr"
+        android:layout_width="170dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/fuelLevel"
+        android:layout_width="170dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center"
+        />
 
     <Button
         android:id="@+id/refreshButton"

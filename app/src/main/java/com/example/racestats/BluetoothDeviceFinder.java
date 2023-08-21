@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 // Imports for OBD2 classes
+import com.github.pires.obd.commands.engine.OilTempCommand;
+import com.github.pires.obd.commands.engine.ThrottlePositionCommand;
+import com.github.pires.obd.commands.fuel.AirFuelRatioCommand;
+import com.github.pires.obd.commands.fuel.FuelLevelCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
@@ -122,9 +127,9 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
         Log.d("Test", "Added Device to list 132");
         bluetoothAdapter.startDiscovery();
-        Log.d("Line 142","test");
+        Log.d("Line 142", "test");
         devicesListView.setOnItemClickListener((parent, view, position, id) -> {
-            Log.d("Line 145","Click detected");
+            Log.d("Line 145", "Click detected");
             String deviceInfo = devicesArrayAdapter.getItem(position);
             String[] deviceInfoArray = deviceInfo.split("\n");
             String deviceAddress = deviceInfoArray[1];
@@ -153,27 +158,70 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                     VinCommand getVinCmd = new VinCommand();
                     getVinCmd.run(socket.getInputStream(), socket.getOutputStream());
 
-                    // Get the temperature value
+                    ThrottlePositionCommand getOilTemp = new ThrottlePositionCommand();
+                    getOilTemp.run(socket.getInputStream(), socket.getOutputStream());
+
+                    // Don't work on the Z
+//                    OilTempCommand getOilTemp = new OilTempCommand();
+//                    getOilTemp.run(socket.getInputStream(), socket.getOutputStream());
+
+//                    AirFuelRatioCommand getAfr = new AirFuelRatioCommand();
+//                    getAfr.run(socket.getInputStream(), socket.getOutputStream());
+
+//                    Log.d("test run", "AFR");
+
+//                    FuelLevelCommand getFuelLevel = new FuelLevelCommand();
+//                    getFuelLevel.run(socket.getInputStream(), socket.getOutputStream());
+
+//                    Log.d("test run", "Fuel");
+
+                    // After fetching the values using OBD2 commands
                     String coolantTemp = coolantTempCmd.getFormattedResult();
                     String vin = getVinCmd.getFormattedResult();
+                    String oilTemp = getOilTemp.getFormattedResult();
+//                    String oilTemp = getOilTemp.getFormattedResult();
+//                    String afr = getAfr.getFormattedResult();
+//                    String fuelLevel = getFuelLevel.getFormattedResult();
 
                     Log.d("Coolant Temperature", coolantTemp);
                     Log.d("Vin", vin);
+                    Log.d("Oil Temp", oilTemp);
+//                    Log.d("Oil Temp", oilTemp);
+//                    Log.d("AFR", afr);
+//                    Log.d("Fuel Level", fuelLevel);
+
+                    // Update TextView elements with the received values
+                    TextView coolantTempTextView = findViewById(R.id.coolantTemp);
+                    coolantTempTextView.setText("Coolant Temp: " + coolantTemp);
+
+                    TextView oilTempTextView = findViewById(R.id.oilTemp);
+                    oilTempTextView.setText("Oil Temp: " + oilTemp);
+
+                    TextView vinTextView = findViewById(R.id.vin);
+                    vinTextView.setText("VIN: " + vin);
+
+//                    TextView afrTextView = findViewById(R.id.afr);
+//                    afrTextView.setText("AFR: " + afr);
+
+//                    TextView fuelLevelTextView = findViewById(R.id.fuelLevel);
+//                    fuelLevelTextView.setText("Fuel Level: " + fuelLevel);
                 } catch (Exception e) {
                     // handle errors
                     e.printStackTrace();
-                    Log.e("Error", e.toString());
+//                    Log.e("Error", e.toString());
                 }
-
-                // Close the socket when done
-                socket.close();
             } catch (IOException e) {
-                Log.d("Bluetooth connection error", "Failed to connect and establish a connection with the OBD2 Scanner");
+//                Log.d("Bluetooth connection error", "Failed to connect and establish a connection with the OBD2 Scanner");
                 e.printStackTrace();
             }
 
+            // Find disconnect UI button
             Button disconnectButton = findViewById(R.id.disconnectButton);
             BluetoothSocket finalSocket = socket;
+
+            /**
+             * On click listener that will deal with disconnecting the device from the OBD2 Scanner
+             */
             disconnectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -192,6 +240,10 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
     }
 
+    /**
+     * @param strings
+     * @param i
+     */
     private void requestPermissionsBlueToothScan(String[] strings, int i) {
         if (getApplicationContext().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
             // Access granted
@@ -201,6 +253,9 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     */
     private void requestPermissions() {
         if (getApplicationContext().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
             // Access granted
@@ -210,6 +265,11 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         }
     }
 
+    /**
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -224,18 +284,28 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         }
     }
 
+
+    /**
+     *
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(bluetoothReceiver);
     }
 
+    /**
+     *
+     */
     private void refreshBluetoothDevices() {
         devicesList.clear();
         devicesArrayAdapter.notifyDataSetChanged();
         startBluetoothDiscovery();
     }
 
+    /**
+     *
+     */
     private void startBluetoothDiscovery() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
             Log.d("Error Permissions", "229 Permissions error");
