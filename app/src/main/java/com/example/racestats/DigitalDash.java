@@ -1,6 +1,7 @@
 package com.example.racestats;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
@@ -38,7 +39,9 @@ import com.github.pires.obd.exceptions.NoDataException;
 import java.io.IOException;
 
 public class DigitalDash extends AppCompatActivity {
-    private BluetoothSocketConnection socketConnection;
+    private BluetoothSocket socket;
+    private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
