@@ -16,30 +16,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 // Imports for OBD2 classes
-import com.github.pires.obd.commands.control.ModuleVoltageCommand;
-import com.github.pires.obd.commands.engine.AbsoluteLoadCommand;
-import com.github.pires.obd.commands.engine.LoadCommand;
-import com.github.pires.obd.commands.engine.MassAirFlowCommand;
-import com.github.pires.obd.commands.engine.OilTempCommand;
+import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.engine.RuntimeCommand;
-import com.github.pires.obd.commands.engine.ThrottlePositionCommand;
-import com.github.pires.obd.commands.fuel.AirFuelRatioCommand;
-import com.github.pires.obd.commands.fuel.FindFuelTypeCommand;
-import com.github.pires.obd.commands.fuel.FuelLevelCommand;
-import com.github.pires.obd.commands.pressure.FuelPressureCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
-import com.github.pires.obd.enums.FuelType;
-import com.github.pires.obd.enums.ObdProtocols;
-import com.github.pires.obd.commands.control.VinCommand;
 import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand;
-import com.github.pires.obd.exceptions.NoDataException;
+import com.github.pires.obd.enums.ObdProtocols;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 public class DigitalDash extends AppCompatActivity {
@@ -116,9 +104,8 @@ public class DigitalDash extends AppCompatActivity {
 
             // Batch multiple commands in a single request
             List<ObdCommand> commandsToRun = new ArrayList<>();
-            commandsToRun.add(new EngineLoadCommand());
-            commandsToRun.add(new EngineRPMCommand());
-            // Add more commands to the list
+            commandsToRun.add(new EngineCoolantTemperatureCommand());
+            commandsToRun.add(new RPMCommand());
 
             // Execute commands in a single request
             for (ObdCommand command : commandsToRun) {
