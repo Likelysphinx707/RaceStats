@@ -25,19 +25,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 // Imports for OBD2 classes
+import com.github.pires.obd.commands.control.ModuleVoltageCommand;
+import com.github.pires.obd.commands.engine.AbsoluteLoadCommand;
+import com.github.pires.obd.commands.engine.LoadCommand;
+import com.github.pires.obd.commands.engine.MassAirFlowCommand;
 import com.github.pires.obd.commands.engine.OilTempCommand;
+import com.github.pires.obd.commands.engine.RPMCommand;
+import com.github.pires.obd.commands.engine.RuntimeCommand;
 import com.github.pires.obd.commands.engine.ThrottlePositionCommand;
 import com.github.pires.obd.commands.fuel.AirFuelRatioCommand;
+import com.github.pires.obd.commands.fuel.FindFuelTypeCommand;
 import com.github.pires.obd.commands.fuel.FuelLevelCommand;
+import com.github.pires.obd.commands.pressure.FuelPressureCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
+import com.github.pires.obd.enums.FuelType;
 import com.github.pires.obd.enums.ObdProtocols;
 import com.github.pires.obd.commands.control.VinCommand;
 import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand;
+import com.github.pires.obd.exceptions.NoDataException;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -152,11 +164,12 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                     new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
                     new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
 
+                    String coolantTemp = null;
                     try {
                         // EngineCoolantTemperatureCommand
                         EngineCoolantTemperatureCommand coolantTempCmd = new EngineCoolantTemperatureCommand();
                         coolantTempCmd.run(socket.getInputStream(), socket.getOutputStream());
-                        String coolantTemp = coolantTempCmd.getFormattedResult();
+                        coolantTemp = coolantTempCmd.getFormattedResult();
                         System.out.println("Coolant Temperature: " + coolantTemp);
                     } catch (NoDataException e) {
                         System.err.println("Error: No data available for EngineCoolantTemperatureCommand");
@@ -164,11 +177,12 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                         System.err.println("Error while fetching EngineCoolantTemperatureCommand: " + e.getMessage());
                     }
 
+                    String vin = null;
                     try {
                         // VinCommand
                         VinCommand getVinCmd = new VinCommand();
                         getVinCmd.run(socket.getInputStream(), socket.getOutputStream());
-                        String vin = getVinCmd.getFormattedResult();
+                        vin = getVinCmd.getFormattedResult();
                         System.out.println("Vin: " + vin);
                     } catch (NoDataException e) {
                         System.err.println("Error: No data available for VinCommand");
@@ -189,18 +203,6 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                     }
 
                     try {
-                        // AbsoluteLoadCommand
-                        AbsoluteLoadCommand absoluteLoadCmd = new AbsoluteLoadCommand();
-                        absoluteLoadCmd.run(socket.getInputStream(), socket.getOutputStream());
-                        String absoluteLoad = absoluteLoadCmd.getFormattedResult();
-                        System.out.println("Absolute Load: " + absoluteLoad);
-                    } catch (NoDataException e) {
-                        System.err.println("Error: No data available for AbsoluteLoadCommand");
-                    } catch (Exception e) {
-                        System.err.println("Error while fetching AbsoluteLoadCommand: " + e.getMessage());
-                    }
-
-                    try {
                         // LoadCommand
                         LoadCommand loadCmd = new LoadCommand();
                         loadCmd.run(socket.getInputStream(), socket.getOutputStream());
@@ -210,29 +212,6 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                         System.err.println("Error: No data available for LoadCommand");
                     } catch (Exception e) {
                         System.err.println("Error while fetching LoadCommand: " + e.getMessage());
-                    }
-
-                    try {
-                        // MassAirFlowCommand
-                        MassAirFlowCommand massAirFlowCmd = new MassAirFlowCommand();
-                        massAirFlowCmd.run(socket.getInputStream(), socket.getOutputStream());
-                        String massAirFlow = massAirFlowCmd.getFormattedResult();
-                        System.out.println("Mass Air Flow: " + massAirFlow);
-                    } catch (NoDataException e) {
-                        System.err.println("Error: No data available for MassAirFlowCommand");
-                    } catch (Exception e) {
-                        System.err.println("Error while fetching MassAirFlowCommand: " + e.getMessage());
-                    }
-                    try {
-                        // OilTempCommand
-                        OilTempCommand oilTempCmd = new OilTempCommand();
-                        oilTempCmd.run(socket.getInputStream(), socket.getOutputStream());
-                        String oilTemp = oilTempCmd.getFormattedResult();
-                        System.out.println("Oil Temperature: " + oilTemp);
-                    } catch (NoDataException e) {
-                        System.err.println("Error: No data available for OilTempCommand");
-                    } catch (Exception e) {
-                        System.err.println("Error while fetching OilTempCommand: " + e.getMessage());
                     }
 
                     try {
@@ -248,37 +227,44 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
                     }
 
                     try {
-                        // RuntimeCommand
-                        RuntimeCommand runtimeCmd = new RuntimeCommand();
-                        runtimeCmd.run(socket.getInputStream(), socket.getOutputStream());
-                        String runtime = runtimeCmd.getFormattedResult();
-                        System.out.println("Runtime: " + runtime);
+                        // FuelPRessureCommand
+                        FuelPressureCommand rpmCmd = new FuelPressureCommand();
+                        rpmCmd.run(socket.getInputStream(), socket.getOutputStream());
+                        String rpm = rpmCmd.getFormattedResult();
+                        System.out.println("RPM: " + rpm);
                     } catch (NoDataException e) {
-                        System.err.println("Error: No data available for RuntimeCommand");
+                        System.err.println("Error: No data available for RPMCommand");
                     } catch (Exception e) {
-                        System.err.println("Error while fetching RuntimeCommand: " + e.getMessage());
+                        System.err.println("Error while fetching RPMCommand: " + e.getMessage());
                     }
 
 
+                    // Construct and send a custom OBD command
+                    String customPid = "01 0C"; // Replace with your custom PID
+                    String command = customPid + "\r\n"; // ELM327 command format
+                    byte[] commandBytes = command.getBytes();
+
+                    OutputStream outputStream = socket.getOutputStream();
+                    outputStream.write(commandBytes);
+                    outputStream.flush();
+
+                    // Read and parse the response
+                    InputStream inputStream = socket.getInputStream();
+                    byte[] buffer = new byte[1024];
+                    int bytesRead = inputStream.read(buffer);
+                    String response = new String(buffer, 0, bytesRead);
+
+                    // Parse the response to extract the oil pressure value
+                    String oilPressure = parseOilPressureResponse(response);
+                    System.out.println("Oil Pressure: " + oilPressure);
+
+
                     // Don't work on the Z
-//                    OilTempCommand getOilTemp = new OilTempCommand();
-//                    getOilTemp.run(socket.getInputStream(), socket.getOutputStream());
-
-//                    AirFuelRatioCommand getAfr = new AirFuelRatioCommand();
-//                    getAfr.run(socket.getInputStream(), socket.getOutputStream());
-
-//                    Log.d("test run", "AFR");
-
-//                    FuelLevelCommand getFuelLevel = new FuelLevelCommand();
-//                    getFuelLevel.run(socket.getInputStream(), socket.getOutputStream());
-
-
-                    // Update TextView elements with the received values
-                    TextView coolantTempTextView = findViewById(R.id.coolantTemp);
-                    coolantTempTextView.setText("Coolant Temp: " + coolantTemp);
-
-                    TextView oilTempTextView = findViewById(R.id.oilTemp);
-                    oilTempTextView.setText("Oil Temp: " + oilTemp);
+//                    AbsoluteLoadCommand
+//                    OilTempCommand
+//                    RuntimeCommand
+//                    ModuleVoltageCommand
+//                    FindFuelTypeCommand
 
                     TextView vinTextView = findViewById(R.id.vin);
                     vinTextView.setText("VIN: " + vin);
@@ -318,6 +304,15 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             });
         });
 
+    }
+
+    private String parseOilPressureResponse(String response) {
+        // Assuming the response contains the oil pressure value in the form "PID:VALUE"
+        String[] parts = response.split(":");
+        if (parts.length >= 2) {
+            return parts[1].trim(); // Extract the value part
+        }
+        return "N/A"; // Return "Not Available" if parsing fails
     }
 
     /**
