@@ -39,14 +39,13 @@ import com.github.pires.obd.exceptions.NoDataException;
 import java.io.IOException;
 
 public class DigitalDash extends AppCompatActivity {
-    private BluetoothSocket socket;
+    private static BluetoothSocket socket;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.paired_blue_tooth_list);
+        setContentView(R.layout.digital_dash);
 
         // Retrieve the passed device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
@@ -59,6 +58,11 @@ public class DigitalDash extends AppCompatActivity {
             }
             socket = selectedDevice.createInsecureRfcommSocketToServiceRecord(selectedDevice.getUuids()[0].getUuid());
             socket.connect();
+
+            // need to make array of some sort that will collect all gauges user wants to use. Maybe make ids for each gauge to pass to the command call
+
+            // will make calls to the OBD2 scanner to get values needed
+            obd2CommandsToCall();
 
         } catch (IOException ex) {
             ex.printStackTrace();
