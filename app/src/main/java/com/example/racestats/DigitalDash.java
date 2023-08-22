@@ -5,11 +5,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -37,6 +39,8 @@ import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand
 import com.github.pires.obd.exceptions.NoDataException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
 
 public class DigitalDash extends AppCompatActivity {
     private static BluetoothSocket socket;
@@ -47,25 +51,45 @@ public class DigitalDash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.digital_dash);
 
-        // Retrieve the passed device address from the intent
+        // Get the Bluetooth device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
         BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
 
-        try {
-            // Create a BluetoothSocket using the selected device
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        // Check Bluetooth connect permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 requestPermissions();
             }
-            socket = selectedDevice.createInsecureRfcommSocketToServiceRecord(selectedDevice.getUuids()[0].getUuid());
+        }
+
+        // Create Bluetooth socket
+        socket = createBluetoothSocket(selectedDevice);
+
+        try {
+            // Connect socket and execute OBD2 commands in a separate thread
             socket.connect();
 
-            // need to make array of some sort that will collect all gauges user wants to use. Maybe make ids for each gauge to pass to the command call
-
-            // will make calls to the OBD2 scanner to get values needed
-            obd2CommandsToCall();
-
+            // Run OBD2 commands in new Thread
+            Executors.newSingleThreadExecutor().execute(this::obd2CommandsToCall);
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Create a Bluetooth socket for the selected device
+     */
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) {
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    requestPermissions();
+                }
+            }
+            return device.createInsecureRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -80,136 +104,53 @@ public class DigitalDash extends AppCompatActivity {
     /**
      * Class that will make calls to the obd2 scanner based off of the selected gauges of the user
      */
-    private static void obd2CommandsToCall() {
+    private void obd2CommandsToCall() {
         long startTime = System.currentTimeMillis();
-        // Request ECU Data
+
         try {
+            // Initialize OBD2 communication
             new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
             new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
             new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
             new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
 
-            String coolantTemp = null;
-            try {
-                // EngineCoolantTemperatureCommand
-                EngineCoolantTemperatureCommand coolantTempCmd = new EngineCoolantTemperatureCommand();
-                coolantTempCmd.run(socket.getInputStream(), socket.getOutputStream());
-                coolantTemp = coolantTempCmd.getFormattedResult();
-                System.out.println("Coolant Temperature: " + coolantTemp);
-            } catch (NoDataException e) {
-                System.err.println("Error: No data available for EngineCoolantTemperatureCommand");
-            } catch (Exception e) {
-                System.err.println("Error while fetching EngineCoolantTemperatureCommand: " + e.getMessage());
+            // Batch multiple commands in a single request
+            List<ObdCommand> commandsToRun = new ArrayList<>();
+            commandsToRun.add(new EngineLoadCommand());
+            commandsToRun.add(new EngineRPMCommand());
+            // Add more commands to the list
+
+            // Execute commands in a single request
+            for (ObdCommand command : commandsToRun) {
+                command.run(socket.getInputStream(), socket.getOutputStream());
+                String result = command.getFormattedResult();
+                Log.d("Command Result", result);
             }
 
-            String vin = null;
-            try {
-                // VinCommand
-                VinCommand getVinCmd = new VinCommand();
-                getVinCmd.run(socket.getInputStream(), socket.getOutputStream());
-                vin = getVinCmd.getFormattedResult();
-                System.out.println("Vin: " + vin);
-            } catch (NoDataException e) {
-                System.err.println("Error: No data available for VinCommand");
-            } catch (Exception e) {
-                System.err.println("Error while fetching VinCommand: " + e.getMessage());
-            }
+            // ... Add more OBD2 commands here ...
 
-            try {
-                // ThrottlePositionCommand
-                ThrottlePositionCommand throttlePositionCmd = new ThrottlePositionCommand();
-                throttlePositionCmd.run(socket.getInputStream(), socket.getOutputStream());
-                String throttlePosition = throttlePositionCmd.getFormattedResult();
-                System.out.println("Throttle Position: " + throttlePosition);
-            } catch (NoDataException e) {
-                System.err.println("Error: No data available for ThrottlePositionCommand");
-            } catch (Exception e) {
-                System.err.println("Error while fetching ThrottlePositionCommand: " + e.getMessage());
-            }
-
-            try {
-                // LoadCommand
-                LoadCommand loadCmd = new LoadCommand();
-                loadCmd.run(socket.getInputStream(), socket.getOutputStream());
-                String load = loadCmd.getFormattedResult();
-                System.out.println("Load: " + load);
-            } catch (NoDataException e) {
-                System.err.println("Error: No data available for LoadCommand");
-            } catch (Exception e) {
-                System.err.println("Error while fetching LoadCommand: " + e.getMessage());
-            }
-
-            try {
-                // RPMCommand
-                RPMCommand rpmCmd = new RPMCommand();
-                rpmCmd.run(socket.getInputStream(), socket.getOutputStream());
-                String rpm = rpmCmd.getFormattedResult();
-                System.out.println("RPM: " + rpm);
-            } catch (NoDataException e) {
-                System.err.println("Error: No data available for RPMCommand");
-            } catch (Exception e) {
-                System.err.println("Error while fetching RPMCommand: " + e.getMessage());
-            }
-
-            try {
-                // FuelPressureCommand
-                FuelPressureCommand getFuelPressure = new FuelPressureCommand();
-                getFuelPressure.run(socket.getInputStream(), socket.getOutputStream());
-                String rpm = getFuelPressure.getFormattedResult();
-                System.out.println("Fuel Pressure: " + getFuelPressure);
-            } catch (NoDataException e) {
-                System.err.println("Error: No data available for Fuel Pressure");
-            } catch (Exception e) {
-                System.err.println("Error while fetching Fuel Pressure: " + e.getMessage());
-            }
-
-
-            // Construct and send a custom OBD command
-//                    String customPid = "01 0C"; // Replace with your custom PID
-//                    String command = customPid + "\r\n"; // ELM327 command format
-//                    byte[] commandBytes = command.getBytes();
-//
-//                    OutputStream outputStream = socket.getOutputStream();
-//                    outputStream.write(commandBytes);
-//                    outputStream.flush();
-//
-//                    // Read and parse the response
-//                    InputStream inputStream = socket.getInputStream();
-//                    byte[] buffer = new byte[1024];
-//                    int bytesRead = inputStream.read(buffer);
-//                    String response = new String(buffer, 0, bytesRead);
-//
-//                    // Parse the response to extract the oil pressure value
-//                    String oilPressure = parseOilPressureResponse(response);
-//                    System.out.println("Oil Pressure: " + oilPressure);
-
-
-            // Don't work on the Z
-//                    AbsoluteLoadCommand
-//                    OilTempCommand
-//                    RuntimeCommand
-//                    ModuleVoltageCommand
-//                    FindFuelTypeCommand
         } catch (Exception e) {
             e.printStackTrace();
-//                    Log.e("Error", e.toString());
-
-        } catch (IOException e) {
-//        Log.d("Bluetooth connection error", "Failed to connect and establish a connection with the OBD2 Scanner");
-            e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        // Done calculating time it took to run OBD2 calls
         long endTime = System.currentTimeMillis();
         double elapsedTimeSeconds = (endTime - startTime) / 1000.0;
-        System.out.println("Total execution time to call OBD2 Data: " + elapsedTimeSeconds + " seconds");
+        Log.d("Execution Time", "Total execution time: " + elapsedTimeSeconds + " seconds");
     }
 
 
+    /**
+     * Cleanup when the activity is destroyed
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Close the Bluetooth socket when the activity is destroyed
         if (socket != null) {
             try {
                 socket.close();
@@ -220,9 +161,9 @@ public class DigitalDash extends AppCompatActivity {
     }
 
     /**
-     * @param strings
-     * @param i
+     * Request Bluetooth permissions for scanning
      */
+    @RequiresApi(api = Build.VERSION_CODES.S)
     private void requestPermissionsBlueToothScan(String[] strings, int i) {
         if (getApplicationContext().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
             // Access granted
@@ -233,8 +174,9 @@ public class DigitalDash extends AppCompatActivity {
     }
 
     /**
-     *
+     * Request Bluetooth permissions for connection
      */
+    @RequiresApi(api = Build.VERSION_CODES.S)
     private void requestPermissions() {
         if (getApplicationContext().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
             // Access granted
@@ -243,6 +185,4 @@ public class DigitalDash extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
         }
     }
-
-
 }
