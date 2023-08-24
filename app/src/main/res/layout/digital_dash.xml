@@ -1,5 +1,4 @@
 <!-- res/layout/digital_dash.xml -->
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,27 +8,57 @@
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".MainActivity">
+    <!-- need to implement the pop out bar for the user to select gauges and assets to add Make it so when clicking on a hamburger menu
+     an animation plays that will transition out all a side panel with the available gauges/assets. Hamburger menu should then be turned into a
+     X to close the menu -->
 
-    <Button
+    <!-- need to figure out a way for users to be able to move and resize the gauges/assets -->
+
+    <!-- this is where we are going to add the gauges for temp and rpm and stuff like that -->
+    <LinearLayout
+        android:id="@+id/row1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/rpmTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Engine RPM: "
+            android:textSize="18sp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/coolantTempTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Coolant Temperature: "
+            android:textSize="18sp"
+            android:visibility="visible" />
+
+
+    </LinearLayout>
+
+
+    <!-- This is the seconded row gauges and ECU info -->
+    <LinearLayout
+    android:id="@+id/row2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+        <Button
         android:id="@+id/connectButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect to OBD2"
-        android:onClick="onConnectClick" />
+        android:onClick="onConnectClick"
+        android:text="Connect to OBD2" />
 
-    <TextView
-        android:id="@+id/rpmTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Engine RPM: "
-        android:textSize="18sp"
-        android:visibility="visible" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/coolantTempTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Coolant Temperature: "
-        android:textSize="18sp"
-        android:visibility="visible" />
 </LinearLayout>
+
+
+
+

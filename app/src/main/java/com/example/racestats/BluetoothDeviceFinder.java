@@ -134,14 +134,14 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
     }
 
-    private String parseOilPressureResponse(String response) {
-        // Assuming the response contains the oil pressure value in the form "PID:VALUE"
-        String[] parts = response.split(":");
-        if (parts.length >= 2) {
-            return parts[1].trim(); // Extract the value part
-        }
-        return "N/A"; // Return "Not Available" if parsing fails
-    }
+//    private String parseOilPressureResponse(String response) {
+//        // Assuming the response contains the oil pressure value in the form "PID:VALUE"
+//        String[] parts = response.split(":");
+//        if (parts.length >= 2) {
+//            return parts[1].trim(); // Extract the value part
+//        }
+//        return "N/A"; // Return "Not Available" if parsing fails
+//    }
 
     /**
      * @param strings
@@ -189,7 +189,7 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
 
     /**
-     *
+     * In charge of destroying the bluetooth connection between the device and the OBD2 scanner
      */
     @Override
     protected void onDestroy() {
@@ -198,7 +198,7 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
     }
 
     /**
-     *
+     * This will refresh the paired devices that are showing up in the UI
      */
     private void refreshBluetoothDevices() {
         devicesList.clear();
@@ -207,13 +207,14 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
     }
 
     /**
-     *
+     * This will check to make sure all of the appropriate permissions are granted by the user
      */
     private void startBluetoothDiscovery() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
             Log.d("Error Permissions", "229 Permissions error");
             return;
         }
+
         if (!bluetoothAdapter.isDiscovering()) {
             bluetoothAdapter.startDiscovery();
         }
