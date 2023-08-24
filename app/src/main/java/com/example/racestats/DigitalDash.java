@@ -8,12 +8,14 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+// Import our Gauge view class
+import com.example.racestats.DraggableGaugeView;
 
 // Imports for OBD2 classes
 import com.github.pires.obd.commands.ObdCommand;
@@ -39,28 +41,43 @@ public class DigitalDash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.digital_dash);
 
+        // Initialize gauges and assets for UI
+        DraggableGaugeView rpmGauge = findViewById(R.id.rpmGauge);
+        DraggableGaugeView coolantTempGauge = findViewById(R.id.coolantTempGauge);
+
         // Get the Bluetooth device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
-        BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
 
-        // Check Bluetooth connect permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                requestPermissions();
+        if (deviceAddress == null) {
+            // Show a popup indicating that no Bluetooth device is connected
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("No Bluetooth Device Detected");
+            builder.setMessage("There is no Bluetooth device connected. Please connect a device and try again.");
+            builder.setPositiveButton("OK", (dialog, which) -> finish());
+            builder.show();
+        } else {
+            BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
+
+
+            // Check Bluetooth connect permission
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    requestPermissions();
+                }
             }
-        }
 
-        // Create Bluetooth socket
-        socket = createBluetoothSocket(selectedDevice);
+            // Create Bluetooth socket
+            socket = createBluetoothSocket(selectedDevice);
 
-        try {
-            // Connect socket and execute OBD2 commands in a separate thread
-            socket.connect();
+            try {
+                // Connect socket and execute OBD2 commands in a separate thread
+                socket.connect();
 
-            // Run OBD2 commands in new Thread
-            Executors.newSingleThreadExecutor().execute(this::obd2CommandsToCall);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+                // Run OBD2 commands in new Thread
+                Executors.newSingleThreadExecutor().execute(this::obd2CommandsToCall);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -112,7 +129,13 @@ public class DigitalDash extends AppCompatActivity {
                 command.run(socket.getInputStream(), socket.getOutputStream());
                 String result = command.getFormattedResult();
                 Log.d("Command Result", result);
+
             }
+
+            // This will actually set our values in the UI need to test first.
+            // Get results
+//            String rpmResult = rpmCommand.getFormattedResult();
+//            String coolantTempResult = coolantTempCommand.getFormattedResult();
 
             // ... Add more OBD2 commands here ...
 
