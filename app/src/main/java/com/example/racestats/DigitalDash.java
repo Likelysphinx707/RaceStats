@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -36,14 +38,20 @@ public class DigitalDash extends AppCompatActivity {
     private static BluetoothSocket socket;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+    // Declare member variables here
+    private DraggableGaugeView rpmGauge;
+    private DraggableGaugeView coolantTempGauge;
+    private Button refreshbutton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.digital_dash);
 
         // Initialize gauges and assets for UI
-        DraggableGaugeView rpmGauge = findViewById(R.id.rpmGauge);
-        DraggableGaugeView coolantTempGauge = findViewById(R.id.coolantTempGauge);
+        rpmGauge = findViewById(R.id.rpmGauge);
+        coolantTempGauge = findViewById(R.id.coolantTempGauge);
+        refreshbutton = findViewById(R.id.refreshbutton);
 
         // Get the Bluetooth device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
@@ -78,6 +86,13 @@ public class DigitalDash extends AppCompatActivity {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+
+            // add refresh button here for testing
+            refreshbutton.setOnClickListener(view -> {
+                // Call the obd2CommandsToCall() function here
+                obd2CommandsToCall();
+                Log.d("Updated command", "OBD2 commands called refreshed");
+            });
         }
     }
 
@@ -124,30 +139,48 @@ public class DigitalDash extends AppCompatActivity {
             commandsToRun.add(new EngineCoolantTemperatureCommand());
             commandsToRun.add(new RPMCommand());
 
+            String coolantTempResult = null;
+            String rpmResult = null;
+
             // Execute commands in a single request
+            //  adding a counter so we know how what request we are on
+            int counter = 0;
+
             for (ObdCommand command : commandsToRun) {
                 command.run(socket.getInputStream(), socket.getOutputStream());
                 String result = command.getFormattedResult();
-                Log.d("Command Result", result);
+                if (counter == 0) {
+                    // set coolant temp test
+                    coolantTempResult = result;
+                } else if (counter == 1) {
+                    rpmResult = result;
+                }
+                counter++;
 
             }
 
             // This will actually set our values in the UI need to test first.
             // Get results
-//            String rpmResult = rpmCommand.getFormattedResult();
-//            String coolantTempResult = coolantTempCommand.getFormattedResult();
+            Log.d("Coolant Temp", coolantTempResult);
+            Log.d("RPM", rpmResult);
+
+            // Update the values in the DraggableGaugeView instances
+            rpmGauge.setText("Engine RPM: " + rpmResult);
+            coolantTempGauge.setText("Coolant Temperature C°: " + coolantTempResult);
+
 
             // ... Add more OBD2 commands here ...
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
+//        finally {
+//            try {
+//                socket.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         long endTime = System.currentTimeMillis();
         double elapsedTimeSeconds = (endTime - startTime) / 1000.0;

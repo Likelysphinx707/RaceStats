@@ -1,6 +1,8 @@
 package com.example.racestats;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -8,6 +10,9 @@ import android.view.View;
 public class DraggableGaugeView extends View {
     private float lastTouchX;
     private float lastTouchY;
+    private String text = "";
+
+    private Paint textPaint = new Paint();
 
     public DraggableGaugeView(Context context) {
         super(context);
@@ -23,6 +28,19 @@ public class DraggableGaugeView extends View {
         // Initialization code, if needed
     }
 
+    // Add a method to set the text
+    public void setText(String newText) {
+        text = newText;
+        invalidate(); // Invalidate the view to trigger a redraw
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        // Draw the text on the canvas
+        canvas.drawText(text, 20, 40, textPaint);  // Adjust the coordinates as needed
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
