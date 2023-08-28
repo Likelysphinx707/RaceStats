@@ -78,6 +78,13 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             }
         });
 
+        Button testButton = findViewById(R.id.testButton);
+        testButton.setOnClickListener( view -> {
+            Intent intent = new Intent(BluetoothDeviceFinder.this, DigitalDash.class);
+            startActivity(intent);
+        });
+
+
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth

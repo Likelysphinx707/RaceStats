@@ -2,6 +2,7 @@ package com.example.racestats;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -25,7 +26,9 @@ public class DraggableGaugeView extends View {
     }
 
     private void init() {
-        // Initialization code, if needed
+        // Set the text color to white
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(30); // Set the text size
     }
 
     // Add a method to set the text

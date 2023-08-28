@@ -1,6 +1,7 @@
 package com.example.racestats;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -8,7 +9,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -32,6 +36,7 @@ import com.github.pires.obd.enums.ObdProtocols;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executors;
 
 public class DigitalDash extends AppCompatActivity {
@@ -42,6 +47,11 @@ public class DigitalDash extends AppCompatActivity {
     private DraggableGaugeView rpmGauge;
     private DraggableGaugeView coolantTempGauge;
     private Button refreshbutton;
+
+    private ImageButton hamburgerButton;
+    private RelativeLayout popoutMenu;
+    private boolean isMenuOpen = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +66,29 @@ public class DigitalDash extends AppCompatActivity {
         // Get the Bluetooth device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
 
+        hamburgerButton = findViewById(R.id.hamburgerButton);
+        popoutMenu = findViewById(R.id.popoutMenu);
+
+        hamburgerButton.setOnClickListener(view -> {
+            if (!isMenuOpen) {
+                openMenu();
+            } else {
+                closeMenu();
+            }
+        });
+
         if (deviceAddress == null) {
             // Show a popup indicating that no Bluetooth device is connected
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("No Bluetooth Device Detected");
-            builder.setMessage("There is no Bluetooth device connected. Please connect a device and try again.");
-            builder.setPositiveButton("OK", (dialog, which) -> finish());
-            builder.show();
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("No Bluetooth Device Detected");
+//            builder.setMessage("There is no Bluetooth device connected. Please connect a device and try again.");
+//            builder.setPositiveButton("OK", (dialog, which) -> finish());
+//            builder.show();
+
+
+            // add dev test buttons here generate random values
+            rpmGauge.setText("Engine RPM: " + generateRandomNumber(4));
+            coolantTempGauge.setText("Coolant Temperature C°: " + 2);
         } else {
             BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
 
@@ -96,6 +122,60 @@ public class DigitalDash extends AppCompatActivity {
         }
     }
 
+    public void onGaugeOptionClick(View view) {
+        switch (view.getId()) {
+            case R.id.gaugeOptionRPM:
+                toggleGaugeVisibility(rpmGauge);
+                break;
+            case R.id.gaugeOptionCoolant:
+                toggleGaugeVisibility(coolantTempGauge);
+                break;
+            // Add cases for more gauge options
+        }
+    }
+
+    private void toggleGaugeVisibility(DraggableGaugeView gaugeView) {
+        int newVisibility = gaugeView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+        gaugeView.setVisibility(newVisibility);
+    }
+
+
+    private void openMenu() {
+        isMenuOpen = true;
+        popoutMenu.setVisibility(View.VISIBLE);
+
+        ObjectAnimator rotation = ObjectAnimator.ofFloat(hamburgerButton, "rotation", 0f, 45f);
+        rotation.setDuration(300);
+        rotation.start();
+    }
+
+    private void closeMenu() {
+        isMenuOpen = false;
+        popoutMenu.setVisibility(View.INVISIBLE);
+
+        ObjectAnimator rotation = ObjectAnimator.ofFloat(hamburgerButton, "rotation", 45f, 0f);
+        rotation.setDuration(300);
+        rotation.start();
+    }
+
+    /**
+     * Random number generator for testing purposes
+     *
+     * @param numberOfDigits
+     * @return
+     */
+    public static int generateRandomNumber(int numberOfDigits) {
+        if (numberOfDigits <= 0) {
+            throw new IllegalArgumentException("Number of digits must be a positive integer.");
+        }
+
+        Random random = new Random();
+        int minBound = (int) Math.pow(10, numberOfDigits - 1);
+        int maxBound = (int) Math.pow(10, numberOfDigits) - 1;
+
+        return random.nextInt(maxBound - minBound + 1) + minBound;
+    }
+
     /**
      * Create a Bluetooth socket for the selected device
      */
@@ -117,6 +197,7 @@ public class DigitalDash extends AppCompatActivity {
      * This function will check and see what PIDs are available for the selected ECU
      */
     private int[] avaliablePIDs() {
+
         return null;
     }
 

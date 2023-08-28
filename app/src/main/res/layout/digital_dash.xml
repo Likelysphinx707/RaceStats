@@ -1,11 +1,10 @@
 <!-- res/layout/digital_dash.xml -->
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp"
     tools:context=".MainActivity">
 
@@ -13,14 +12,9 @@
         android:id="@+id/refreshbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Refresh"/>
+        android:text="Refresh"
+        android:textAlignment="center" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="test"
-        android:textColor="@color/white" />
-    <!-- Add a FrameLayout to hold your draggable gauges -->
     <FrameLayout
         android:id="@+id/gaugeContainer"
         android:layout_width="wrap_content"
@@ -29,36 +23,72 @@
         <!-- You will programmatically add your gauges to this container -->
     </FrameLayout>
 
-    <!-- Add your pop-out bar for gauge selection here -->
-
-    <!-- Add your hamburger menu button here -->
-
-    <!-- This is where we are going to add the gauges for temp and rpm and stuff like that -->
-    <LinearLayout
-        android:id="@+id/row1"
+    <!-- Add your com.example.racestats.DraggableGaugeView elements here -->
+    <com.example.racestats.DraggableGaugeView
+        android:id="@+id/rpmGauge"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="272dp"
+        android:text="Engine RPM: "
+        android:textSize="18sp"
+        android:visibility="visible" />
 
-        <com.example.racestats.DraggableGaugeView
-            android:id="@+id/rpmGauge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Engine RPM: "
-            android:textSize="18sp"
-            android:visibility="visible" />
+    <com.example.racestats.DraggableGaugeView
+        android:id="@+id/coolantTempGauge"
+        android:layout_width="wrap_content"
+        android:layout_height="266dp"
+        android:text="Coolant Temperature C°: "
+        android:textSize="18sp"
+        android:visibility="visible" />
 
-        <com.example.racestats.DraggableGaugeView
-            android:id="@+id/coolantTempGauge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Coolant Temperature C°: "
-            android:textSize="18sp"
-            android:visibility="visible" />
-    </LinearLayout>
-
-
+    <!-- Add your pop-out bar for gauge selection -->
 
     <!-- Other UI elements as needed -->
 
-</LinearLayout>
+    <!-- set the width of the box equal to 20% of the screen width -->
+    <RelativeLayout
+        android:id="@+id/popoutMenu"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_toEndOf="@id/hamburgerButton"
+        android:background="@android:color/black"
+        android:visibility="gone">
+
+        <!-- Gauge options in pop-out menu -->
+        <TextView
+            android:id="@+id/gaugeOptionRPM"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Engine RPM - Active"
+            android:padding="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="onGaugeOptionClick" />
+
+        <TextView
+            android:id="@+id/gaugeOptionCoolant"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gaugeOptionRPM"
+            android:text="Coolant Temperature - Active"
+            android:padding="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="onGaugeOptionClick" />
+
+        <!-- Add more gauge options as needed -->
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/hamburgerButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/home_icon" />
+
+</RelativeLayout>

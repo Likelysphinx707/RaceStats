@@ -87,4 +87,11 @@
         android:layout_height="65dp"
         android:layout_gravity="center"
         android:text="Disconnect" />
+
+    <Button
+        android:id="@+id/testButton"
+        android:layout_width="170dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center"
+        android:text="Dev Test Button" />
 </LinearLayout>
