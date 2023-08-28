@@ -5,90 +5,119 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/refreshbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refresh"
-        android:textAlignment="center" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:id="@+id/gaugeContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-        <!-- You will programmatically add your gauges to this container -->
-    </FrameLayout>
+        <Button
+            android:id="@+id/refreshbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Refresh"
+            android:textAlignment="center" />
 
-    <!-- Add your com.example.racestats.DraggableGaugeView elements here -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/hamburgerButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:baselineAlignBottom="false"
+                android:src="@drawable/home_icon"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <com.example.racestats.DraggableGaugeView
         android:id="@+id/rpmGauge"
-        android:layout_width="wrap_content"
-        android:layout_height="272dp"
+        android:layout_width="350dp"
+        android:layout_height="63dp"
         android:text="Engine RPM: "
         android:textSize="18sp"
         android:visibility="visible" />
 
     <com.example.racestats.DraggableGaugeView
         android:id="@+id/coolantTempGauge"
-        android:layout_width="wrap_content"
-        android:layout_height="266dp"
+        android:layout_width="350dp"
+        android:layout_height="63dp"
         android:text="Coolant Temperature C°: "
         android:textSize="18sp"
         android:visibility="visible" />
 
-    <!-- Add your pop-out bar for gauge selection -->
-
-    <!-- Other UI elements as needed -->
-
-    <!-- set the width of the box equal to 20% of the screen width -->
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/popoutMenu"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_toEndOf="@id/hamburgerButton"
         android:background="@android:color/black"
+        android:orientation="vertical"
         android:visibility="gone">
 
+        <!-- x button to close pop out -->
+        <ImageButton
+            android:id="@+id/x_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:baselineAlignBottom="false"
+            android:src="@drawable/ic_x_icon"
+            android:visibility="gone"
+            tools:ignore="SpeakableTextPresentCheck" />
+
         <!-- Gauge options in pop-out menu -->
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="16dp"
+            android:text="Availabe Data"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/gaugeOptionRPM"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Engine RPM - Active"
-            android:padding="16dp"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="onGaugeOptionClick" />
+            android:gravity="center_horizontal"
+            android:onClick="onGaugeOptionClick"
+            android:padding="16dp"
+            android:text="Engine RPM - Active"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/gaugeOptionCoolant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/gaugeOptionRPM"
-            android:text="Coolant Temperature - Active"
-            android:padding="16dp"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="onGaugeOptionClick" />
+            android:gravity="center_horizontal"
+            android:onClick="onGaugeOptionClick"
+            android:padding="16dp"
+            android:text="Coolant Temperature - Active"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
         <!-- Add more gauge options as needed -->
-    </RelativeLayout>
-
-    <ImageButton
-        android:id="@+id/hamburgerButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:src="@drawable/home_icon" />
-
+    </LinearLayout>
 </RelativeLayout>

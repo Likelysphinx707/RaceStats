@@ -8,10 +8,13 @@ import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -49,7 +52,8 @@ public class DigitalDash extends AppCompatActivity {
     private Button refreshbutton;
 
     private ImageButton hamburgerButton;
-    private RelativeLayout popoutMenu;
+    private LinearLayout popoutMenu;
+    private ImageButton xButton;
     private boolean isMenuOpen = false;
 
 
@@ -68,14 +72,24 @@ public class DigitalDash extends AppCompatActivity {
 
         hamburgerButton = findViewById(R.id.hamburgerButton);
         popoutMenu = findViewById(R.id.popoutMenu);
+        xButton = findViewById(R.id.x_button);
 
         hamburgerButton.setOnClickListener(view -> {
             if (!isMenuOpen) {
                 openMenu();
-            } else {
-                closeMenu();
+                hamburgerButton.setVisibility(View.GONE);
+                xButton.setVisibility(View.VISIBLE);
             }
         });
+
+        xButton.setOnClickListener(view -> {
+            if (isMenuOpen) {
+                closeMenu();
+                xButton.setVisibility(View.GONE);
+                hamburgerButton.setVisibility(View.VISIBLE);
+            }
+        });
+
 
         if (deviceAddress == null) {
             // Show a popup indicating that no Bluetooth device is connected
@@ -84,7 +98,6 @@ public class DigitalDash extends AppCompatActivity {
 //            builder.setMessage("There is no Bluetooth device connected. Please connect a device and try again.");
 //            builder.setPositiveButton("OK", (dialog, which) -> finish());
 //            builder.show();
-
 
             // add dev test buttons here generate random values
             rpmGauge.setText("Engine RPM: " + generateRandomNumber(4));

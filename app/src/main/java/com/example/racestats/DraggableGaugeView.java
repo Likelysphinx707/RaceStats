@@ -37,6 +37,11 @@ public class DraggableGaugeView extends View {
         invalidate(); // Invalidate the view to trigger a redraw
     }
 
+    public void setTextColor(int color) {
+        textPaint.setColor(color);
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
