@@ -82,7 +82,7 @@ public class DigitalDash extends AppCompatActivity {
             }
         });
 
-        xButton.setOnClickListener(view -> {
+        xButton.setOnClickListener(view -> {+
             if (isMenuOpen) {
                 closeMenu();
                 xButton.setVisibility(View.GONE);
