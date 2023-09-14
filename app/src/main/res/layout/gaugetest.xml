@@ -2,18 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
     <!-- Coolant logo on the left -->
+
+    <!-- Horizontal gauge ProgressBar -->
     <ImageView
         android:id="@+id/coolantLogo"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
+        android:layout_marginStart="41dp"
         android:layout_marginEnd="8dp"
         android:src="@drawable/coolant_logo" />
 
-    <!-- Horizontal gauge ProgressBar -->
     <ProgressBar
         android:id="@+id/coolantTemperatureGauge"
         style="?android:attr/progressBarStyleHorizontal"
@@ -24,7 +27,27 @@
         android:progress="0"
         android:progressDrawable="@drawable/horizontal_gauge" />
 
+    <!-- Coolant temperature text aligned with gauge progress -->
+
     <!-- Black line separator -->
+
+    <TextView
+        android:id="@+id/coolantTemperatureText"
+        android:layout_width="70dp"
+        android:layout_height="35dp"
+        android:layout_alignStart="@+id/coolantTemperatureGauge"
+        android:layout_alignTop="@+id/coolantTemperatureGauge"
+        android:layout_alignEnd="@+id/coolantTemperatureGauge"
+        android:layout_alignBottom="@+id/coolantTemperatureGauge"
+        android:layout_marginStart="485dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="594dp"
+        android:layout_marginBottom="10dp"
+        android:text="0°C"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="30sp" />
+
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
@@ -42,15 +65,37 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
 
-        <!-- Coolant temperature text on the right -->
-        <TextView
-            android:id="@+id/coolantTemperatureText"
-            android:layout_width="1620dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="0°C"
-            android:textColor="@color/black"
-            android:textSize="30sp" />
+        <!-- Other temperature markers here -->
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/simpleTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/box_shadow_gradient"
+        android:orientation="vertical"
+        android:padding="16dp"> <!-- Adjust padding as needed -->
+
+        <ImageView
+            android:id="@+id/coolantLogoSimple"
+            android:layout_width="117dp"
+            android:layout_height="84dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/coolant_logo_white" />
+
+        <TextView
+            android:id="@+id/textTempSimple"
+            android:layout_width="120dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center_horizontal"
+            android:text="0°C"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
 </RelativeLayout>
