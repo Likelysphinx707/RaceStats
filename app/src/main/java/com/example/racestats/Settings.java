@@ -5,46 +5,48 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Settings extends AppCompatActivity {
-    private ProgressBar coolantTemperatureGauge;
-    private TextView coolantTemperatureText;
+    private CustomProgressBar coolantTemperatureGauge;
+    private TextView coolantTemperatureTextOverlay;
 
     private TextView coolantTempTextSimple;
     private ImageView coolantLogoSimple;
 
+    // Handles coolant flash event
     private Handler handler = new Handler();
     private boolean isFlashing = false;
     private int flashCount = 0;
-
-    private boolean hasFlahed = false;
+    private boolean hasFlashed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gaugetest);
 
-    // Set the coolant temperature (0 to 126, adjust as needed)
-    int coolantTemperature = 75; // Change this temperature value
+        coolantTemperatureTextOverlay = findViewById(R.id.coolantTemperatureTextOverlay); // Initialize the TextView
 
+        // Set the coolant temperature (0 to 126, adjust as needed)
+        int coolantTemperature = 88; // Change this temperature value
+
+        // Set the coolant temperature in your CustomProgressBar
         coolantTemperatureGauge = findViewById(R.id.coolantTemperatureGauge);
-        coolantTemperatureText = findViewById(R.id.coolantTemperatureText);
+        coolantTemperatureGauge.setCoolantTemperatureTextOverlay(coolantTemperatureTextOverlay);
+        coolantTemperatureGauge.setCoolantTemperature(coolantTemperature);
 
-        coolantLogoSimple = findViewById(R.id.coolantLogoSimple);
         coolantTempTextSimple = findViewById(R.id.textTempSimple);
-
+        coolantLogoSimple = findViewById(R.id.coolantLogoSimple);
 
         // Update the temperature text
-        coolantTemperatureText.setText(coolantTemperature + "°C");
+        coolantTemperatureTextOverlay.setText(coolantTemperature + "°C");
         coolantTempTextSimple.setText(coolantTemperature + "°C");
 
-    // Update the gauge color based on temperature
-    updateGaugeColor(coolantTemperature);
-}
+        // Update the gauge color based on temperature
+        updateGaugeColor(coolantTemperature);
+    }
 
     // Method to update the gauge color based on temperature
     private void updateGaugeColor(int temperature) {
@@ -52,9 +54,9 @@ public class Settings extends AppCompatActivity {
             coolantTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge_high));
 
             // Start the flashing effect if it's not already running
-            if (!isFlashing && !hasFlahed) {
+            if (!isFlashing && !hasFlashed) {
                 startFlashingEffect();
-                hasFlahed = true;
+                hasFlashed = true;
             }
 
             coolantLogoSimple.setImageResource(R.drawable.coolant_logo_red);
@@ -67,7 +69,7 @@ public class Settings extends AppCompatActivity {
 
             coolantTempTextSimple.setTextColor(Color.parseColor("#ffe222"));
             coolantLogoSimple.setImageResource(R.drawable.coolant_logo_yellow);
-            hasFlahed = false;
+            hasFlashed = false;
         } else {
             coolantTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge));
 
@@ -76,7 +78,7 @@ public class Settings extends AppCompatActivity {
 
             coolantTempTextSimple.setTextColor(Color.parseColor("#FFFFFF"));
             coolantLogoSimple.setImageResource(R.drawable.coolant_logo_white);
-            hasFlahed = false;
+            hasFlashed = false;
         }
 
         coolantTemperatureGauge.setProgress(temperature);

@@ -2,13 +2,17 @@ package com.example.racestats;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class CustomProgressBar extends ProgressBar {
     private Paint marksPaint;
-    private float markHeight;
+    private TextView coolantTemperatureTextOverlay;
+    private int coolantTemperature;
 
     public CustomProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -18,16 +22,8 @@ public class CustomProgressBar extends ProgressBar {
     private void init() {
         marksPaint = new Paint();
         marksPaint.setColor(0xFFFF0000); // Red color
-        marksPaint.setStrokeWidth(5); // 40dp width
+        marksPaint.setStrokeWidth(5); // 5dp width
         // Other paint attributes like style, etc., can be set here.
-
-        markHeight = getHeight(); // Set mark height initially to the progress bar's height
-    }
-
-    @Override
-    protected synchronized void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        markHeight = h; // Update mark height when the progress bar size changes
     }
 
     @Override
@@ -40,16 +36,31 @@ public class CustomProgressBar extends ProgressBar {
 
     private void drawMarks(Canvas canvas) {
         // Define the progress points where you want to draw marks
-        int[] progressPoints = {25, 50, 75, 106, 110};
+        int[] progressPoints = {25, 50, 75, 106};
 
         int width = getWidth();
+        int height = getHeight();
 
         for (int progress : progressPoints) {
             float xPos = width * progress / getMax();
-            float yPos = getHeight() / 2f; // Center vertically
+            float yPos = height / 2f; // Center vertically
 
             // Draw a mark at the specified position with the calculated markHeight
-            canvas.drawLine(xPos, yPos - markHeight / 2f, xPos, yPos + markHeight / 2f, marksPaint);
+            canvas.drawLine(xPos, yPos - height / 2f, xPos, yPos + height / 2f, marksPaint);
         }
+
+        // set textview just in front of filled in portion of progress bar
+        coolantTemperatureTextOverlay.setX(width * coolantTemperature / getMax() + 110);
+        coolantTemperatureTextOverlay.setY(height / 2f);
+        coolantTemperatureTextOverlay.setText(coolantTemperature + "°C");
+    }
+
+    public void setCoolantTemperature(int temperature) {
+        coolantTemperature = temperature;
+        invalidate(); // Redraw the progress bar
+    }
+
+    public void setCoolantTemperatureTextOverlay(TextView textView) {
+        coolantTemperatureTextOverlay = textView;
     }
 }

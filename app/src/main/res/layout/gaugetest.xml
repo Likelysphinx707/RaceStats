@@ -27,16 +27,18 @@
         android:max="126"
         android:progress="0" />
 
-
+    <!-- Add TextView to display coolantTemperature -->
     <TextView
-        android:id="@+id/coolantTemperatureText"
-        android:layout_width="108dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@+id/coolantTemperatureGauge"
+        android:id="@+id/coolantTemperatureTextOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/coolantTemperatureGauge"
+        android:layout_alignBottom="@id/coolantTemperatureGauge"
+        android:layout_toEndOf="@id/coolantTemperatureGauge"
+        android:layout_marginStart="8dp"
+        android:textSize="24dp"
         android:text="0°C"
-        android:textAlignment="center"
-        android:textSize="30sp" />
+        android:textColor="@color/black"/>
 
     <LinearLayout
         android:id="@+id/simpleTemp"
