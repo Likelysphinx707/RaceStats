@@ -21,13 +21,15 @@ public class Settings extends AppCompatActivity {
     private boolean isFlashing = false;
     private int flashCount = 0;
 
+    private boolean hasFlahed = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gaugetest);
 
     // Set the coolant temperature (0 to 126, adjust as needed)
-    int coolantTemperature = 106; // Change this temperature value
+    int coolantTemperature = 75; // Change this temperature value
 
         coolantTemperatureGauge = findViewById(R.id.coolantTemperatureGauge);
         coolantTemperatureText = findViewById(R.id.coolantTemperatureText);
@@ -46,12 +48,13 @@ public class Settings extends AppCompatActivity {
 
     // Method to update the gauge color based on temperature
     private void updateGaugeColor(int temperature) {
-        if (temperature > 105) {
+        if (temperature > 104) {
             coolantTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge_high));
 
             // Start the flashing effect if it's not already running
-            if (!isFlashing) {
+            if (!isFlashing && !hasFlahed) {
                 startFlashingEffect();
+                hasFlahed = true;
             }
 
             coolantLogoSimple.setImageResource(R.drawable.coolant_logo_red);
@@ -64,6 +67,7 @@ public class Settings extends AppCompatActivity {
 
             coolantTempTextSimple.setTextColor(Color.parseColor("#ffe222"));
             coolantLogoSimple.setImageResource(R.drawable.coolant_logo_yellow);
+            hasFlahed = false;
         } else {
             coolantTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge));
 
@@ -72,6 +76,7 @@ public class Settings extends AppCompatActivity {
 
             coolantTempTextSimple.setTextColor(Color.parseColor("#FFFFFF"));
             coolantLogoSimple.setImageResource(R.drawable.coolant_logo_white);
+            hasFlahed = false;
         }
 
         coolantTemperatureGauge.setProgress(temperature);
