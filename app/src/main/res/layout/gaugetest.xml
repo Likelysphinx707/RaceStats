@@ -5,7 +5,6 @@
     android:padding="16dp">
 
     <!-- Coolant logo on the left -->
-
     <!-- Horizontal gauge ProgressBar -->
 
     <ImageView

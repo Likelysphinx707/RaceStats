@@ -6,16 +6,20 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -56,6 +60,15 @@ public class DigitalDash extends AppCompatActivity {
     private ImageButton xButton;
     private boolean isMenuOpen = false;
 
+    private CustomProgressBar coolantTemperatureGauge;
+    private TextView coolantTemperatureTextOverlay;
+    private TextView coolantTempTextSimple;
+    private ImageView coolantLogoSimple;
+    private Handler handler = new Handler();
+    private boolean isFlashing = false;
+    private int flashCount = 0;
+    private boolean hasFlashed = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +86,12 @@ public class DigitalDash extends AppCompatActivity {
         hamburgerButton = findViewById(R.id.hamburgerButton);
         popoutMenu = findViewById(R.id.popoutMenu);
         xButton = findViewById(R.id.x_button);
+
+        // Initialize coolant temperature gauge and related UI elements
+        coolantTemperatureTextOverlay = findViewById(R.id.coolantTemperatureTextOverlay);
+        coolantTemperatureGauge = findViewById(R.id.coolantTemperatureGauge);
+        coolantTempTextSimple = findViewById(R.id.textTempSimple);
+        coolantLogoSimple = findViewById(R.id.coolantLogoSimple);
 
         hamburgerButton.setOnClickListener(view -> {
             if (!isMenuOpen) {
@@ -214,6 +233,72 @@ public class DigitalDash extends AppCompatActivity {
         return null;
     }
 
+    private void updateCoolantTemperature(int temperature) {
+        // Implement the logic to update coolant temperature gauge and UI based on temperature
+        // This will replace the updateGaugeColor method from Settings class
+        // You can adapt the logic from updateGaugeColor to this method
+        if (temperature > 104) {
+            coolantTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge_high));
+
+            // Start the flashing effect if it's not already running
+            if (!isFlashing && !hasFlashed) {
+                startFlashingEffect();
+                hasFlashed = true;
+            }
+
+            coolantLogoSimple.setImageResource(R.drawable.coolant_logo_red);
+            coolantTempTextSimple.setTextColor(Color.parseColor("#ff0000"));
+        } else if (temperature > 96) {
+            coolantTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge_medium));
+
+            // Stop the flashing effect if it's running
+            stopFlashingEffect();
+
+            coolantTempTextSimple.setTextColor(Color.parseColor("#ffe222"));
+            coolantLogoSimple.setImageResource(R.drawable.coolant_logo_yellow);
+            hasFlashed = false;
+        } else {
+            coolantTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge));
+
+            // Stop the flashing effect if it's running
+            stopFlashingEffect();
+
+            coolantTempTextSimple.setTextColor(Color.parseColor("#FFFFFF"));
+            coolantLogoSimple.setImageResource(R.drawable.coolant_logo_white);
+            hasFlashed = false;
+        }
+
+        coolantTemperatureGauge.setProgress(temperature);
+    }
+
+    private void startFlashingEffect() {
+        isFlashing = true;
+        flashCount = 0;
+        handler.postDelayed(flashingRunnable, 500); // Start flashing every 500ms
+    }
+
+    private void stopFlashingEffect() {
+        isFlashing = false;
+        handler.removeCallbacks(flashingRunnable); // Stop the flashing effect
+    }
+
+    private Runnable flashingRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (flashCount < 8) { // 8 times to flash (4 times on, 4 times off)
+                if (coolantLogoSimple.getVisibility() == View.VISIBLE) {
+                    coolantLogoSimple.setVisibility(View.INVISIBLE);
+                } else {
+                    coolantLogoSimple.setVisibility(View.VISIBLE);
+                }
+                flashCount++;
+                handler.postDelayed(this, 500); // Repeat the flashing every 500ms
+            } else {
+                coolantLogoSimple.setVisibility(View.VISIBLE); // Ensure it's visible when done flashing
+                isFlashing = false;
+            }
+        }
+    };
 
     /**
      * Class that will make calls to the obd2 scanner based off of the selected gauges of the user
@@ -255,6 +340,12 @@ public class DigitalDash extends AppCompatActivity {
 
             // This will actually set our values in the UI need to test first.
             // Get results
+            // Update the coolant temperature gauge
+            if (coolantTempResult != null) {
+                int coolantTemp = Integer.parseInt(coolantTempResult);
+                updateCoolantTemperature(coolantTemp);
+            }
+
             Log.d("Coolant Temp", coolantTempResult);
             Log.d("RPM", rpmResult);
 
