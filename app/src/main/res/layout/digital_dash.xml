@@ -12,18 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/refreshbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Refresh"
-            android:textAlignment="center" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <Button
+                android:id="@+id/refreshbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Refresh"
+                android:textAlignment="center" />
 
             <ImageButton
                 android:id="@+id/hamburgerButton"
@@ -57,37 +57,50 @@
         android:textSize="18sp"
         android:visibility="visible" />
 
-    <ImageView
-    android:id="@+id/coolantLogo"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:layout_alignParentStart="true"
-    android:layout_marginEnd="8dp"
-    android:src="@drawable/coolant_logo" />
-
-
-    <com.example.racestats.CustomProgressBar
-        android:id="@+id/coolantTemperatureGauge"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="1043dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="24dp"
-        android:layout_toEndOf="@id/coolantLogo"
-        android:max="126"
-        android:progress="0" />
 
     <!-- Add TextView to display coolantTemperature -->
-    <TextView
-        android:id="@+id/coolantTemperatureTextOverlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/coolantTemperatureGauge"
-        android:layout_alignBottom="@id/coolantTemperatureGauge"
-        android:layout_toEndOf="@id/coolantTemperatureGauge"
-        android:layout_marginStart="8dp"
-        android:textSize="24dp"
-        android:text="0°C"
-        android:textColor="@color/black"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- Coolant logo on the left -->
+        <!-- Horizontal gauge ProgressBar -->
+
+        <ImageView
+            android:id="@+id/coolantLogo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/coolant_logo_white" />
+
+
+        <!-- Add TextView to display coolantTemperature -->
+        <TextView
+            android:id="@+id/coolantTemperatureTextOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/coolantTemperatureGauge"
+            android:layout_alignBottom="@id/coolantTemperatureGauge"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/coolantTemperatureGauge"
+            android:text="0°C"
+            android:textColor="@color/black"
+            android:textSize="24dp" />
+
+        <com.example.racestats.CustomProgressBar
+            android:id="@+id/coolantTemperatureGauge"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="1007dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="315dp"
+            android:max="126"
+            android:progress="0" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/simpleTemp"
@@ -97,7 +110,8 @@
         android:background="@drawable/box_shadow_gradient"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="20dp"> <!-- Adjust padding as needed -->
+        android:padding="20dp"
+        android:visibility="gone"> <!-- Adjust padding as needed -->
 
         <ImageView
             android:id="@+id/coolantLogoSimple"

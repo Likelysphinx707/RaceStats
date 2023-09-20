@@ -62,6 +62,7 @@ public class DigitalDash extends AppCompatActivity {
 
     private CustomProgressBar coolantTemperatureGauge;
     private TextView coolantTemperatureTextOverlay;
+    private TextView textTempSimple;
     private TextView coolantTempTextSimple;
     private ImageView coolantLogoSimple;
     private Handler handler = new Handler();
@@ -92,6 +93,7 @@ public class DigitalDash extends AppCompatActivity {
         coolantTemperatureGauge = findViewById(R.id.coolantTemperatureGauge);
         coolantTempTextSimple = findViewById(R.id.textTempSimple);
         coolantLogoSimple = findViewById(R.id.coolantLogoSimple);
+        textTempSimple = findViewById(R.id.textTempSimple);
 
         hamburgerButton.setOnClickListener(view -> {
             if (!isMenuOpen) {
@@ -121,6 +123,9 @@ public class DigitalDash extends AppCompatActivity {
             // add dev test buttons here generate random values
             rpmGauge.setText("Engine RPM: " + generateRandomNumber(4));
             coolantTempGauge.setText("Coolant Temperature C°: " + 2);
+            updateCoolantTemperature(60);
+            textTempSimple.setText("60");
+
         } else {
             BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
 
@@ -229,7 +234,6 @@ public class DigitalDash extends AppCompatActivity {
      * This function will check and see what PIDs are available for the selected ECU
      */
     private int[] avaliablePIDs() {
-
         return null;
     }
 
@@ -237,6 +241,7 @@ public class DigitalDash extends AppCompatActivity {
         // Implement the logic to update coolant temperature gauge and UI based on temperature
         // This will replace the updateGaugeColor method from Settings class
         // You can adapt the logic from updateGaugeColor to this method
+
         if (temperature > 104) {
             coolantTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge_high));
 
@@ -269,6 +274,7 @@ public class DigitalDash extends AppCompatActivity {
         }
 
         coolantTemperatureGauge.setProgress(temperature);
+//        coolantTemperatureTextOverlay.setText(temperature);
     }
 
     private void startFlashingEffect() {
