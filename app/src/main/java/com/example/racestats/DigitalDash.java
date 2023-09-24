@@ -76,6 +76,8 @@ public class DigitalDash extends AppCompatActivity {
     private CustomProgressBar intakeTemperatureGauge;
     private TextView intakeTemperatureTextOverlay;
 
+    private final Handler dataUpdateHandler = new Handler();
+    private static final long DATA_UPDATE_INTERVAL = 5000; // Update interval in milliseconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +179,22 @@ public class DigitalDash extends AppCompatActivity {
                 Log.d("Updated command", "OBD2 commands called refreshed");
             });
         }
+
+        // Start the data update loop
+        startDataUpdateLoop();
+    }
+
+    private void startDataUpdateLoop() {
+        dataUpdateHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Call the function to update OBD2 data and UI
+                obd2CommandsToCall();
+
+                // Schedule the next data update
+                dataUpdateHandler.postDelayed(this, DATA_UPDATE_INTERVAL);
+            }
+        }, DATA_UPDATE_INTERVAL);
     }
 
     public void onGaugeOptionClick(View view) {
@@ -337,9 +355,81 @@ public class DigitalDash extends AppCompatActivity {
     /**
      * Class that will make calls to the obd2 scanner based off of the selected gauges of the user
      */
-    private void obd2CommandsToCall() {
-        long startTime = System.currentTimeMillis();
+//    private void obd2CommandsToCall() {
+//        long startTime = System.currentTimeMillis();
+//
+//        try {
+//            // Initialize OBD2 communication
+//            new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+//            new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+//            new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+//            new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
+//
+//            // Batch multiple commands in a single request
+//            List<ObdCommand> commandsToRun = new ArrayList<>();
+//            commandsToRun.add(new EngineCoolantTemperatureCommand());
+//            commandsToRun.add(new AirIntakeTemperatureCommand());
+//
+//            String coolantTempResult = null;
+//            String intakeTempResult = null;
+//
+//            // Execute commands in a single request
+//            //  adding a counter so we know how what request we are on
+//            int counter = 0;
+//
+//            for (ObdCommand command : commandsToRun) {
+//                command.run(socket.getInputStream(), socket.getOutputStream());
+//                String result = command.getFormattedResult();
+//                if (counter == 0) {
+//                    // set coolant temp test
+//                    coolantTempResult = result;
+//                } else if (counter == 1) {
+//                    intakeTempResult = result;
+//                }
+//                counter++;
+//
+//            }
+//
+//            // This will actually set our values in the UI need to test first.
+//            // Get results
+//            // Update the coolant temperature gauge
+//            if (coolantTempResult != null) {
+//                int coolantTemp = Integer.parseInt(coolantTempResult);
+//                updateCoolantTemperature(coolantTemp);
+//            }
+//
+//            if (intakeTempResult != null) {
+//                int intakeTemp = Integer.parseInt(coolantTempResult);
+//                updateCoolantTemperature(intakeTemp);
+//            }
+//
+//            Log.d("Coolant Temp", coolantTempResult);
+//            Log.d("Intake Temp", intakeTempResult);
+//
+//            // Update the values in the DraggableGaugeView instances
+//            rpmGauge.setText("Intake Temp: " + intakeTempResult);
+//            coolantTempGauge.setText("Coolant Temperature C°: " + coolantTempResult);
+//
+//
+//            // ... Add more OBD2 commands here ...
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+////        finally {
+////            try {
+////                socket.close();
+////            } catch (IOException e) {
+////                e.printStackTrace();
+////            }
+////        }
+//
+//        long endTime = System.currentTimeMillis();
+//        double elapsedTimeSeconds = (endTime - startTime) / 1000.0;
+//        Log.d("Execution Time", "Total execution time: " + elapsedTimeSeconds + " seconds");
+//    }
 
+    private void obd2CommandsToCall() {
         try {
             // Initialize OBD2 communication
             new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
@@ -347,70 +437,51 @@ public class DigitalDash extends AppCompatActivity {
             new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
             new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
 
-            // Batch multiple commands in a single request
-            List<ObdCommand> commandsToRun = new ArrayList<>();
-            commandsToRun.add(new EngineCoolantTemperatureCommand());
-            commandsToRun.add(new AirIntakeTemperatureCommand());
+            // Initialize the OBD2 commands
+            EngineCoolantTemperatureCommand coolantTempCommand = new EngineCoolantTemperatureCommand();
+            AirIntakeTemperatureCommand intakeTempCommand = new AirIntakeTemperatureCommand();
 
-            String coolantTempResult = null;
-            String intakeTempResult = null;
+            // Execute the OBD2 commands
+            coolantTempCommand.run(socket.getInputStream(), socket.getOutputStream());
+            intakeTempCommand.run(socket.getInputStream(), socket.getOutputStream());
 
-            // Execute commands in a single request
-            //  adding a counter so we know how what request we are on
-            int counter = 0;
+            // Get the results from the commands
+            String coolantTempResult = coolantTempCommand.getFormattedResult();
+            String intakeTempResult = intakeTempCommand.getFormattedResult();
 
-            for (ObdCommand command : commandsToRun) {
-                command.run(socket.getInputStream(), socket.getOutputStream());
-                String result = command.getFormattedResult();
-                if (counter == 0) {
-                    // set coolant temp test
-                    coolantTempResult = result;
-                } else if (counter == 1) {
-                    intakeTempResult = result;
-                }
-                counter++;
-
-            }
-
-            // This will actually set our values in the UI need to test first.
-            // Get results
-            // Update the coolant temperature gauge
-            if (coolantTempResult != null) {
+            if (coolantTempResult != null && intakeTempResult != null) {
                 int coolantTemp = Integer.parseInt(coolantTempResult);
-                updateCoolantTemperature(coolantTemp);
+                int intakeTemp = Integer.parseInt(intakeTempResult);
+
+                // Update UI based on OBD2 data
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateCoolantTemperature(coolantTemp);
+                        updateAirIntakeTemperature(intakeTemp);
+
+                        // Update the values in the DraggableGaugeView instances
+                        rpmGauge.setText("Intake Temp: " + intakeTemp);
+                        coolantTempGauge.setText("Coolant Temperature C°: " + coolantTemp);
+                    }
+                });
             }
-
-            if (intakeTempResult != null) {
-                int intakeTemp = Integer.parseInt(coolantTempResult);
-                updateCoolantTemperature(intakeTemp);
-            }
-
-            Log.d("Coolant Temp", coolantTempResult);
-            Log.d("Intake Temp", intakeTempResult);
-
-            // Update the values in the DraggableGaugeView instances
-            rpmGauge.setText("Intake Temp: " + intakeTempResult);
-            coolantTempGauge.setText("Coolant Temperature C°: " + coolantTempResult);
-
-
-            // ... Add more OBD2 commands here ...
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        finally {
-//            try {
-//                socket.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-        long endTime = System.currentTimeMillis();
-        double elapsedTimeSeconds = (endTime - startTime) / 1000.0;
-        Log.d("Execution Time", "Total execution time: " + elapsedTimeSeconds + " seconds");
     }
 
+
+    private int getUpdatedCoolantTemperature() {
+        // Simulated coolant temperature (replace this with your OBD2 logic)
+        return generateRandomNumber(100);
+    }
+
+    private int getUpdatedIntakeTemperature() {
+        // Simulated intake temperature (replace this with your OBD2 logic)
+        return generateRandomNumber(100);
+    }
 
     /**
      * Cleanup when the activity is destroyed
@@ -418,6 +489,8 @@ public class DigitalDash extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Remove the data update handler callbacks when the activity is destroyed
+        dataUpdateHandler.removeCallbacksAndMessages(null);
         if (socket != null) {
             try {
                 socket.close();
