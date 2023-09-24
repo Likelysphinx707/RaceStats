@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,9 +30,9 @@ public class CustomProgressBar extends ProgressBar {
         super.onDraw(canvas);
 
         // Ensure coolantTemperatureTextOverlay is not null before drawing marks
-        if (coolantTemperatureTextOverlay != null) {
+//        if (coolantTemperatureTextOverlay != null) {
             drawMarks(canvas);
-        }
+//        }
     }
 
     private void drawMarks(Canvas canvas) {

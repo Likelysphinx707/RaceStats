@@ -14,6 +14,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -37,6 +39,7 @@ import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
+import com.github.pires.obd.commands.temperature.AirIntakeTemperatureCommand;
 import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand;
 import com.github.pires.obd.enums.ObdProtocols;
 
@@ -70,11 +73,25 @@ public class DigitalDash extends AppCompatActivity {
     private int flashCount = 0;
     private boolean hasFlashed = false;
 
+    private CustomProgressBar intakeTemperatureGauge;
+    private TextView intakeTemperatureTextOverlay;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set the activity to fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.digital_dash);
+
+        // Hide the navigation bar (optional)
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
 
         // Initialize gauges and assets for UI
         rpmGauge = findViewById(R.id.rpmGauge);
@@ -94,6 +111,9 @@ public class DigitalDash extends AppCompatActivity {
         coolantTempTextSimple = findViewById(R.id.textTempSimple);
         coolantLogoSimple = findViewById(R.id.coolantLogoSimple);
         textTempSimple = findViewById(R.id.textTempSimple);
+
+        intakeTemperatureGauge = findViewById(R.id.intakeTemperatureGauge);
+        intakeTemperatureTextOverlay = findViewById(R.id.intakeTemperatureTextOverlay);
 
         hamburgerButton.setOnClickListener(view -> {
             if (!isMenuOpen) {
@@ -121,14 +141,14 @@ public class DigitalDash extends AppCompatActivity {
 //            builder.show();
 
             // add dev test buttons here generate random values
-            rpmGauge.setText("Engine RPM: " + generateRandomNumber(4));
+            rpmGauge.setText("Intake Temp: " + generateRandomNumber(4));
             coolantTempGauge.setText("Coolant Temperature C°: " + 2);
-            updateCoolantTemperature(60);
-            textTempSimple.setText("60");
+            updateCoolantTemperature(75);
+            updateAirIntakeTemperature(60);
+            textTempSimple.setText("75");
 
         } else {
             BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
-
 
             // Check Bluetooth connect permission
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
@@ -237,6 +257,12 @@ public class DigitalDash extends AppCompatActivity {
         return null;
     }
 
+    private void updateAirIntakeTemperature(int temperature) {
+        intakeTemperatureGauge.setProgress(temperature);
+        intakeTemperatureTextOverlay.setText(String.valueOf(temperature) + " °C");
+        intakeTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge));
+    }
+
     private void updateCoolantTemperature(int temperature) {
         // Implement the logic to update coolant temperature gauge and UI based on temperature
         // This will replace the updateGaugeColor method from Settings class
@@ -274,8 +300,10 @@ public class DigitalDash extends AppCompatActivity {
         }
 
         coolantTemperatureGauge.setProgress(temperature);
-//        coolantTemperatureTextOverlay.setText(temperature);
+        coolantTemperatureTextOverlay.setText(String.valueOf(temperature) + " °C");
     }
+
+
 
     private void startFlashingEffect() {
         isFlashing = true;
@@ -322,10 +350,10 @@ public class DigitalDash extends AppCompatActivity {
             // Batch multiple commands in a single request
             List<ObdCommand> commandsToRun = new ArrayList<>();
             commandsToRun.add(new EngineCoolantTemperatureCommand());
-            commandsToRun.add(new RPMCommand());
+            commandsToRun.add(new AirIntakeTemperatureCommand());
 
             String coolantTempResult = null;
-            String rpmResult = null;
+            String intakeTempResult = null;
 
             // Execute commands in a single request
             //  adding a counter so we know how what request we are on
@@ -338,7 +366,7 @@ public class DigitalDash extends AppCompatActivity {
                     // set coolant temp test
                     coolantTempResult = result;
                 } else if (counter == 1) {
-                    rpmResult = result;
+                    intakeTempResult = result;
                 }
                 counter++;
 
@@ -352,11 +380,16 @@ public class DigitalDash extends AppCompatActivity {
                 updateCoolantTemperature(coolantTemp);
             }
 
+            if (intakeTempResult != null) {
+                int intakeTemp = Integer.parseInt(coolantTempResult);
+                updateCoolantTemperature(intakeTemp);
+            }
+
             Log.d("Coolant Temp", coolantTempResult);
-            Log.d("RPM", rpmResult);
+            Log.d("Intake Temp", intakeTempResult);
 
             // Update the values in the DraggableGaugeView instances
-            rpmGauge.setText("Engine RPM: " + rpmResult);
+            rpmGauge.setText("Intake Temp: " + intakeTempResult);
             coolantTempGauge.setText("Coolant Temperature C°: " + coolantTempResult);
 
 
