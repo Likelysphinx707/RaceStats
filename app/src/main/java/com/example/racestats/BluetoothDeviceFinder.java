@@ -32,6 +32,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Set;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 @RequiresApi(api = Build.VERSION_CODES.S)
 public class BluetoothDeviceFinder extends AppCompatActivity {
     private BluetoothAdapter bluetoothAdapter;
@@ -60,6 +63,8 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         }
     };
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +82,19 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
 
         requestPermissions();
+
+        // Initialize SharedPreferences
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Check if there's a previously saved device address
+        String savedDeviceAddress = sharedPreferences.getString("lastDeviceAddress", null);
+        if (savedDeviceAddress != null) {
+            // Auto-connect to the last connected device
+            connectToBluetoothDevice(savedDeviceAddress);
+        } else {
+            // Proceed with regular Bluetooth device discovery
+            startBluetoothDiscovery();
+        }
 
         ListView devicesListView = findViewById(R.id.devicesListView);
         devicesList = new ArrayList<>();
@@ -154,14 +172,24 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
 
     }
 
-//    private String parseOilPressureResponse(String response) {
-//        // Assuming the response contains the oil pressure value in the form "PID:VALUE"
-//        String[] parts = response.split(":");
-//        if (parts.length >= 2) {
-//            return parts[1].trim(); // Extract the value part
-//        }
-//        return "N/A"; // Return "Not Available" if parsing fails
-//    }
+    /**
+     * Connect to the Bluetooth device with the given address
+     */
+    private void connectToBluetoothDevice(String deviceAddress) {
+        // Your existing code to connect to a Bluetooth device goes here
+
+        // Example code to connect to a device by its address
+        // BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
+        // BluetoothSocket socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+        // ... Rest of the connection code ...
+
+        // Save the last connected device address
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("lastDeviceAddress", deviceAddress);
+        editor.apply();
+    }
+
+
 
     /**
      * @param strings

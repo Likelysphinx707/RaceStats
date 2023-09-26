@@ -23,6 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Context;
+import android.content.SharedPreferences;
+
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -56,7 +59,6 @@ public class DigitalDash extends AppCompatActivity {
     // Declare member variables here
     private DraggableGaugeView rpmGauge;
     private DraggableGaugeView coolantTempGauge;
-    private Button refreshbutton;
 
     private ImageButton hamburgerButton;
     private LinearLayout popoutMenu;
@@ -89,7 +91,7 @@ public class DigitalDash extends AppCompatActivity {
 
         setContentView(R.layout.digital_dash);
 
-        // Hide the navigation bar (optional)
+        // Hide the navigation bar
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -98,7 +100,6 @@ public class DigitalDash extends AppCompatActivity {
         // Initialize gauges and assets for UI
         rpmGauge = findViewById(R.id.rpmGauge);
         coolantTempGauge = findViewById(R.id.coolantTempGauge);
-        refreshbutton = findViewById(R.id.refreshbutton);
 
         // Get the Bluetooth device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
@@ -135,19 +136,19 @@ public class DigitalDash extends AppCompatActivity {
 
 
         if (deviceAddress == null) {
-            // Show a popup indicating that no Bluetooth device is connected
+//            Show a popup indicating that no Bluetooth device is connected
 //            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //            builder.setTitle("No Bluetooth Device Detected");
 //            builder.setMessage("There is no Bluetooth device connected. Please connect a device and try again.");
 //            builder.setPositiveButton("OK", (dialog, which) -> finish());
 //            builder.show();
 
-            // add dev test buttons here generate random values
-//            rpmGauge.setText("Intake Temp: " + generateRandomNumber(4));
-//            coolantTempGauge.setText("Coolant Temperature C°: " + 2);
-//            updateCoolantTemperature(75);
-//            updateAirIntakeTemperature(60);
-//            textTempSimple.setText("75");
+//          add dev test buttons here generate random values
+            rpmGauge.setText("Intake Temp: " + generateRandomNumber(4));
+            coolantTempGauge.setText("Coolant Temperature C°: " + 2);
+            updateCoolantTemperature(75);
+            updateAirIntakeTemperature(35);
+            textTempSimple.setText("75");
 
         } else {
             BluetoothDevice selectedDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
@@ -172,12 +173,6 @@ public class DigitalDash extends AppCompatActivity {
                 ex.printStackTrace();
             }
 
-            // add refresh button here for testing
-            refreshbutton.setOnClickListener(view -> {
-                // Call the obd2CommandsToCall() function here
-                obd2CommandsToCall();
-                Log.d("Updated command", "OBD2 commands called refreshed");
-            });
         }
 
         // Start the data update loop
