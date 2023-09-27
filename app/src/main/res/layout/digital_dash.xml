@@ -9,79 +9,87 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/hamburgerButtonWraper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp">
-
-        <ImageButton
-            android:id="@+id/hamburgerButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="end"
-            android:layout_marginStart="24dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:baselineAlignBottom="false"
-            android:src="@drawable/home_icon"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/horizontalBarContanier"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/hamburgerButtonWraper"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_marginTop="48dp"
-            android:gravity="center"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/coolantLogo"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/coolant_logo_white" />
+            <Button
+                android:id="@+id/refreshbutton"
+                android:layout_width="180dp"
+                android:layout_height="62dp"
+                android:layout_marginTop="16dp"
+                android:text="Refresh"
+                android:textAlignment="center" />
 
-            <com.example.racestats.CustomProgressBar
-                android:id="@+id/coolantTemperatureGauge"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="780dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="24dp"
-                android:layout_toEndOf="@id/coolantLogo"
-                android:max="126"
-                android:progress="0" />
+            <ImageButton
+                android:id="@+id/hamburgerButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="-64dp"
+                android:layout_marginEnd="24dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:baselineAlignBottom="false"
+                android:src="@drawable/home_icon"
+                tools:ignore="SpeakableTextPresentCheck" />
 
-            <TextView
-                android:id="@+id/coolantTemperatureTextOverlay"
-                android:layout_width="106dp"
-                android:layout_height="46dp"
-                android:layout_alignTop="@id/coolantTemperatureGauge"
-                android:layout_alignBottom="@id/coolantTemperatureGauge"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="0dp"
-                android:layout_toEndOf="@id/coolantTemperatureGauge"
-                android:gravity="center"
-                android:text="0°C"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="34sp" />
+        </LinearLayout>
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:padding="16dp">
+
+                <!-- Coolant logo on the left -->
+                <!-- Horizontal gauge ProgressBar -->
+
+
+                <!-- Add TextView to display coolantTemperature -->
+
+                <ImageView
+                    android:id="@+id/coolantLogo"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/coolant_logo_white" />
+
+                <com.example.racestats.CustomProgressBar
+                    android:id="@+id/coolantTemperatureGauge"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="800dp"
+                    android:layout_height="46dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_toEndOf="@id/coolantLogo"
+                    android:max="126"
+                    android:progress="0" />
+
+                <TextView
+                    android:id="@+id/coolantTemperatureTextOverlay"
+                    android:layout_width="70dp"
+                    android:layout_height="56dp"
+                    android:layout_alignTop="@id/coolantTemperatureGauge"
+                    android:layout_alignBottom="@id/coolantTemperatureGauge"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="-4dp"
+                    android:layout_toEndOf="@id/coolantTemperatureGauge"
+                    android:gravity="center"
+                    android:text="0°C"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="24dp" />
+
+            </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginTop="48dp"
-            android:gravity="center"
+            android:layout_height="230dp"
             android:padding="16dp">
 
             <ImageView
@@ -96,17 +104,17 @@
             <com.example.racestats.CustomProgressBar
                 android:id="@+id/intakeTemperatureGauge"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="780dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="32dp"
+                android:layout_width="800dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="24dp"
                 android:layout_toEndOf="@id/intakeLogo"
-                android:max="80"
+                android:max="126"
                 android:progress="0" />
 
             <TextView
                 android:id="@+id/intakeTemperatureTextOverlay"
-                android:layout_width="106dp"
-                android:layout_height="46dp"
+                android:layout_width="70dp"
+                android:layout_height="56dp"
                 android:layout_alignTop="@id/intakeTemperatureGauge"
                 android:layout_alignBottom="@id/intakeTemperatureGauge"
                 android:layout_marginStart="20dp"
@@ -116,11 +124,11 @@
                 android:text="0°C"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="34sp" />
+                android:textSize="24dp" />
 
         </RelativeLayout>
 
-    </LinearLayout>
+        </LinearLayout>
 
 
     <com.example.racestats.DraggableGaugeView
