@@ -254,22 +254,14 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
      * This will check to make sure all of the appropriate permissions are granted by the user
      */
     private void startBluetoothDiscovery() {
-        if (bluetoothAdapter == null) {
-            Log.d("Error", "BluetoothAdapter is null. Unable to start discovery.");
-            // need to add error handling here
-            return;
-        }
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("Error Permissions", "BLUETOOTH_SCAN permission not granted");
-            // also need to add error handling here
+            Log.d("Error Permissions", "229 Permissions error");
             return;
         }
 
         if (!bluetoothAdapter.isDiscovering()) {
-            bluetoothAdapter.startDiscovery();
+             bluetoothAdapter.startDiscovery();
         }
     }
-
 
 }
