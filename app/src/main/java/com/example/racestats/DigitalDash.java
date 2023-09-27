@@ -70,6 +70,7 @@ public class DigitalDash extends AppCompatActivity {
     private TextView textTempSimple;
     private TextView coolantTempTextSimple;
     private ImageView coolantLogoSimple;
+
     private Handler handler = new Handler();
     private boolean isFlashing = false;
     private int flashCount = 0;

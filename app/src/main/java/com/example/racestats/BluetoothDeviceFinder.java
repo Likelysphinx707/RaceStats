@@ -89,81 +89,84 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         // Check if there's a previously saved device address
         String savedDeviceAddress = sharedPreferences.getString("lastDeviceAddress", null);
         if (savedDeviceAddress != null) {
-            // Auto-connect to the last connected device if there is one
+            // Auto-connect to the last connected device
             connectToBluetoothDevice(savedDeviceAddress);
         } else {
-            ListView devicesListView = findViewById(R.id.devicesListView);
-            devicesList = new ArrayList<>();
-            devicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, devicesList);
-            devicesListView.setAdapter(devicesArrayAdapter);
-
-            Button refreshButton = findViewById(R.id.refreshButton);
-            refreshButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    refreshBluetoothDevices();
-                }
-            });
-
-            Button testButton = findViewById(R.id.testButton);
-            testButton.setOnClickListener( view -> {
-                Intent intent = new Intent(BluetoothDeviceFinder.this, DigitalDash.class);
-                startActivity(intent);
-            });
-
-            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if (bluetoothAdapter == null) {
-                // Device doesn't support Bluetooth
-                Log.d("bluetooth error", "Device Does Not Support Bluetooth");
-                // TODO need to add text view for the users to see letting them know that Bluetooth is not supported on there device
-                return;
-            }
-
-            if (!bluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, 1);
-            }
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Error in permission check here", Toast.LENGTH_SHORT).show();
-            }
-
-            Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-
-            Log.d("Test", "onCreate: Test 106");
-            for (BluetoothDevice device : pairedDevices) {
-                String deviceName = device.getName();
-                String deviceAddress = device.getAddress();
-                String deviceInfo = deviceName + "\n" + deviceAddress;
-                devicesList.add(deviceInfo);
-            }
-
-            devicesArrayAdapter.notifyDataSetChanged();
-
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(bluetoothReceiver, filter);
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissionsBlueToothScan(new String[]{Manifest.permission.BLUETOOTH_SCAN}, 1);
-            }
-
-            bluetoothAdapter.startDiscovery();
-
-            /**
-             * Will redirect user to the Digital Dash Board View
-             */
-            devicesListView.setOnItemClickListener((parent, view, position, id) -> {
-                String deviceInfo = devicesArrayAdapter.getItem(position);
-                String[] deviceInfoArray = deviceInfo.split("\n");
-                String deviceAddress = deviceInfoArray[1];
-
-                Intent intent = new Intent(BluetoothDeviceFinder.this, DigitalDash.class);
-                intent.putExtra("deviceAddress", deviceAddress); // Pass the device address to DigitalDash activity
-                startActivity(intent);
-            });
-
             // Proceed with regular Bluetooth device discovery
             startBluetoothDiscovery();
+
+        ListView devicesListView = findViewById(R.id.devicesListView);
+        devicesList = new ArrayList<>();
+        devicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, devicesList);
+        devicesListView.setAdapter(devicesArrayAdapter);
+
+        Button refreshButton = findViewById(R.id.refreshButton);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshBluetoothDevices();
+            }
+        });
+
+        Button testButton = findViewById(R.id.testButton);
+        testButton.setOnClickListener( view -> {
+            Intent intent = new Intent(BluetoothDeviceFinder.this, DigitalDash.class);
+            startActivity(intent);
+        });
+
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            // Device doesn't support Bluetooth
+            Log.d("bluetooth error", "Device Does Not Support Bluetooth");
+            // TODO need to add text view for the users to see letting them know that Bluetooth is not supported on there device
+            return;
+        }
+
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, 1);
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Error in permission check here", Toast.LENGTH_SHORT).show();
+        }
+
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+        for (BluetoothDevice device : pairedDevices) {
+            String deviceName = device.getName();
+            String deviceAddress = device.getAddress();
+            String deviceInfo = deviceName + "\n" + deviceAddress;
+            devicesList.add(deviceInfo);
+        }
+        devicesArrayAdapter.notifyDataSetChanged();
+
+
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(bluetoothReceiver, filter);
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionsBlueToothScan(new String[]{Manifest.permission.BLUETOOTH_SCAN}, 1);
+        }
+
+
+        bluetoothAdapter.startDiscovery();
+
+
+        /**
+         * Will redirect user to the Digital Dash Board View
+         */
+        devicesListView.setOnItemClickListener((parent, view, position, id) -> {
+            String deviceInfo = devicesArrayAdapter.getItem(position);
+            String[] deviceInfoArray = deviceInfo.split("\n");
+            String deviceAddress = deviceInfoArray[1];
+
+            Intent intent = new Intent(BluetoothDeviceFinder.this, DigitalDash.class);
+            intent.putExtra("deviceAddress", deviceAddress); // Pass the device address to DigitalDash activity
+            startActivity(intent);
+        });
         }
     }
 
@@ -171,17 +174,15 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
      * Connect to the Bluetooth device with the given address
      */
     private void connectToBluetoothDevice(String deviceAddress) {
-        // Your existing code to connect to a Bluetooth device goes here
-
-        // Example code to connect to a device by its address
-        // BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
-        // BluetoothSocket socket = device.createRfcommSocketToServiceRecord(MY_UUID);
-        // ... Rest of the connection code ...
-
         // Save the last connected device address
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("lastDeviceAddress", deviceAddress);
         editor.apply();
+
+        // Redirect user to the Digital Dash Board View
+        Intent intent = new Intent(BluetoothDeviceFinder.this, DigitalDash.class);
+        intent.putExtra("deviceAddress", deviceAddress); // Pass the device address to DigitalDash activity
+        startActivity(intent);
     }
 
 
@@ -259,7 +260,7 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         }
 
         if (!bluetoothAdapter.isDiscovering()) {
-            bluetoothAdapter.startDiscovery();
+             bluetoothAdapter.startDiscovery();
         }
     }
 
