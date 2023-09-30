@@ -94,6 +94,7 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         } else {
             // Proceed with regular Bluetooth device discovery
             startBluetoothDiscovery();
+        }
 
         ListView devicesListView = findViewById(R.id.devicesListView);
         devicesList = new ArrayList<>();
@@ -167,7 +168,6 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             intent.putExtra("deviceAddress", deviceAddress); // Pass the device address to DigitalDash activity
             startActivity(intent);
         });
-        }
     }
 
     /**
