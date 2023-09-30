@@ -90,8 +90,10 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
         String savedDeviceAddress = sharedPreferences.getString("lastDeviceAddress", null);
         if (savedDeviceAddress != null) {
             // Auto-connect to the last connected device
+            Log.d("autoconnect", "Attempting to auto connect");
             connectToBluetoothDevice(savedDeviceAddress);
         } else {
+            Log.d("manuel connection", "manuel connection needed");
             // Proceed with regular Bluetooth device discovery
             startBluetoothDiscovery();
         }
@@ -163,6 +165,11 @@ public class BluetoothDeviceFinder extends AppCompatActivity {
             String deviceInfo = devicesArrayAdapter.getItem(position);
             String[] deviceInfoArray = deviceInfo.split("\n");
             String deviceAddress = deviceInfoArray[1];
+
+            // Save the selected device address in SharedPreferences for auto-connection
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("lastDeviceAddress", deviceAddress);
+            editor.apply();
 
             Intent intent = new Intent(BluetoothDeviceFinder.this, DigitalDash.class);
             intent.putExtra("deviceAddress", deviceAddress); // Pass the device address to DigitalDash activity
