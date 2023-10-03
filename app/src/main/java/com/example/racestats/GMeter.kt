@@ -70,7 +70,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class GmeterActivity : AppCompatActivity(), SensorEventListener {
+class GMeter : AppCompatActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private lateinit var accelerometer: Sensor
     private lateinit var gdot: ImageView
@@ -122,19 +122,23 @@ class GmeterActivity : AppCompatActivity(), SensorEventListener {
             val accelX = event.values[0]
             val accelY = event.values[1]
 
+
             val leftGs = calculateLeftGs(accelX)
             val rightGs = calculateRightGs(accelX)
             val accelGs = calculateAccelGs(accelY)
             val brakingGs = calculateBrakingGs(accelY)
 
+
             updateGdotPosition(leftGs, rightGs, accelGs, brakingGs)
             updateHighScore(leftGs) // Update high score with leftGs for demonstration
+
 
             // Update UI to display the G-forces
             leftGsTextView.text = "Left G's: $leftGs"
             rightGsTextView.text = "Right G's: $rightGs"
             accelGsTextView.text = "Acceleration G's: $accelGs"
             brakingGsTextView.text = "Braking G's: $brakingGs"
+
         }
     }
 
@@ -158,14 +162,20 @@ class GmeterActivity : AppCompatActivity(), SensorEventListener {
         return -accelY.coerceIn(Float.MIN_VALUE, 0f)
     }
 
-    private fun updateGdotPosition(leftGs: Float, rightGs: Float, accelGs: Float, brakingGs: Float) {
+    private fun updateGdotPosition(
+        leftGs: Float,
+        rightGs: Float,
+        accelGs: Float,
+        brakingGs: Float
+    ) {
         // Set the position of the red dot based on G-forces
         // Adjust this logic based on your specific requirements and scaling
         val maxGForce = 1.5f  // Maximum g-force to display
         val scaleFactor = 1000  // Scale factor for dot movement
 
         // Calculate total G-force
-        val totalGForce = kotlin.math.sqrt(leftGs * leftGs + rightGs * rightGs + accelGs * accelGs + brakingGs * brakingGs)
+        val totalGForce =
+            kotlin.math.sqrt(leftGs * leftGs + rightGs * rightGs + accelGs * accelGs + brakingGs * brakingGs)
         val normalizedGForce = (totalGForce / maxGForce).coerceIn(0.0f, 1.0f)
         val translationY = normalizedGForce * scaleFactor
 
@@ -178,7 +188,8 @@ class GmeterActivity : AppCompatActivity(), SensorEventListener {
             maxGForceRecorded = gForce
             // Update UI to display the highest G-force
             // Assuming you have a TextView with the id 'highScoreTextView'
-            findViewById<TextView>(R.id.highScoreTextView).text = "Highest G-force: $maxGForceRecorded"
+            findViewById<TextView>(R.id.highScoreTextView).text =
+                "Highest G-force: $maxGForceRecorded"
         }
     }
 }
