@@ -51,25 +51,6 @@ class GMeter : AppCompatActivity() {
         // Set the translation on both X and Y axes
         gdot.translationX = translationX
         gdot.translationY = translationY
-
-        // Create a fading tail effect
-        val alphaAnimation = AlphaAnimation(1.0f, 0.0f)
-        alphaAnimation.duration = 1000 // Duration in milliseconds
-        alphaAnimation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation?) {
-                // Do nothing
-            }
-
-            override fun onAnimationEnd(animation: Animation?) {
-                // Reset the alpha to fully visible for the next tail
-                gdot.alpha = 1.0f
-            }
-
-            override fun onAnimationRepeat(animation: Animation?) {
-                // Do nothing
-            }
-        })
-        gdot.startAnimation(alphaAnimation)
     }
 
     private fun dpToPx(dp: Int): Float {
