@@ -68,4 +68,12 @@
         android:layout_below="@id/AccelGs"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:id="@+id/calibrateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calibrate"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="16dp"/>
+
 </RelativeLayout>

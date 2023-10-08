@@ -67,6 +67,8 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -82,10 +84,20 @@ class GMeter : AppCompatActivity(), SensorEventListener {
     private lateinit var brakingGsTextView: TextView
     private lateinit var leftGsTextView: TextView
     private lateinit var rightGsTextView: TextView
+    private lateinit var calibrateButton: Button
+
+    // Variables to store the calibration offsets
+    private var xOffset: Float = 0.0f
+    private var yOffset: Float = 0.0f
+    private var zOffset: Float = 0.0f
+    private var isCalibrated: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gmeter)
+
+        // Set the activity to full-screen mode
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
 
         gdot = findViewById(R.id.gdot)
         accelGsTextView = findViewById(R.id.AccelGs)
@@ -93,8 +105,14 @@ class GMeter : AppCompatActivity(), SensorEventListener {
         leftGsTextView = findViewById(R.id.LeftGs)
         rightGsTextView = findViewById(R.id.RightGs)
 
+        calibrateButton = findViewById(R.id.calibrateButton);
+
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+        calibrateButton.setOnClickListener {
+            onCalibrateButtonClick()
+        }
     }
 
     override fun onResume() {
@@ -135,28 +153,37 @@ class GMeter : AppCompatActivity(), SensorEventListener {
         // Do nothing
     }
 
+    private var initialSensorEvent: SensorEvent? = null
+
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
-            val accelX = event.values[0]
-            val accelY = event.values[1]
+            // Store the initial sensor event for calibration
+            if (!isCalibrated && initialSensorEvent == null) {
+                initialSensorEvent = event
+            }
 
+            var accelX = event.values[0]
+            var accelY = event.values[1]
+
+            // Apply calibration offsets if calibrated
+            if (isCalibrated) {
+                accelX -= xOffset
+                accelY -= yOffset
+            }
 
             val leftGs = calculateLeftGs(accelX)
             val rightGs = calculateRightGs(accelX)
             val accelGs = calculateAccelGs(accelY)
             val brakingGs = calculateBrakingGs(accelY)
 
-
             updateGdotPosition(leftGs, rightGs, accelGs, brakingGs)
             updateHighScore(leftGs) // Update high score with leftGs for demonstration
-
 
             // Update UI to display the G-forces
             leftGsTextView.text = "Left G's: $leftGs"
             rightGsTextView.text = "Right G's: $rightGs"
             accelGsTextView.text = "Acceleration G's: $accelGs"
             brakingGsTextView.text = "Braking G's: $brakingGs"
-
         }
     }
 
@@ -167,7 +194,7 @@ class GMeter : AppCompatActivity(), SensorEventListener {
 
     private fun calculateRightGs(accelX: Float): Float {
         // Calculate G-force in the positive x direction
-        return -accelX.coerceIn(Float.MIN_VALUE, 0f)
+        return -accelX.coerceIn(-Float.MAX_VALUE, 0f)
     }
 
     private fun calculateAccelGs(accelY: Float): Float {
@@ -177,7 +204,7 @@ class GMeter : AppCompatActivity(), SensorEventListener {
 
     private fun calculateBrakingGs(accelY: Float): Float {
         // Calculate G-force in the negative y direction (braking)
-        return -accelY.coerceIn(Float.MIN_VALUE, 0f)
+        return -accelY.coerceIn(-Float.MIN_VALUE, 0f)
     }
 
     private fun updateGdotPosition(
@@ -208,6 +235,31 @@ class GMeter : AppCompatActivity(), SensorEventListener {
             // Assuming you have a TextView with the id 'highScoreTextView'
             findViewById<TextView>(R.id.highScoreTextView).text =
                 "Highest G-force: $maxGForceRecorded"
+        }
+    }
+
+    // Function to handle calibration button click
+    fun onCalibrateButtonClick() {
+        // Measure initial readings and set as offsets for calibration
+        // Assuming the device is in the desired calibration position at this point
+
+        // Handle the initial sensor event
+        val initialEvent = initialSensorEvent
+
+        if (initialEvent != null) {
+            val initialX = initialEvent.values[0]
+            val initialY = initialEvent.values[1]
+            val initialZ = initialEvent.values[2]
+
+            // Store the initial readings as offsets for calibration
+            xOffset = initialX
+            yOffset = initialY
+            zOffset = initialZ
+
+            // Set calibration flag to true
+            isCalibrated = true
+        } else {
+            Log.e("Calibration Error", "onCalibrateButtonClick: No initial sensor event")
         }
     }
 }
