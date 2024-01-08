@@ -17,7 +17,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
-    private val BOOT_PERMISSION_REQUEST_CODE = 123
     private lateinit var ecuInfo: View
     private lateinit var g_meter: View
     private lateinit var maintenance_records: View
@@ -31,7 +30,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Set the activity to full-screen mode
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+        window.decorView.systemUiVisibility =
+            (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
 
         // Grab our link variables
         ecuInfo = findViewById(R.id.ecuInfo)
@@ -72,46 +72,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Check if permission is granted for boot
-        checkBootPermission()
-    }
-
-    private fun checkBootPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (!packageManager.canRequestPackageInstalls()) {
-                showBootPermissionDialog()
-            }
+        // Check and request permission for system boot
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_BOOT_COMPLETED)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermission()
         }
     }
-
-    private fun showBootPermissionDialog() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("Permission Required")
-        dialogBuilder.setMessage("To start the app on system boot, please grant the necessary permission.")
-        dialogBuilder.setPositiveButton("Grant") { dialogInterface: DialogInterface, _: Int ->
-            dialogInterface.dismiss()
-            requestBootPermission()
-        }
-        dialogBuilder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, _: Int ->
-            dialogInterface.dismiss()
-            // Handle cancellation if needed
-        }
-        val dialog = dialogBuilder.create()
-        dialog.show()
-    }
-
-    private fun requestBootPermission() {
-            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-            intent.data = Uri.parse("package:$packageName")
-            startActivityForResult(intent, BOOT_PERMISSION_REQUEST_CODE)
-        }
-
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            super.onActivityResult(requestCode, resultCode, data)
-            if (requestCode == BOOT_PERMISSION_REQUEST_CODE) {
-                checkBootPermission()
-            }
-        }
 
 //     Ask User for all needed permissions
 //    private val requestPermissionLauncher = registerForActivityResult(
@@ -144,5 +111,72 @@ class MainActivity : AppCompatActivity() {
 //        }
 //    }
 
+    private fun requestPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.RECEIVE_BOOT_COMPLETED
+            )
+        ) {
+            // Show rationale if needed
+            AlertDialog.Builder(this)
+                .setTitle("Permission Required")
+                .setMessage("This permission is needed to start the app on system boot.")
+                .setPositiveButton("OK") { _: DialogInterface, _: Int ->
+                    requestSystemBootPermission()
+                }
+                .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
+                    dialog.dismiss()
+                    // Handle if the user denies permission
+                    // You can show a message or take appropriate action here
+                    Toast.makeText(
+                        this,
+                        "Permission denied. App may not start on system boot.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .create()
+                .show()
+        } else {
+            requestSystemBootPermission()
+        }
+    }
 
+    private fun requestSystemBootPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.RECEIVE_BOOT_COMPLETED),
+            PERMISSION_REQUEST_SYSTEM_BOOT
+        )
+    }
+
+    companion object {
+        private const val PERMISSION_REQUEST_SYSTEM_BOOT = 1001
+    }
+
+    // Handle permission request result if needed (not included in the provided code)
+    // Override onRequestPermissionsResult to handle the permission result
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_SYSTEM_BOOT) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                Toast.makeText(
+                    this,
+                    "Permission granted. App can start on system boot.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                // Permission denied
+                Toast.makeText(
+                    this,
+                    "Permission denied. App may not start on system boot.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
 }
