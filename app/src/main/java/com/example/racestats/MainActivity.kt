@@ -1,6 +1,7 @@
 package com.example.racestats
 
 import android.Manifest
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -10,11 +11,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
+    private val BOOT_PERMISSION_REQUEST_CODE = 123
     private lateinit var ecuInfo: View
     private lateinit var g_meter: View
     private lateinit var maintenance_records: View
@@ -69,7 +72,46 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Check if permission is granted for boot
+        checkBootPermission()
     }
+
+    private fun checkBootPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!packageManager.canRequestPackageInstalls()) {
+                showBootPermissionDialog()
+            }
+        }
+    }
+
+    private fun showBootPermissionDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("Permission Required")
+        dialogBuilder.setMessage("To start the app on system boot, please grant the necessary permission.")
+        dialogBuilder.setPositiveButton("Grant") { dialogInterface: DialogInterface, _: Int ->
+            dialogInterface.dismiss()
+            requestBootPermission()
+        }
+        dialogBuilder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, _: Int ->
+            dialogInterface.dismiss()
+            // Handle cancellation if needed
+        }
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
+
+    private fun requestBootPermission() {
+            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+            intent.data = Uri.parse("package:$packageName")
+            startActivityForResult(intent, BOOT_PERMISSION_REQUEST_CODE)
+        }
+
+        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+            super.onActivityResult(requestCode, resultCode, data)
+            if (requestCode == BOOT_PERMISSION_REQUEST_CODE) {
+                checkBootPermission()
+            }
+        }
 
 //     Ask User for all needed permissions
 //    private val requestPermissionLauncher = registerForActivityResult(

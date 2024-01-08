@@ -37,7 +37,7 @@ public class CustomProgressBar extends ProgressBar {
 
     private void drawMarks(Canvas canvas) {
         // Define the progress points where you want to draw marks
-        int[] progressPoints = {25, 50, 75, 100};
+        int[] progressPoints = {81, 100};
 
         int width = getWidth();
         int height = getHeight();
