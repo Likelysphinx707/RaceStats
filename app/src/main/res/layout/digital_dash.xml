@@ -222,29 +222,30 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/gaugeOptionIntakeTemp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_horizontal"
-            android:onClick="onGaugeOptionClick"
-            android:padding="16dp"
-            android:text="Intake Temp - Active"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-
-        <TextView
             android:id="@+id/gaugeOptionCoolant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/gaugeOptionIntakeTemp"
+
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_horizontal"
             android:onClick="onGaugeOptionClick"
             android:padding="16dp"
             android:text="Coolant Temperature - Active"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/gaugeOptionIntakeTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gaugeOptionCoolant"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:onClick="onGaugeOptionClick"
+            android:padding="16dp"
+            android:text="Intake Temp - Active"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
