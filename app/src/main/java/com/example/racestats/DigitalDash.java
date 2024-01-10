@@ -1,12 +1,15 @@
 package com.example.racestats;
 
 import android.Manifest;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +34,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 // Import our Gauge view class
 import com.example.racestats.DraggableGaugeView;
@@ -63,6 +67,9 @@ public class DigitalDash extends AppCompatActivity {
     private ImageButton hamburgerButton;
     private LinearLayout popoutMenu;
     private ImageButton xButton;
+    private ImageView backbutton;
+    private boolean isHomeIconRotated = false;
+
     private boolean isMenuOpen = false;
 
     private CustomProgressBar coolantTemperatureGauge;
@@ -178,6 +185,46 @@ public class DigitalDash extends AppCompatActivity {
 
         // Start the data update loop
         startDataUpdateLoop();
+
+        backbutton = findViewById(R.id.backArrow);
+        // Set a click listener for the home icon
+        backbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Rotate and change the drawable based on the rotation state
+                if (isHomeIconRotated) {
+                    ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(backbutton, "rotation", 55f, 0f);
+                    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(backbutton, "scaleX", 1.0f, 0.8f);
+                    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(backbutton, "scaleY", 1.0f, 0.8f);
+                    AnimatorSet set = new AnimatorSet();
+                    set.playTogether(rotationAnim, scaleXAnim, scaleYAnim);
+                    set.setDuration(300);
+                    set.start();
+
+                    // Set the bars icon drawable to the ImageView
+                    Drawable barsIconDrawable = VectorDrawableCompat.create(getResources(), R.drawable.home_icon, getTheme());
+                    backbutton.setImageDrawable(barsIconDrawable);
+                } else {
+                    ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(backbutton, "rotation", 0f, 335f);
+                    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(backbutton, "scaleX", 1.0f, 1.0f);
+                    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(backbutton, "scaleY", 1.0f, 1.0f);
+                    AnimatorSet set = new AnimatorSet();
+                    set.playTogether(rotationAnim, scaleXAnim, scaleYAnim);
+                    set.setDuration(650);
+                    set.start();
+
+                    // Set the X icon drawable to the ImageView
+                    Drawable xIconDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_x_icon, getTheme());
+                    backbutton.setImageDrawable(xIconDrawable);
+                }
+
+                // Toggle the rotation state
+                isHomeIconRotated = !isHomeIconRotated;
+
+                Intent intent = new Intent(DigitalDash.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void startDataUpdateLoop() {
