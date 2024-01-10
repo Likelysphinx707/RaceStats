@@ -60,6 +60,9 @@ class ServiceRecords : AppCompatActivity() {
         val dateContentBox = findViewById<View>(R.id.dateContentBox)
         val params = serviceTitleBox.layoutParams as ViewGroup.MarginLayoutParams
 
+        // get scroll view that holds all the old records
+        val scrollView2 = findViewById<View>(R.id.scrollView2)
+
         // find the UI buttons and assign them to their vars
         addButton = findViewById(R.id.add_new_button)
         editButton = findViewById(R.id.edit_button)
@@ -76,6 +79,9 @@ class ServiceRecords : AppCompatActivity() {
         // find the LinearLayout for new record
         newRecordLayout = findViewById(R.id.new_record_layout)
 
+
+
+
         // set onClickListener on the button
         addButton.setOnClickListener {
             // Toggle the visibility of the new record layout
@@ -84,17 +90,23 @@ class ServiceRecords : AppCompatActivity() {
                 params.setMargins(resources.getDimensionPixelSize(R.dimen.margin_40dp), resources.getDimensionPixelSize(R.dimen.margin_100dp), 0, 0)
                 serviceTitleBox.layoutParams = params
 
+                // hide old recoreds when 'add new' view is open
+                scrollView2.visibility = View.GONE
+
                 val marginValue = resources.getDimensionPixelSize(R.dimen.margin_40dp)
                 params.setMargins(marginValue, marginValue, 0, 0)
                 mileageContentBox.layoutParams = params
                 dateContentBox.layoutParams = params
-                toggleRecordLayoutVisibility(newRecordLayout, addButton, recordViews, titleTextView, editButton, deleteButton, cancelButton)
+                toggleRecordLayoutVisibility(newRecordLayout, addButton, recordViews, titleTextView, editButton, deleteButton, cancelButton, scrollView2)
             } else {
                 // Set margins to 0 when new_record_layout is gone
                 params.setMargins(0, 0, 0, 0)
                 serviceTitleBox.layoutParams = params
                 mileageContentBox.layoutParams = params
                 dateContentBox.layoutParams = params
+
+                // hide old recoreds when 'add new' view is open
+                scrollView2.visibility = View.VISIBLE
 
                 // Change the addButton's text from "Add New" to "Save"
                 addButton.text = "Save"
@@ -509,7 +521,7 @@ class ServiceRecords : AppCompatActivity() {
         db.close()
     }
 
-    private fun toggleRecordLayoutVisibility(newRecordLayout: View, addButton: Button, recordViews: List<View>, titleTextView: TextView, editButton: Button, deleteButton: Button, cancelButton: Button) {
+    private fun toggleRecordLayoutVisibility(newRecordLayout: View, addButton: Button, recordViews: List<View>, titleTextView: TextView, editButton: Button, deleteButton: Button, cancelButton: Button,  scrollView2: View) {
         newRecordLayout.visibility = View.VISIBLE
         addButton.text = "Confirm"
         for (record in recordViews) {
@@ -523,6 +535,8 @@ class ServiceRecords : AppCompatActivity() {
         cancelButton.setOnClickListener {
             if (newRecordLayout.visibility == View.VISIBLE) {
                 newRecordLayout.visibility = View.GONE
+                scrollView2.visibility = View.VISIBLE
+
                 addButton.text = "Add New"
                 for (record in recordViews) {
                     record.visibility = View.VISIBLE
