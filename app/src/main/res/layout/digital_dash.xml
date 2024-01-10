@@ -51,6 +51,7 @@
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/coolantTemp"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_marginTop="48dp"
@@ -94,6 +95,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/IntakeTemp"
             android:layout_width="match_parent"
             android:layout_height="103dp"
             android:layout_marginTop="48dp"
@@ -138,21 +140,21 @@
 
     </LinearLayout>
 
-    <com.example.racestats.DraggableGaugeView
-        android:id="@+id/rpmGauge"
-        android:layout_width="350dp"
-        android:layout_height="63dp"
-        android:text="Engine RPM: "
-        android:textSize="18sp"
-        android:visibility="gone" />
+<!--    <com.example.racestats.DraggableGaugeView-->
+<!--        android:id="@+id/rpmGauge"-->
+<!--        android:layout_width="350dp"-->
+<!--        android:layout_height="63dp"-->
+<!--        android:text="Engine RPM: "-->
+<!--        android:textSize="18sp"-->
+<!--        android:visibility="gone" />-->
 
-    <com.example.racestats.DraggableGaugeView
-        android:id="@+id/coolantTempGauge"
-        android:layout_width="350dp"
-        android:layout_height="63dp"
-        android:text="Coolant Temperature C°: "
-        android:textSize="18sp"
-        android:visibility="gone" />
+<!--    <com.example.racestats.DraggableGaugeView-->
+<!--        android:id="@+id/coolantTempGauge"-->
+<!--        android:layout_width="350dp"-->
+<!--        android:layout_height="63dp"-->
+<!--        android:text="Coolant Temperature C°: "-->
+<!--        android:textSize="18sp"-->
+<!--        android:visibility="gone" />-->
 
 
     <!-- Add TextView to display coolantTemperature -->
@@ -192,7 +194,7 @@
         android:layout_alignParentEnd="true"
         android:background="@android:color/black"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <!-- x button to close pop out -->
         <ImageButton
@@ -220,7 +222,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/gaugeOptionRPM"
+            android:id="@+id/gaugeOptionIntakeTemp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
@@ -228,7 +230,7 @@
             android:gravity="center_horizontal"
             android:onClick="onGaugeOptionClick"
             android:padding="16dp"
-            android:text="Engine RPM - Active"
+            android:text="Intake Temp - Active"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -236,7 +238,7 @@
             android:id="@+id/gaugeOptionCoolant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/gaugeOptionRPM"
+            android:layout_below="@id/gaugeOptionIntakeTemp"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_horizontal"

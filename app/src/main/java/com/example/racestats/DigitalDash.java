@@ -61,8 +61,8 @@ public class DigitalDash extends AppCompatActivity {
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     // Declare member variables here
-    private DraggableGaugeView rpmGauge;
-    private DraggableGaugeView coolantTempGauge;
+    private RelativeLayout intakeTempGauge;
+    private RelativeLayout coolantTempGauge;
 
     private ImageButton hamburgerButton;
     private LinearLayout popoutMenu;
@@ -106,8 +106,8 @@ public class DigitalDash extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
 
         // Initialize gauges and assets for UI
-        rpmGauge = findViewById(R.id.rpmGauge);
-        coolantTempGauge = findViewById(R.id.coolantTempGauge);
+        intakeTempGauge = findViewById(R.id.IntakeTemp);
+        coolantTempGauge = findViewById(R.id.coolantTemp);
 
         // Get the Bluetooth device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
@@ -152,8 +152,8 @@ public class DigitalDash extends AppCompatActivity {
 //            builder.show();
 
 //          add dev test buttons here generate random values
-            rpmGauge.setText("Intake Temp: " + generateRandomNumber(4));
-            coolantTempGauge.setText("Coolant Temperature C°: " + 2);
+//            rpmGauge.setText("Intake Temp: " + generateRandomNumber(4));
+//            coolantTempGauge.setText("Coolant Temperature C°: " + 2);
             updateCoolantTemperature(75);
             updateAirIntakeTemperature(35);
             textTempSimple.setText("75");
@@ -242,8 +242,8 @@ public class DigitalDash extends AppCompatActivity {
 
     public void onGaugeOptionClick(View view) {
         switch (view.getId()) {
-            case R.id.gaugeOptionRPM:
-                toggleGaugeVisibility(rpmGauge);
+            case R.id.gaugeOptionIntakeTemp:
+                toggleGaugeVisibility(intakeTempGauge);
                 break;
             case R.id.gaugeOptionCoolant:
                 toggleGaugeVisibility(coolantTempGauge);
@@ -252,7 +252,7 @@ public class DigitalDash extends AppCompatActivity {
         }
     }
 
-    private void toggleGaugeVisibility(DraggableGaugeView gaugeView) {
+    private void toggleGaugeVisibility(RelativeLayout gaugeView) {
         int newVisibility = gaugeView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
         gaugeView.setVisibility(newVisibility);
     }
@@ -465,12 +465,6 @@ public class DigitalDash extends AppCompatActivity {
 
 //            Log.d("Coolant Temp", coolantTempResult);
 //            Log.d("Intake Temp", intakeTempResult);
-
-            // Update the values in the DraggableGaugeView instances
-            rpmGauge.setText("Intake Temp: " + intakeTempResult);
-            coolantTempGauge.setText("Coolant Temperature C°: " + coolantTempResult);
-
-
 
 
             // ... Add more OBD2 commands here ...
