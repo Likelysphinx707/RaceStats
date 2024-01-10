@@ -300,12 +300,12 @@ class ServiceRecords : AppCompatActivity() {
                 val barsIconDrawable = VectorDrawableCompat.create(resources, R.drawable.home_icon, theme)
                 homeIcon.setImageDrawable(barsIconDrawable)
             } else {
-                val rotationAnim = ObjectAnimator.ofFloat(homeIcon, "rotation", 0f, 90f)
+                val rotationAnim = ObjectAnimator.ofFloat(homeIcon, "rotation", 0f, 335f)
                 val scaleXAnim = ObjectAnimator.ofFloat(homeIcon, "scaleX", 1.0f, 1.0f)
                 val scaleYAnim = ObjectAnimator.ofFloat(homeIcon, "scaleY", 1.0f, 1.0f)
                 val set = AnimatorSet()
                 set.playTogether(rotationAnim, scaleXAnim, scaleYAnim)
-                set.duration = 500
+                set.duration = 650
                 set.start()
 
                 // Set the X icon drawable to the ImageView
