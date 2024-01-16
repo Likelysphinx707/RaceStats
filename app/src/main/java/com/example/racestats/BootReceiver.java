@@ -15,11 +15,11 @@ public class BootReceiver extends BroadcastReceiver {
     }
 }
 
-// will launch users saved view still needs tested.
+    // will launch users saved view still needs tested.
 //    @Override
 //    public void onReceive(Context context, Intent intent) {
 //        // Access the string resource within the onReceive method
-//        String viewToLaunch = context.getString(R.string.LaunchView);
+//        String viewToLaunch = context.getString(R.string.launchView);
 //
 //        if (intent.getAction() != null && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 //            // Assuming 'LaunchView' represents a class name, modify this part accordingly
@@ -33,4 +33,4 @@ public class BootReceiver extends BroadcastReceiver {
 //            }
 //        }
 //    }
-
+//}

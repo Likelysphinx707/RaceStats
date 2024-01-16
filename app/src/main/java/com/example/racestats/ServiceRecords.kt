@@ -112,7 +112,7 @@ class ServiceRecords : AppCompatActivity() {
                 addButton.text = "Save"
 
                 // Check if any of the fields are null if they are new record will not be submitted and the user will be shown an error alert
-                if (serviceEditText.text.isNullOrBlank() || mileageEditText.text.isNullOrBlank() || dateEditText.text.isNullOrBlank()) {
+                if (serviceEditText.text.isNullOrBlank() && mileageEditText.text.isNullOrBlank() && dateEditText.text.isNullOrBlank()) {
                     // One or more fields are null, handle the error or display a message
                     Toast.makeText(this, "You must fill in at least one field to add a new record", Toast.LENGTH_LONG).show()
                 } else {

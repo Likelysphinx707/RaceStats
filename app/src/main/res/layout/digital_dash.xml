@@ -194,7 +194,7 @@
         android:layout_alignParentEnd="true"
         android:background="@android:color/black"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <!-- x button to close pop out -->
         <ImageButton
