@@ -154,7 +154,7 @@ class ServiceRecords : AppCompatActivity() {
                     serviceTextView.id = R.id.service_textview
                     serviceTextView.text = service
                     serviceTextView.setTextColor(resources.getColor(R.color.white))
-                    serviceTextView.textSize = 28f
+                    serviceTextView.textSize = 40f
                     serviceTextView.layoutParams = LinearLayout.LayoutParams(
                         0,
                         LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -167,7 +167,7 @@ class ServiceRecords : AppCompatActivity() {
                     mileageTextView.id = R.id.mileage_textview
                     mileageTextView.text = mileage
                     mileageTextView.setTextColor(resources.getColor(R.color.white))
-                    mileageTextView.textSize = 28f
+                    mileageTextView.textSize = 40f
                     mileageTextView.layoutParams = LinearLayout.LayoutParams(
                         0,
                         LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -180,7 +180,7 @@ class ServiceRecords : AppCompatActivity() {
                     dateTextView.id = R.id.date_textview
                     dateTextView.text = date
                     dateTextView.setTextColor(resources.getColor(R.color.white))
-                    dateTextView.textSize = 28f
+                    dateTextView.textSize = 40f
                     dateTextView.layoutParams = LinearLayout.LayoutParams(
                         0,
                         LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -411,7 +411,7 @@ class ServiceRecords : AppCompatActivity() {
                 serviceTextView.id = R.id.service_textview
                 serviceTextView.text = service
                 serviceTextView.setTextColor(resources.getColor(R.color.white))
-                serviceTextView.textSize = 28f
+                serviceTextView.textSize = 40f
                 serviceTextView.layoutParams = LinearLayout.LayoutParams(
                     0,
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -424,7 +424,7 @@ class ServiceRecords : AppCompatActivity() {
                 mileageTextView.id = R.id.mileage_textview
                 mileageTextView.text = mileage
                 mileageTextView.setTextColor(resources.getColor(R.color.white))
-                mileageTextView.textSize = 28f
+                mileageTextView.textSize = 40f
                 mileageTextView.layoutParams = LinearLayout.LayoutParams(
                     0,
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -437,7 +437,7 @@ class ServiceRecords : AppCompatActivity() {
                 dateTextView.id = R.id.date_textview
                 dateTextView.text = date
                 dateTextView.setTextColor(resources.getColor(R.color.white))
-                dateTextView.textSize = 28f
+                dateTextView.textSize = 40f
                 dateTextView.layoutParams = LinearLayout.LayoutParams(
                     0,
                     LinearLayout.LayoutParams.WRAP_CONTENT,
