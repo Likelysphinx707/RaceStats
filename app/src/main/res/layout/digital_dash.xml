@@ -19,7 +19,7 @@
         <!-- back button -->
         <ImageButton
             android:id="@+id/backArrow"
-            android:layout_width="48dp"
+            android:layout_width="60dp"
             android:layout_height="48dp"
             android:layout_gravity="start"
             android:layout_marginEnd="874dp"
@@ -36,7 +36,7 @@
             android:layout_marginEnd="24dp"
             android:background="?android:attr/selectableItemBackground"
             android:baselineAlignBottom="false"
-            android:src="@drawable/home_icon"
+            android:src="@drawable/hamburger"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
 
@@ -189,36 +189,39 @@
 
     <LinearLayout
         android:id="@+id/popoutMenu"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:background="@android:color/black"
+        android:background="#121312"
         android:orientation="vertical"
         android:visibility="gone">
 
         <!-- x button to close pop out -->
         <ImageButton
             android:id="@+id/x_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="48dp"
+            android:layout_gravity="end"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="0dp"
             android:background="?android:attr/selectableItemBackground"
             android:baselineAlignBottom="false"
-            android:src="@drawable/ic_x_icon"
+            android:src="@drawable/xwhite"
             android:visibility="gone"
             tools:ignore="SpeakableTextPresentCheck" />
+
 
         <!-- Gauge options in pop-out menu -->
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
             android:gravity="center_horizontal"
             android:padding="16dp"
             android:text="Availabe Data"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <TextView
@@ -230,10 +233,10 @@
             android:focusable="true"
             android:gravity="center_horizontal"
             android:onClick="onGaugeOptionClick"
-            android:padding="16dp"
-            android:text="Coolant Temperature - Active"
+            android:padding="12dp"
+            android:text="Coolant Temp - Active"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/gaugeOptionIntakeTemp"
@@ -244,10 +247,10 @@
             android:focusable="true"
             android:gravity="center_horizontal"
             android:onClick="onGaugeOptionClick"
-            android:padding="16dp"
+            android:padding="10dp"
             android:text="Intake Temp - Active"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
         <!-- Add more gauge options as needed -->
     </LinearLayout>
