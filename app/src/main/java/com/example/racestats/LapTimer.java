@@ -36,6 +36,8 @@ public class LapTimer implements LocationListener {
     private static final String COLUMN_LAP_TIME = "lap_time";
     private static final String COLUMN_DATE_TIME = "date_time";
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 123;
+    private static final long LAP_THRESHOLD_TIME = 5000; // 5 seconds threshold determines how much time needs to elapse before recording a lap.
+
 
     private SQLiteDatabase database;
     private LocationManager locationManager;
@@ -119,8 +121,9 @@ public class LapTimer implements LocationListener {
         }
 
         float distance = location.distanceTo(startLocation);
+        long elapsedTimeSinceLastLap = SystemClock.elapsedRealtime() - currentLapStartTime;
 
-        if (distance < 10) {
+        if (distance < 10 && elapsedTimeSinceLastLap > LAP_THRESHOLD_TIME) {
             long lapTime = SystemClock.elapsedRealtime() - currentLapStartTime;
             lapTimes.add(lapTime);
             saveLapTime(lapTime);
