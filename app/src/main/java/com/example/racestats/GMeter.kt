@@ -60,7 +60,10 @@ package com.example.racestats
 //}
 
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -69,10 +72,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 
 class GMeter : AppCompatActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
@@ -85,12 +90,14 @@ class GMeter : AppCompatActivity(), SensorEventListener {
     private lateinit var leftGsTextView: TextView
     private lateinit var rightGsTextView: TextView
     private lateinit var calibrateButton: Button
+    private lateinit var back_button: ImageButton
 
     // Variables to store the calibration offsets
     private var xOffset: Float = 0.0f
     private var yOffset: Float = 0.0f
     private var zOffset: Float = 0.0f
     private var isCalibrated: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,13 +112,20 @@ class GMeter : AppCompatActivity(), SensorEventListener {
         leftGsTextView = findViewById(R.id.LeftGs)
         rightGsTextView = findViewById(R.id.RightGs)
 
-        calibrateButton = findViewById(R.id.calibrateButton);
+        calibrateButton = findViewById(R.id.calibrateButton)
+        back_button = findViewById(R.id.back_button)
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
 
         calibrateButton.setOnClickListener {
             onCalibrateButtonClick()
+        }
+
+        // Set a click listener for the back button
+        back_button.setOnClickListener {
+            val intent = Intent(this@GMeter, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 
