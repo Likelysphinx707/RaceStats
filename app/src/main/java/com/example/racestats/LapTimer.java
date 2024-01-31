@@ -15,6 +15,7 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,6 +66,7 @@ public class LapTimer implements LocationListener {
         if (isGPSEnabled) {
             if (hasLocationPermissions(activity)) {
                 startLocationUpdates(activity);
+                currentLapStartTime = SystemClock.elapsedRealtime(); // Initialize currentLapStartTime
                 startTime = SystemClock.elapsedRealtime();
                 lapTimes.clear(); // Clear previous lap times
             } else {
@@ -78,6 +80,7 @@ public class LapTimer implements LocationListener {
             // Handle GPS not enabled
         }
     }
+
 
     /**
      * Checks if the app has the necessary location permissions.
@@ -140,7 +143,7 @@ public class LapTimer implements LocationListener {
         // Continue with location updates if permissions are already granted
         locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                1000,  // minimum time interval between updates (in milliseconds)
+                100,  // minimum time interval between updates (in milliseconds)
                 1,     // minimum distance between updates (in meters)
                 this   // LocationListener
         );
@@ -165,7 +168,7 @@ public class LapTimer implements LocationListener {
      * Saves a lap time record to the SQLite database.
      * @param lapTime The lap time to be saved.
      */
-    private void saveLapTime(long lapTime) {
+    void saveLapTime(long lapTime) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_LAP_TIME, lapTime);
         values.put(COLUMN_DATE_TIME, getCurrentDateTime());
