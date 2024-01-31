@@ -108,7 +108,7 @@ class GMeter : AppCompatActivity(), SensorEventListener {
         calibrateButton = findViewById(R.id.calibrateButton);
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
 
         calibrateButton.setOnClickListener {
             onCalibrateButtonClick()
@@ -117,7 +117,7 @@ class GMeter : AppCompatActivity(), SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
 
         if (accelerometer != null) {
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
@@ -233,13 +233,12 @@ class GMeter : AppCompatActivity(), SensorEventListener {
             maxGForceRecorded = gForce
             // Update UI to display the highest G-force
             // Assuming you have a TextView with the id 'highScoreTextView'
-            findViewById<TextView>(R.id.highScoreTextView).text =
-                "Highest G-force: $maxGForceRecorded"
+            findViewById<TextView>(R.id.highScoreTextView).text = "Highest G-force: $maxGForceRecorded"
         }
     }
 
     // Function to handle calibration button click
-    fun onCalibrateButtonClick() {
+    private fun onCalibrateButtonClick() {
         // Measure initial readings and set as offsets for calibration
         // Assuming the device is in the desired calibration position at this point
 

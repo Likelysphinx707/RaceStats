@@ -260,10 +260,10 @@ class SpacedNumberPicker @JvmOverloads constructor (
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas?.let {
+        canvas.let {
             val x = width / 20f
             val y = height / 20f
 
@@ -332,12 +332,8 @@ fun getCpuTemperature(callback: (Float) -> Unit) {
     return try {
         val reader = RandomAccessFile("/sys/devices/virtual/thermal/thermal_zone0/temp", "r")
         val line: String = reader.readLine()
-        if (line != null) {
-            val temp = line.toFloat() / 1000 // Divide by 1000 to get the temperature in degrees Celsius
-            callback(temp) // Invoke the callback with the CPU temperature value
-        } else {
-            // Handle the case when reading the temperature fails
-        }
+        val temp = line.toFloat() / 1000 // Divide by 1000 to get the temperature in degrees Celsius
+        callback(temp) // Invoke the callback with the CPU temperature value
         reader.close()
     } catch (e: Exception) {
         e.printStackTrace()
