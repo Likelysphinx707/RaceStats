@@ -1,13 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.RaceStats" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Background color -->
+        <item name="android:windowBackground">#000000</item>
+
+        <!-- Text color -->
+        <item name="android:textColor">#FFFFFF</item>
+
         <!-- Primary brand color. -->
         <item name="colorPrimary">#FFE222</item>
         <item name="colorPrimaryVariant">@color/black</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorOnPrimary">#000000</item> <!-- Text color on primary -->
+
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/white</item>
         <item name="colorSecondaryVariant">@color/black</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">#000000</item> <!-- Text color on secondary -->
+    </style>
+
+    <!-- Button style -->
+    <style name="Button.RaceStats" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">#FFE222</item>
+        <item name="android:textColor">#000000</item>
     </style>
 </resources>

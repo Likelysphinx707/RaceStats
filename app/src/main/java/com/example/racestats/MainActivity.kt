@@ -6,10 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -43,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         // Links to other views
         ecuInfo.setOnClickListener {
-            val intent = Intent(this, EcuData::class.java)
+            val intent = Intent(this, LapTimerActivity::class.java)
             startActivity(intent)
         }
 
