@@ -160,7 +160,9 @@ public class LapTimerActivity extends AppCompatActivity {
     private String formatTime(long milliseconds) {
         long minutes = milliseconds / (60 * 1000);
         long seconds = (milliseconds / 1000) % 60;
-        long millis = (milliseconds % 1000) / 100; // Extract only the first digit of milliseconds
-        return String.format("%02d:%02d:%01d", minutes, seconds, millis);
+        long millis = milliseconds % 1000 / 10;
+
+        return String.format("%02d:%02d:%02d", minutes, seconds, millis);
     }
+
 }
