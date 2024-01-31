@@ -15,7 +15,6 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,13 +38,12 @@ public class LapTimer implements LocationListener {
     private static final long LAP_THRESHOLD_TIME = 5000; // 5 seconds threshold determines how much time needs to elapse before recording a lap.
 
 
-    private SQLiteDatabase database;
-    private LocationManager locationManager;
-    private boolean isGPSEnabled;
+    private final SQLiteDatabase database;
+    private final LocationManager locationManager;
+    private final boolean isGPSEnabled;
     private long currentLapStartTime;
-    private long startTime;
     private Location startLocation;
-    private List<Long> lapTimes;
+    private final List<Long> lapTimes;
 
     /**
      * Constructor for LapTimer class.
@@ -69,7 +67,7 @@ public class LapTimer implements LocationListener {
             if (hasLocationPermissions(activity)) {
                 startLocationUpdates(activity);
                 currentLapStartTime = SystemClock.elapsedRealtime(); // Initialize currentLapStartTime
-                startTime = SystemClock.elapsedRealtime();
+                long startTime = SystemClock.elapsedRealtime();
                 lapTimes.clear(); // Clear previous lap times
             } else {
                 // Permissions not granted, you might want to inform the user or request permissions again
