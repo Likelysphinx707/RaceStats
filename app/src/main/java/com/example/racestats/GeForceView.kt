@@ -13,7 +13,6 @@ import android.view.View
 
 class GeForceView : View {
 
-    private val circleRadius = 200f
     private val dotRadius = 15f
     private val dotPaint = Paint().apply {
         color = Color.RED
@@ -21,6 +20,8 @@ class GeForceView : View {
 
     private var leftRightForce = 0f
     private var upDownForce = 0f
+    private var calibrationOffsetLeftRight = 0f
+    private var calibrationOffsetUpDown = 0f
 
     constructor(context: Context) : super(context) {
         init()
@@ -75,10 +76,14 @@ class GeForceView : View {
         canvas.drawText("Right Force: ${-leftRightForce}", padding, height / 2f, textPaint)
     }
 
+    fun calibrate() {
+        calibrationOffsetLeftRight += -leftRightForce
+        calibrationOffsetUpDown += -upDownForce
+    }
 
     fun updateForces(leftRightForce: Float, upDownForce: Float) {
-        this.leftRightForce = leftRightForce
-        this.upDownForce = upDownForce
+        this.leftRightForce = leftRightForce + calibrationOffsetLeftRight
+        this.upDownForce = upDownForce + calibrationOffsetUpDown
         invalidate()
     }
 

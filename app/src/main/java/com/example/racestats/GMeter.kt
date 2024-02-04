@@ -220,6 +220,7 @@ class GMeter : AppCompatActivity() {
     private lateinit var sensorManager: SensorManager
     private lateinit var accelerometer: Sensor
     private lateinit var geForceView: GeForceView
+    private lateinit var calibrateButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -228,11 +229,14 @@ class GMeter : AppCompatActivity() {
         // Set the activity to full-screen mode
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
 
-
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
 
         geForceView = findViewById(R.id.geForceView)
+        calibrateButton = findViewById(R.id.calibrateButton)
+
+        // Set click listener for calibrate button
+        calibrateButton.setOnClickListener { onCalibrateClick(it) }
     }
 
     override fun onResume() {
@@ -266,8 +270,8 @@ class GMeter : AppCompatActivity() {
     }
 
     // Calibrate button click handler
-    fun onCalibrateClick(view: View) {
-        // Reset forces to 0
-        geForceView.updateForces(0f, 0f)
+    private fun onCalibrateClick(view: View) {
+        // Calibrate the GeForceView
+        geForceView.calibrate()
     }
 }

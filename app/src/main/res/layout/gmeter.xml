@@ -138,7 +138,7 @@
         android:text="Calibrate"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:onClick="onCalibrateClick" />
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp" />
 
 </RelativeLayout>
