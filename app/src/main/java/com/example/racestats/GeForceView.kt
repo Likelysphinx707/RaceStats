@@ -110,10 +110,10 @@ class GeForceView : View {
         val leftForceG = leftRightForce * 1.5f  // Scale by the largest circle's radius
         val rightForceG = if (leftRightForce > 0) 0f else -leftRightForce * 1.5f  // Scale by the largest circle's radius
 
-        canvas.drawText("Acceleration: ${String.format("%.2f G", accelerationG)}", padding, height - 150f, textPaint)
-        canvas.drawText("Braking: ${String.format("%.2f G", brakingG)}", padding, 100f, textPaint)
-        canvas.drawText("Left Force: ${String.format("%.2f G", leftForceG)}", width - 350f, height / 2f, textPaint)
-        canvas.drawText("Right Force: ${String.format("%.2f G", rightForceG)}", padding, height / 2f, textPaint)
+        canvas.drawText("Acceleration: ${String.format("%.2f G", if (accelerationG < 0) 0f else accelerationG)}", padding, height - 150f, textPaint)
+        canvas.drawText("Braking: ${String.format("%.2f G", if (brakingG < 0) 0f else brakingG)}", padding, 100f, textPaint)
+        canvas.drawText("Left Force: ${String.format("%.2f G", if (leftForceG < 0) 0f else leftForceG)}", width - 350f, height / 2f, textPaint)
+        canvas.drawText("Right Force: ${String.format("%.2f G", if (rightForceG < 0) 0f else rightForceG)}", padding, height / 2f, textPaint)
     }
 
     // Calibration method to reset forces to 0
