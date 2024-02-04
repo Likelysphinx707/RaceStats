@@ -4,8 +4,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.util.AttributeSet
 import android.view.View
+
+// TODO Make UI work on all screen sizes and fix Gtext offset
 
 class GeForceView : View {
 

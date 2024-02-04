@@ -9,6 +9,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -58,8 +59,10 @@ class GMeter : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Calibrate the GeForceView when the app first launches
-        geForceView.calibrate()
+        // Handles initial calibration of Gmeter
+        Handler().postDelayed({
+            geForceView.calibrate()
+        }, 100)
     }
 
     override fun onResume() {
