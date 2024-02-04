@@ -66,11 +66,6 @@ class GeForceView : View {
         val circleRadius2 = (width - padding * 4) / 5f // 50% of above value
         val circleRadius3 = (width - padding * 4) / 3.5f // 73% of above value
 
-        // Draw circles
-        drawCircle(canvas, centerX, centerY, circleRadius1, 0.5f)
-        drawCircle(canvas, centerX, centerY, circleRadius2, 1f)
-        drawCircle(canvas, centerX, centerY, circleRadius3, 1.5f)
-
         // Draw the trail dots
         for (i in 0 until trailDots.size) {
             val trailDot = trailDots[i]
@@ -105,15 +100,15 @@ class GeForceView : View {
             textSize = 30f
         }
 
-        val accelerationG = upDownForce * 1.5f  // Scale by the largest circle's radius
-        val brakingG = if (upDownForce > 0) 0f else -upDownForce * 1.5f  // Scale by the largest circle's radius
-        val leftForceG = leftRightForce * 1.5f  // Scale by the largest circle's radius
-        val rightForceG = if (leftRightForce > 0) 0f else -leftRightForce * 1.5f  // Scale by the largest circle's radius
+        val brakingG = upDownForce * 1.5f  // Scale by the largest circle's radius
+        val accelerationG = if (upDownForce > 0) 0f else -upDownForce * 1.5f  // Scale by the largest circle's radius
+        val rightForceG = leftRightForce * 1.5f  // Scale by the largest circle's radius
+        val leftForceG = if (leftRightForce > 0) 0f else -leftRightForce * 1.5f  // Scale by the largest circle's radius
 
-        canvas.drawText("Acceleration: ${String.format("%.2f G", if (accelerationG < 0) 0f else accelerationG)}", padding, height - 150f, textPaint)
-        canvas.drawText("Braking: ${String.format("%.2f G", if (brakingG < 0) 0f else brakingG)}", padding, 100f, textPaint)
-        canvas.drawText("Left Force: ${String.format("%.2f G", if (leftForceG < 0) 0f else leftForceG)}", width - 350f, height / 2f, textPaint)
-        canvas.drawText("Right Force: ${String.format("%.2f G", if (rightForceG < 0) 0f else rightForceG)}", padding, height / 2f, textPaint)
+        canvas.drawText("Braking: ${String.format("%.2f G", if (brakingG < 0) 0f else brakingG)}", padding, height - 150f, textPaint)
+        canvas.drawText("Acceleration: ${String.format("%.2f G", if (accelerationG < 0) 0f else accelerationG)}", padding, 100f, textPaint)
+        canvas.drawText("Right Force: ${String.format("%.2f G", if (rightForceG < 0) 0f else rightForceG)}", width - 350f, height / 2f, textPaint)
+        canvas.drawText("Left Force: ${String.format("%.2f G", if (leftForceG < 0) 0f else leftForceG)}", padding, height / 2f, textPaint)
     }
 
     // Calibration method to reset forces to 0
