@@ -4,21 +4,15 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 
 class GMeter : AppCompatActivity() {
 //    private lateinit var sensorManager: SensorManager
@@ -221,6 +215,7 @@ class GMeter : AppCompatActivity() {
     private lateinit var accelerometer: Sensor
     private lateinit var geForceView: GeForceView
     private lateinit var calibrateButton: Button
+    private lateinit var backbutton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -234,9 +229,34 @@ class GMeter : AppCompatActivity() {
 
         geForceView = findViewById(R.id.geForceView)
         calibrateButton = findViewById(R.id.calibrateButton)
+        backbutton = findViewById(R.id.backArrow)
 
         // Set click listener for calibrate button
         calibrateButton.setOnClickListener { onCalibrateClick(it) }
+
+        // Calibrate the GeForceView when the app first launches
+        geForceView.calibrate()
+
+
+        // Set a click listener for the back button
+        backbutton.setOnClickListener {
+            // Rotate and change the drawable based on the rotation state
+            val rotation = if (backbutton.rotation == 0f) 355f else 0f
+            val scaleX = if (backbutton.rotation == 0f) 0.8f else 1.0f
+            val scaleY = if (backbutton.rotation == 0f) 0.8f else 1.0f
+
+            val rotationAnim = ObjectAnimator.ofFloat(backbutton, "rotation", rotation)
+            val scaleXAnim = ObjectAnimator.ofFloat(backbutton, "scaleX", scaleX)
+            val scaleYAnim = ObjectAnimator.ofFloat(backbutton, "scaleY", scaleY)
+
+            val set = AnimatorSet()
+            set.playTogether(rotationAnim, scaleXAnim, scaleYAnim)
+            set.duration = 450
+            set.start()
+
+            val intent = Intent(this@GMeter, MainActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {
