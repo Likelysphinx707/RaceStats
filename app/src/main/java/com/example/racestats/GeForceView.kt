@@ -60,17 +60,24 @@ class GeForceView : View {
         val dotY = centerY - upDownForce * circleRadius3
         canvas.drawCircle(dotX, dotY, dotRadius, dotPaint)
 
-        // Display real-time values
+        // Display real-time values in Gs
         val textPaint = Paint().apply {
             color = Color.WHITE
             textSize = 30f
         }
 
-        canvas.drawText("Acceleration: $upDownForce", padding, height - 150f, textPaint)
-        canvas.drawText("Braking: ${-upDownForce}", padding, 100f, textPaint)
-        canvas.drawText("Left Force: $leftRightForce", width - 350f, height / 2f, textPaint)
-        canvas.drawText("Right Force: ${-leftRightForce}", padding, height / 2f, textPaint)
+        val accelerationG = upDownForce * 1.5f  // Scale by the largest circle's radius
+        val brakingG = -upDownForce * 1.5f  // Scale by the largest circle's radius
+        val leftForceG = leftRightForce * 1.5f  // Scale by the largest circle's radius
+        val rightForceG = -leftRightForce * 1.5f  // Scale by the largest circle's radius
+
+        canvas.drawText("Acceleration: ${String.format("%.2f G", accelerationG)}", padding, height - 150f, textPaint)
+        canvas.drawText("Braking: ${String.format("%.2f G", brakingG)}", padding, 100f, textPaint)
+        canvas.drawText("Left Force: ${String.format("%.2f G", leftForceG)}", width - 350f, height / 2f, textPaint)
+        canvas.drawText("Right Force: ${String.format("%.2f G", rightForceG)}", padding, height / 2f, textPaint)
     }
+
+
 
     fun calibrate() {
         calibrationOffsetLeftRight += -leftRightForce
