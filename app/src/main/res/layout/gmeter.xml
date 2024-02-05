@@ -1,125 +1,3 @@
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:background="@color/black">-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/background_circle"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:layout_margin="16dp"-->
-<!--        android:src="@drawable/circle_background"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/BrakingGs"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_above="@id/background_circle"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginEnd="536dp"-->
-<!--        android:layout_marginBottom="36dp"-->
-<!--        android:gravity="center"-->
-<!--        android:text="Braking G's"-->
-<!--        android:textSize="25dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/background_circle"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/background_circle" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/gdot"-->
-<!--        android:layout_width="20dp"-->
-<!--        android:layout_height="20dp"-->
-<!--        app:layout_constraintTop_toTopOf="@id/background_circle"-->
-<!--        app:layout_constraintBottom_toBottomOf="@id/background_circle"-->
-<!--        app:layout_constraintStart_toStartOf="@id/background_circle"-->
-<!--        app:layout_constraintEnd_toEndOf="@id/background_circle"-->
-<!--        app:layout_constraintVertical_bias="0.5"-->
-<!--        app:layout_constraintHorizontal_bias="0.5"-->
-<!--        android:src="@drawable/gdot" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/AccelGs"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/background_circle"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        android:layout_marginBottom="44dp"-->
-<!--        android:gravity="center"-->
-<!--        android:text="Acceleration G's"-->
-<!--        android:textSize="25dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/background_circle" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/LeftGs"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_centerVertical="true"-->
-<!--        android:layout_marginBottom="172dp"-->
-<!--        android:layout_toLeftOf="@id/background_circle"-->
-<!--        android:gravity="center"-->
-<!--        android:text="Left G's"-->
-<!--        android:textSize="25dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/background_circle"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/background_circle"-->
-<!--        app:layout_constraintHorizontal_bias="0.058"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/background_circle" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/RightGs"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_centerVertical="true"-->
-<!--        android:layout_marginEnd="40dp"-->
-<!--        android:layout_marginBottom="172dp"-->
-<!--        android:layout_toRightOf="@id/background_circle"-->
-<!--        android:gravity="center"-->
-<!--        android:text="Right G's"-->
-<!--        android:textSize="25dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/background_circle"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/background_circle" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/highScoreTextView"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/AccelGs"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginBottom="296dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/background_circle"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/background_circle"-->
-<!--        app:layout_constraintHorizontal_bias="0.02"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/LeftGs" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/back_button"-->
-<!--        android:layout_width="69dp"-->
-<!--        android:layout_height="48dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:background="@android:color/black"-->
-<!--        android:src="@drawable/home_icon"-->
-<!--        android:contentDescription="Back Arrow"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/calibrateButton"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Calibrate"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"/>-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -165,5 +43,58 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:text="Log" />
+
+    <!-- TextViews for Forces -->
+    <TextView
+        android:id="@+id/leftForceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Left Force: 0 G"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/calibrateButton"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/rightForceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Right Force: 0 G"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/leftForceTextView"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/brakingForceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Braking Force: 0 G"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/rightForceTextView"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/accelerationForceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Acceleration Force: 0 G"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/brakingForceTextView"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/maxGForceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/calibrateButton"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="88dp"
+        android:layout_marginEnd="26dp"
+        android:text="Max G-Force: 0 G"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

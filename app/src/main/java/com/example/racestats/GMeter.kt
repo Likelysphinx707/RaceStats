@@ -13,6 +13,7 @@ import android.os.Handler
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class GMeter : AppCompatActivity() {
@@ -21,6 +22,13 @@ class GMeter : AppCompatActivity() {
     private lateinit var geForceView: GeForceView
     private lateinit var calibrateButton: Button
     private lateinit var backbutton: ImageButton
+
+    // TextViews for Forces
+    private lateinit var leftForceTextView: TextView
+    private lateinit var rightForceTextView: TextView
+    private lateinit var brakingForceTextView: TextView
+    private lateinit var accelerationForceTextView: TextView
+    private lateinit var maxGForceTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +43,13 @@ class GMeter : AppCompatActivity() {
         geForceView = findViewById(R.id.geForceView)
         calibrateButton = findViewById(R.id.calibrateButton)
         backbutton = findViewById(R.id.backArrow)
+
+        // Initialize TextViews
+        leftForceTextView = findViewById(R.id.leftForceTextView)
+        rightForceTextView = findViewById(R.id.rightForceTextView)
+        brakingForceTextView = findViewById(R.id.brakingForceTextView)
+        accelerationForceTextView = findViewById(R.id.accelerationForceTextView)
+        maxGForceTextView = findViewById(R.id.maxGForceTextView)
 
         // Set click listener for calibrate button
         calibrateButton.setOnClickListener { onCalibrateClick(it) }

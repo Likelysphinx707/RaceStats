@@ -1,15 +1,13 @@
 package com.example.racestats
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.util.AttributeSet
 import android.view.View
+import android.widget.TextView
 
 // TODO Make UI work on all screen sizes and fix Gtext offset
 
@@ -24,6 +22,8 @@ class GeForceView : View {
     // Current forces
     private var leftRightForce = 0f
     private var upDownForce = 0f
+    // Add a property to track max G-force
+    private var maxGForce = 0f
 
     // Calibration offsets to reset forces to 0
     private var calibrationOffsetLeftRight = 0f
@@ -99,35 +99,66 @@ class GeForceView : View {
         if (trailDots.size > trailSize) {
             trailDots.removeAt(trailDots.size - 1)
         }
-
-        // Display real-time values in Gs
-        val textPaint = Paint().apply {
-            color = Color.WHITE
-            textSize = 30f
-        }
-
-        val brakingG = upDownForce * 1.5f  // Scale by the largest circle's radius
-        val accelerationG = if (upDownForce > 0) 0f else -upDownForce * 1.5f  // Scale by the largest circle's radius
-        val rightForceG = leftRightForce * 1.5f  // Scale by the largest circle's radius
-        val leftForceG = if (leftRightForce > 0) 0f else -leftRightForce * 1.5f  // Scale by the largest circle's radius
-
-        canvas.drawText("Braking: ${String.format("%.2f G", if (brakingG < 0) 0f else brakingG)}", padding, height - 150f, textPaint)
-        canvas.drawText("Acceleration: ${String.format("%.2f G", if (accelerationG < 0) 0f else accelerationG)}", padding, 100f, textPaint)
-        canvas.drawText("Right Force: ${String.format("%.2f G", if (rightForceG < 0) 0f else rightForceG)}", width - 350f, height / 2f, textPaint)
-        canvas.drawText("Left Force: ${String.format("%.2f G", if (leftForceG < 0) 0f else leftForceG)}", padding, height / 2f, textPaint)
     }
 
     // Calibration method to reset forces to 0
     fun calibrate() {
         calibrationOffsetLeftRight += -leftRightForce
         calibrationOffsetUpDown += -upDownForce
+        maxGForce = 0f
     }
 
     // Method to update forces
     fun updateForces(leftRightForce: Float, upDownForce: Float) {
         this.leftRightForce = leftRightForce + calibrationOffsetLeftRight
         this.upDownForce = upDownForce + calibrationOffsetUpDown
+
+        // Update the TextViews directly
+        (context as? Activity)?.runOnUiThread {
+            updateTextViews()
+        }
+
         invalidate()
+    }
+
+    // Method to update the TextViews
+    private fun updateTextViews() {
+        // Access the TextViews from the parent activity
+        val brakingForceTextView = (context as? GMeter)?.findViewById<TextView>(R.id.brakingForceTextView)
+        val accelerationForceTextView = (context as? GMeter)?.findViewById<TextView>(R.id.accelerationForceTextView)
+        val rightForceTextView = (context as? GMeter)?.findViewById<TextView>(R.id.rightForceTextView)
+        val leftForceTextView = (context as? GMeter)?.findViewById<TextView>(R.id.leftForceTextView)
+        val maxGForceTextView = (context as? GMeter)?.findViewById<TextView>(R.id.maxGForceTextView)
+
+        // Calculate the forces for TextViews
+        val brakingG = upDownForce * 1.5f
+        val accelerationG = if (upDownForce > 0) 0f else -upDownForce * 1.5f
+        val rightForceG = leftRightForce * 1.5f
+        val leftForceG = if (leftRightForce > 0) 0f else -leftRightForce * 1.5f
+
+        // Calculate the max G-Force
+        val newMaxGForce = maxOf(
+            brakingG + leftForceG,
+            brakingG + rightForceG,
+            accelerationG + leftForceG,
+            accelerationG + rightForceG,
+            accelerationG,
+            brakingG,
+            leftForceG,
+            rightForceG
+        )
+
+        // Update the max G-Force if needed
+        if (newMaxGForce > maxGForce) {
+            maxGForce = newMaxGForce
+        }
+
+        // Update the TextViews with the calculated values
+        brakingForceTextView?.text = "Braking Force: ${String.format("%.2f G", if (brakingG < 0) 0f else brakingG)}"
+        accelerationForceTextView?.text = "Acceleration Force: ${String.format("%.2f G", if (accelerationG < 0) 0f else accelerationG)}"
+        rightForceTextView?.text = "Right Force: ${String.format("%.2f G", if (rightForceG < 0) 0f else rightForceG)}"
+        leftForceTextView?.text = "Left Force: ${String.format("%.2f G", if (leftForceG < 0) 0f else leftForceG)}"
+        maxGForceTextView?.text = "Max G-Force: ${String.format("%.2f G", maxGForce)}"
     }
 
     // Draw a circle with a label
