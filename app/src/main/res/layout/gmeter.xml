@@ -18,42 +18,51 @@
 
     <com.example.racestats.GeForceView
         android:id="@+id/geForceView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/calibrateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Calibrate" />
-
-    <Button
-        android:id="@+id/logbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Log" />
-
     <!-- TextViews for Forces -->
+
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="50dp"
+        android:gravity="bottom|center_horizontal"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/calibrateButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="Calibrate"
+            android:textSize="26sp" />
+
+        <Button
+            android:id="@+id/logbutton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="Log"
+            android:textSize="26sp" />
+
+
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/leftForceTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="Left Force: 0 G"
-        android:textColor="@android:color/white"
-        android:layout_below="@id/calibrateButton"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
+        android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/rightForceTextView"
@@ -89,11 +98,9 @@
         android:id="@+id/maxGForceTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/calibrateButton"
-        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/accelerationForceTextView"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="88dp"
-        android:layout_marginEnd="26dp"
+        android:layout_marginTop="-12dp"
         android:text="Max G-Force: 0 G"
         android:textColor="@android:color/white" />
 

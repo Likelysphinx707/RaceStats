@@ -29,6 +29,7 @@ class GeForceView : View {
     private var calibrationOffsetLeftRight = 0f
     private var calibrationOffsetUpDown = 0f
 
+    // Code for Gdot trail
     private val trailPaint = Paint().apply {
         color = Color.parseColor("#C60000")
         alpha = 75 // Adjust the transparency here (0 to 255)
@@ -153,9 +154,10 @@ class GeForceView : View {
             maxGForce = newMaxGForce
         }
 
+        // TODO need to flip the accleration and braking Gs on the Gdot
         // Update the TextViews with the calculated values
-        brakingForceTextView?.text = "Braking Force: ${String.format("%.2f G", if (brakingG < 0) 0f else brakingG)}"
-        accelerationForceTextView?.text = "Acceleration Force: ${String.format("%.2f G", if (accelerationG < 0) 0f else accelerationG)}"
+        brakingForceTextView?.text = "Braking Force: ${String.format("%.2f G", if (accelerationG < 0) 0f else accelerationG)}"
+        accelerationForceTextView?.text = "Acceleration Force: ${String.format("%.2f G", if (brakingG < 0) 0f else brakingG)}"
         rightForceTextView?.text = "Right Force: ${String.format("%.2f G", if (rightForceG < 0) 0f else rightForceG)}"
         leftForceTextView?.text = "Left Force: ${String.format("%.2f G", if (leftForceG < 0) 0f else leftForceG)}"
         maxGForceTextView?.text = "Max G-Force: ${String.format("%.2f G", maxGForce)}"
@@ -176,7 +178,7 @@ class GeForceView : View {
             textSize = 30f
         }
 
-        val textX = centerX - 10f
+        val textX = centerX - 26f
         val textY = centerY + radius + 40f
 
         canvas.drawText("$label G", textX, textY, textPaint)
