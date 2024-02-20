@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,6 +18,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,6 +34,7 @@ import java.util.concurrent.Future;
 
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
@@ -55,6 +59,7 @@ import java.util.Random;
 public class DigitalDash extends AppCompatActivity {
     private static BluetoothSocket socket;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private Button addCustomGauge;
 
     // Declare member variables here
     private RelativeLayout intakeTempGauge;
@@ -107,7 +112,7 @@ public class DigitalDash extends AppCompatActivity {
         // Initialize gauges and assets for UI
         intakeTempGauge = findViewById(R.id.IntakeTemp);
         coolantTempGauge = findViewById(R.id.coolantTemp);
-        fuelTrim = findViewById(R.id.fuelTrim);
+//        fuelTrim = findViewById(R.id.fuelTrim);
 
         // Get the Bluetooth device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
@@ -126,8 +131,8 @@ public class DigitalDash extends AppCompatActivity {
         intakeTemperatureGauge = findViewById(R.id.intakeTemperatureGauge);
         intakeTemperatureTextOverlay = findViewById(R.id.intakeTemperatureTextOverlay);
 
-        fuelTrimGauge = findViewById(R.id.fuelTrimGauge);
-        fuelTrimTextOverlay = findViewById(R.id.fuelTrimTextOverlay);
+//        fuelTrimGauge = findViewById(R.id.fuelTrimGauge);
+//        fuelTrimTextOverlay = findViewById(R.id.fuelTrimTextOverlay);
 
         hamburgerButton.setOnClickListener(view -> {
             if (!isMenuOpen) {
@@ -159,7 +164,7 @@ public class DigitalDash extends AppCompatActivity {
 //            coolantTempGauge.setText("Coolant Temperature C°: " + 2);
             updateCoolantTemperature(75);
             updateAirIntakeTemperature(35);
-            updateFuelTrim(35);
+//            updateFuelTrim(35);
             textTempSimple.setText("75");
 
         } else {
@@ -229,6 +234,67 @@ public class DigitalDash extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        addCustomGauge = findViewById(R.id.addCustomGauge);
+
+        addCustomGauge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    showAddCustomGaugeDialog();
+            }
+        });
+    }
+
+
+    private void showAddCustomGaugeDialog() {
+        // Create an AlertDialog with an EditText for PID and Name input
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Custom Gauge");
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText pidEditText = new EditText(this);
+        pidEditText.setHint("Enter PID (integer)");
+        layout.addView(pidEditText);
+
+        final EditText nameEditText = new EditText(this);
+        nameEditText.setHint("Enter Name");
+        layout.addView(nameEditText);
+
+        builder.setView(layout);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Get the values entered by the user
+                String pidString = pidEditText.getText().toString();
+                String name = nameEditText.getText().toString();
+
+                // Convert PID String to int
+                try {
+                    int pid = Integer.parseInt(pidString);
+                    // Pass the values to the getPID method
+                    int result = getPID(pid);
+                    // Process the result or perform any necessary actions
+                    // (e.g., display result in a toast or update UI)
+                    Toast.makeText(DigitalDash.this, "Result: " + result, Toast.LENGTH_SHORT).show();
+                } catch (NumberFormatException e) {
+                    Toast.makeText(DigitalDash.this, "Invalid PID", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     private void startDataUpdateLoop() {
@@ -319,32 +385,14 @@ public class DigitalDash extends AppCompatActivity {
         }
     }
 
-    /**
-     * This function will check and see what PIDs are available for the selected ECU
-     *
-     * @return
-     */
-//    private int[] avaliablePIDs() {
-//
-//        return null;
-//    }
-//
-//    /**
-//     * This class is used to retrive the value that is at the given pid
-//     *
-//     * @param pidToRetrive
-//     * @return
-//     */
-//    private int getPID(int pidToRetrive) {     // should make this generic
-//
-//        // look into these
+
+           // look into these
 ////        PID           Bytes A   B C D Name Description
 ////        1101 4353 1       61          Engine Coolant Temperature °C = A-50, °F = (A - 50)*9/5+32, Same as Mode 01:05, but +10
 ////        1102 4354 1       00          Vehicle Speed kph = A*2, mph = (A*2)/1.60934
 ////        1103 4355 1       96          Battery Voltage V = A/12.5 or V=A*.08
 ////        111F 4383 1       5F          Oil Temperature °C = A-50, °F = (A - 50)*9/5+32, Same as 580:E
-//        return -1;
-//    }
+
 
     /**
      * This function will check and see what PIDs are available for the selected ECU
@@ -364,7 +412,7 @@ public class DigitalDash extends AppCompatActivity {
 
             // Iterate through PIDs 0-250 and check availability
             for (int i = 0; i <= 250; i++) {
-                ObdCommand pidCommand = new CustomPIDCommand(i);  // Replace CustomPIDCommand with the appropriate command
+                ObdCommand pidCommand = new CustomPIDCommand(i, "pid = " + i);  // Replace CustomPIDCommand with the appropriate command
                 pidCommand.run(socket.getInputStream(), socket.getOutputStream());
                 if (!pidCommand.getResult().equals("NO DATA")) {
                     availablePIDs[i] = i;
@@ -373,7 +421,7 @@ public class DigitalDash extends AppCompatActivity {
 
             return availablePIDs;
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }
@@ -394,19 +442,19 @@ public class DigitalDash extends AppCompatActivity {
             new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
 
             // Create a command for the specified PID
-            CustomPIDCommand customCommand = new CustomPIDCommand(pidToRetrieve, "Custom Command Name");
-            ObdCommand pidCommand = new CustomPIDCommand(pidToRetrieve);  // Replace CustomPIDCommand with the appropriate command
+            ObdCommand pidCommand = new CustomPIDCommand(pidToRetrieve, "Custom Command Name");
             pidCommand.run(socket.getInputStream(), socket.getOutputStream());
 
             // Parse the result and return the value
             String result = pidCommand.getFormattedResult();
             return Integer.parseInt(result);
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return -1;
         }
     }
+
 
     /**
      * Updates intake temp

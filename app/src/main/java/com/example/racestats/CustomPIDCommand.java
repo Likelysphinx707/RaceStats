@@ -2,20 +2,17 @@ package com.example.racestats;
 
 
 import com.github.pires.obd.commands.ObdCommand;
-import com.github.pires.obd.exceptions.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class CustomPIDCommand extends ObdCommand{
 
-    private String customName;
+    private final String customName;
 
     // Constructor to initialize the command with a custom PID and name
-    public CustomPIDCommand(String pid, String customName) {
-        super(pid);
+    public CustomPIDCommand(int pid, String customName) {
+        super(String.valueOf(pid));
         this.customName = customName;
     }
 

@@ -182,49 +182,49 @@
 
 <!--        </RelativeLayout>-->
 
-        <RelativeLayout
-            android:id="@+id/fuelTrim"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:padding="16dp">
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/fuelTrim"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="16dp">-->
 
-            <ImageView
-                android:id="@+id/fuelTrimLogo"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/fueltrim" />
+<!--            <ImageView-->
+<!--                android:id="@+id/fuelTrimLogo"-->
+<!--                android:layout_width="55dp"-->
+<!--                android:layout_height="55dp"-->
+<!--                android:layout_alignParentStart="true"-->
+<!--                android:layout_marginStart="12dp"-->
+<!--                android:layout_marginEnd="8dp"-->
+<!--                android:src="@drawable/fueltrim" />-->
 
-            <com.example.racestats.CustomProgressBar
-                android:id="@+id/fuelTrimGauge"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="780dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="24dp"
-                android:layout_toEndOf="@id/fuelTrimLogo"
-                android:max="100"
-                android:progress="0" />
+<!--            <com.example.racestats.CustomProgressBar-->
+<!--                android:id="@+id/fuelTrimGauge"-->
+<!--                style="?android:attr/progressBarStyleHorizontal"-->
+<!--                android:layout_width="780dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_marginStart="24dp"-->
+<!--                android:layout_toEndOf="@id/fuelTrimLogo"-->
+<!--                android:max="100"-->
+<!--                android:progress="0" />-->
 
-            <TextView
-                android:id="@+id/fuelTrimTextOverlay"
-                android:layout_width="106dp"
-                android:layout_height="46dp"
-                android:layout_alignTop="@id/fuelTrimGauge"
-                android:layout_alignBottom="@id/fuelTrimGauge"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="0dp"
-                android:layout_toEndOf="@id/fuelTrimGauge"
-                android:gravity="center"
-                android:text="0"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="34sp" />
+<!--            <TextView-->
+<!--                android:id="@+id/fuelTrimTextOverlay"-->
+<!--                android:layout_width="106dp"-->
+<!--                android:layout_height="46dp"-->
+<!--                android:layout_alignTop="@id/fuelTrimGauge"-->
+<!--                android:layout_alignBottom="@id/fuelTrimGauge"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:layout_marginBottom="0dp"-->
+<!--                android:layout_toEndOf="@id/fuelTrimGauge"-->
+<!--                android:gravity="center"-->
+<!--                android:text="0"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="34sp" />-->
 
-        </RelativeLayout>
+<!--        </RelativeLayout>-->
 
     </LinearLayout>
 
@@ -282,7 +282,7 @@
         android:layout_alignParentEnd="true"
         android:background="#121312"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <!-- x button to close pop out -->
         <ImageButton
@@ -339,19 +339,19 @@
             android:textColor="@color/white"
             android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/gaugeOptionAfr"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/gaugeOptionCoolant"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_horizontal"
-            android:onClick="onGaugeOptionClick"
-            android:padding="10dp"
-            android:text="AFR - Active"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+<!--        <TextView-->
+<!--            android:id="@+id/gaugeOptionAfr"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/gaugeOptionCoolant"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            android:onClick="onGaugeOptionClick"-->
+<!--            android:padding="10dp"-->
+<!--            android:text="AFR - Active"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="20sp" />-->
 
         <TextView
             android:id="@+id/gaugeOptionFuelTrim"
@@ -366,6 +366,14 @@
             android:text="Fuel Trim - Active"
             android:textColor="@color/white"
             android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/addCustomGauge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="12px"
+            android:text="Add Custom Gauge" />
 
         <!-- Add more gauge options as needed -->
     </LinearLayout>
