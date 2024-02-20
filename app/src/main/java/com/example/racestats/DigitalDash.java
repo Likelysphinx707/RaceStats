@@ -13,21 +13,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 // multithreading imports
 import java.util.concurrent.ExecutorService;
@@ -36,18 +31,13 @@ import java.util.concurrent.Future;
 
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
-// Import our Gauge view class
-import com.example.racestats.DraggableGaugeView;
 
 // Imports for OBD2 classes
 import com.github.pires.obd.commands.ObdCommand;
-import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.fuel.AirFuelRatioCommand;
 import com.github.pires.obd.commands.fuel.FuelTrimCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
@@ -61,8 +51,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class DigitalDash extends AppCompatActivity {
     private static BluetoothSocket socket;
@@ -71,7 +59,6 @@ public class DigitalDash extends AppCompatActivity {
     // Declare member variables here
     private RelativeLayout intakeTempGauge;
     private RelativeLayout coolantTempGauge;
-    private RelativeLayout afr;
     private RelativeLayout fuelTrim;
 
     private ImageButton hamburgerButton;
@@ -94,10 +81,8 @@ public class DigitalDash extends AppCompatActivity {
     private boolean hasFlashed = false;
 
     private CustomProgressBar intakeTemperatureGauge;
-    private CustomProgressBar afrGauge;
     private CustomProgressBar fuelTrimGauge;
     private TextView intakeTemperatureTextOverlay;
-    private TextView afrTextOverlay;
     private TextView fuelTrimTextOverlay;
 
     private final Handler dataUpdateHandler = new Handler();
@@ -122,7 +107,6 @@ public class DigitalDash extends AppCompatActivity {
         // Initialize gauges and assets for UI
         intakeTempGauge = findViewById(R.id.IntakeTemp);
         coolantTempGauge = findViewById(R.id.coolantTemp);
-//        afr = findViewById(R.id.afr);
         fuelTrim = findViewById(R.id.fuelTrim);
 
         // Get the Bluetooth device address from the intent
@@ -141,9 +125,6 @@ public class DigitalDash extends AppCompatActivity {
 
         intakeTemperatureGauge = findViewById(R.id.intakeTemperatureGauge);
         intakeTemperatureTextOverlay = findViewById(R.id.intakeTemperatureTextOverlay);
-
-//        afrGauge = findViewById(R.id.afrGauge);
-//        afrTextOverlay = findViewById(R.id.afrTextOverlay);
 
         fuelTrimGauge = findViewById(R.id.fuelTrimGauge);
         fuelTrimTextOverlay = findViewById(R.id.fuelTrimTextOverlay);
@@ -178,7 +159,6 @@ public class DigitalDash extends AppCompatActivity {
 //            coolantTempGauge.setText("Coolant Temperature C°: " + 2);
             updateCoolantTemperature(75);
             updateAirIntakeTemperature(35);
-//            updateAfr(75);
             updateFuelTrim(35);
             textTempSimple.setText("75");
 
@@ -272,9 +252,6 @@ public class DigitalDash extends AppCompatActivity {
             case R.id.gaugeOptionCoolant:
                 toggleGaugeVisibility(coolantTempGauge);
                 break;
-//            case R.id.gaugeOptionAfr:
-//                toggleGaugeVisibility(afr);
-//                break;
             case R.id.gaugeOptionFuelTrim:
                 toggleGaugeVisibility(fuelTrim);
                 break;
@@ -347,25 +324,88 @@ public class DigitalDash extends AppCompatActivity {
      *
      * @return
      */
-    private int[] avaliablePIDs() {
+//    private int[] avaliablePIDs() {
+//
+//        return null;
+//    }
+//
+//    /**
+//     * This class is used to retrive the value that is at the given pid
+//     *
+//     * @param pidToRetrive
+//     * @return
+//     */
+//    private int getPID(int pidToRetrive) {     // should make this generic
+//
+//        // look into these
+////        PID           Bytes A   B C D Name Description
+////        1101 4353 1       61          Engine Coolant Temperature °C = A-50, °F = (A - 50)*9/5+32, Same as Mode 01:05, but +10
+////        1102 4354 1       00          Vehicle Speed kph = A*2, mph = (A*2)/1.60934
+////        1103 4355 1       96          Battery Voltage V = A/12.5 or V=A*.08
+////        111F 4383 1       5F          Oil Temperature °C = A-50, °F = (A - 50)*9/5+32, Same as 580:E
+//        return -1;
+//    }
 
-        return null;
+    /**
+     * This function will check and see what PIDs are available for the selected ECU
+     *
+     * @return an array of available PIDs
+     */
+    private int[] availablePIDs() {
+        try {
+            // Initialize OBD2 communication
+            new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+            new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
+
+            // Create an array to store available PIDs
+            int[] availablePIDs = new int[251];
+
+            // Iterate through PIDs 0-250 and check availability
+            for (int i = 0; i <= 250; i++) {
+                ObdCommand pidCommand = new CustomPIDCommand(i);  // Replace CustomPIDCommand with the appropriate command
+                pidCommand.run(socket.getInputStream(), socket.getOutputStream());
+                if (!pidCommand.getResult().equals("NO DATA")) {
+                    availablePIDs[i] = i;
+                }
+            }
+
+            return availablePIDs;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
-     * This class is used to retrive the value that is at the given pid
+     * This class is used to retrieve the value that is at the given PID
      *
-     * @param pidToRetrive
-     * @return
+     * @param pidToRetrieve the PID to retrieve
+     * @return the value of the specified PID
      */
-    private int getPID(int pidToRetrive) {     // should make this generic
-        // look into these
-//        PID           Bytes A   B C D Name Description
-//        1101 4353 1       61          Engine Coolant Temperature °C = A-50, °F = (A - 50)*9/5+32, Same as Mode 01:05, but +10
-//        1102 4354 1       00          Vehicle Speed kph = A*2, mph = (A*2)/1.60934
-//        1103 4355 1       96          Battery Voltage V = A/12.5 or V=A*.08
-//        111F 4383 1       5F          Oil Temperature °C = A-50, °F = (A - 50)*9/5+32, Same as 580:E
-        return -1;
+    private int getPID(int pidToRetrieve) {
+        try {
+            // Initialize OBD2 communication
+            new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+            new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
+
+            // Create a command for the specified PID
+            CustomPIDCommand customCommand = new CustomPIDCommand(pidToRetrieve, "Custom Command Name");
+            ObdCommand pidCommand = new CustomPIDCommand(pidToRetrieve);  // Replace CustomPIDCommand with the appropriate command
+            pidCommand.run(socket.getInputStream(), socket.getOutputStream());
+
+            // Parse the result and return the value
+            String result = pidCommand.getFormattedResult();
+            return Integer.parseInt(result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     /**
@@ -480,6 +520,7 @@ public class DigitalDash extends AppCompatActivity {
         }
     };
 
+
     /**
      * Class that will make calls to the obd2 scanner based off of the selected gauges in the UI
      * Will use multi threading on each command to improve runtimes
@@ -536,6 +577,11 @@ public class DigitalDash extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method process the results from the obd2CommandsToCall method and interprets them to update values of the gauges
+     *
+     * @param results
+     */
     private void processResults(List<String> results) {
         // Process the results and update UI
 
