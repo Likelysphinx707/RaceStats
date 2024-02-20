@@ -29,6 +29,11 @@ import android.widget.Toast;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+// multithreading imports
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -57,6 +62,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class DigitalDash extends AppCompatActivity {
     private static BluetoothSocket socket;
@@ -353,7 +359,12 @@ public class DigitalDash extends AppCompatActivity {
      * @return
      */
     private int getPID(int pidToRetrive) {     // should make this generic
-
+        // look into these
+//        PID           Bytes A   B C D Name Description
+//        1101 4353 1       61          Engine Coolant Temperature °C = A-50, °F = (A - 50)*9/5+32, Same as Mode 01:05, but +10
+//        1102 4354 1       00          Vehicle Speed kph = A*2, mph = (A*2)/1.60934
+//        1103 4355 1       96          Battery Voltage V = A/12.5 or V=A*.08
+//        111F 4383 1       5F          Oil Temperature °C = A-50, °F = (A - 50)*9/5+32, Same as 580:E
         return -1;
     }
 
@@ -470,11 +481,10 @@ public class DigitalDash extends AppCompatActivity {
     };
 
     /**
-     * Class that will make calls to the obd2 scanner based off of the selected gauges of the user
+     * Class that will make calls to the obd2 scanner based off of the selected gauges in the UI
+     * Will use multi threading on each command to improve runtimes
      */
     private void obd2CommandsToCall() {
-        long startTime = System.currentTimeMillis();
-
         try {
             // Initialize OBD2 communication
             new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
@@ -488,66 +498,80 @@ public class DigitalDash extends AppCompatActivity {
             commandsToRun.add(new AirIntakeTemperatureCommand());
             commandsToRun.add(new FuelTrimCommand());
 
-            String coolantTempResult = null;
-            String intakeTempResult = null;
-            String fuelTrimResult = null;
-
-
-            // Execute commands in a single request
-            // adding a counter so we know how what request we are on
-            int counter = 0;
+            ExecutorService executorService = Executors.newFixedThreadPool(commandsToRun.size());
+            List<Future<String>> futures = new ArrayList<>();
 
             for (ObdCommand command : commandsToRun) {
-                command.run(socket.getInputStream(), socket.getOutputStream());
-                String result = command.getFormattedResult();
-
-                // Extract numeric part from the result (remove non-numeric characters)
-                String numericPart = result.replaceAll("[^0-9]", "");
-
-                // Check if the numeric part is a valid integer
-                if (!numericPart.isEmpty()) {
+                Future<String> future = executorService.submit(() -> {
                     try {
-                        int temperature = Integer.parseInt(numericPart);
-                        if (counter == 0) {
-                            // set coolant temp test
-                            coolantTempResult = numericPart;
-                        } else if (counter == 1) {
-                            intakeTempResult = numericPart;
-                        } else if (counter == 2) {
-                            fuelTrimResult = numericPart;
-                        }
-                        counter++;
-                    } catch (NumberFormatException e) {
-                        // Handle the case where the numeric part is not a valid integer
-                        Log.e("NumberFormatException", "Invalid temperature value: " + result);
+                        command.run(socket.getInputStream(), socket.getOutputStream());
+                        return command.getFormattedResult();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
                     }
+                });
+
+                futures.add(future);
+            }
+
+            // Wait for all threads to finish and retrieve the results
+            List<String> results = new ArrayList<>();
+
+            for (Future<String> future : futures) {
+                try {
+                    results.add(future.get());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
             }
 
-            // This will actually set our values in the UI.
-            // Get results.
-            // Update the coolant temperature gauge
-            if (coolantTempResult != null) {
-                int coolantTemp = Integer.parseInt(coolantTempResult);
-                updateCoolantTemperature(coolantTemp);
-            }
+            executorService.shutdown();
 
-            if (intakeTempResult != null) {
-                int intakeTemp = Integer.parseInt(intakeTempResult);
-                updateAirIntakeTemperature(intakeTemp);
-            }
-
-            if (fuelTrimResult != null) {
-                int fuelTrimResultVal = Integer.parseInt(fuelTrimResult);
-                updateFuelTrim(fuelTrimResultVal);
-            }
-
-            // ... Add more OBD2 commands here when needed ...
+            // Process the results
+            processResults(results);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void processResults(List<String> results) {
+        // Process the results and update UI
+
+        // Example: Update the coolant temperature gauge
+        String coolantTempResult = extractNumericPart(results.get(0));
+        if (coolantTempResult != null) {
+            int coolantTemp = Integer.parseInt(coolantTempResult);
+            updateCoolantTemperature(coolantTemp);
+        }
+
+        // Example: Update the intake temperature gauge
+        String intakeTempResult = extractNumericPart(results.get(1));
+        if (intakeTempResult != null) {
+            int intakeTemp = Integer.parseInt(intakeTempResult);
+            updateAirIntakeTemperature(intakeTemp);
+        }
+
+        // Example: Update the fuel trim gauge
+        String fuelTrimResult = extractNumericPart(results.get(2));
+        if (fuelTrimResult != null) {
+            int fuelTrimResultVal = Integer.parseInt(fuelTrimResult);
+            updateFuelTrim(fuelTrimResultVal);
+        }
+
+        // ... Process other OBD2 commands here ...
+    }
+
+    /**
+     * extracts only the numeric parts of our obd2 commands
+     *
+     * @param result
+     * @return
+     */
+    private String extractNumericPart(String result) {
+        // Extract numeric part from the result (remove non-numeric characters)
+        return result != null ? result.replaceAll("[^0-9]", "") : null;
     }
 
     /**
