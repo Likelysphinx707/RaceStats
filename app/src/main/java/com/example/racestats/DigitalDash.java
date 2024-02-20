@@ -42,6 +42,8 @@ import com.example.racestats.DraggableGaugeView;
 // Imports for OBD2 classes
 import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
+import com.github.pires.obd.commands.fuel.AirFuelRatioCommand;
+import com.github.pires.obd.commands.fuel.FuelTrimCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
@@ -63,6 +65,8 @@ public class DigitalDash extends AppCompatActivity {
     // Declare member variables here
     private RelativeLayout intakeTempGauge;
     private RelativeLayout coolantTempGauge;
+    private RelativeLayout afr;
+    private RelativeLayout fuelTrim;
 
     private ImageButton hamburgerButton;
     private LinearLayout popoutMenu;
@@ -84,7 +88,11 @@ public class DigitalDash extends AppCompatActivity {
     private boolean hasFlashed = false;
 
     private CustomProgressBar intakeTemperatureGauge;
+    private CustomProgressBar afrGauge;
+    private CustomProgressBar fuelTrimGauge;
     private TextView intakeTemperatureTextOverlay;
+    private TextView afrTextOverlay;
+    private TextView fuelTrimTextOverlay;
 
     private final Handler dataUpdateHandler = new Handler();
     private static final long DATA_UPDATE_INTERVAL = 5000; // Update interval in milliseconds
@@ -108,6 +116,8 @@ public class DigitalDash extends AppCompatActivity {
         // Initialize gauges and assets for UI
         intakeTempGauge = findViewById(R.id.IntakeTemp);
         coolantTempGauge = findViewById(R.id.coolantTemp);
+//        afr = findViewById(R.id.afr);
+        fuelTrim = findViewById(R.id.fuelTrim);
 
         // Get the Bluetooth device address from the intent
         String deviceAddress = getIntent().getStringExtra("deviceAddress");
@@ -125,6 +135,12 @@ public class DigitalDash extends AppCompatActivity {
 
         intakeTemperatureGauge = findViewById(R.id.intakeTemperatureGauge);
         intakeTemperatureTextOverlay = findViewById(R.id.intakeTemperatureTextOverlay);
+
+//        afrGauge = findViewById(R.id.afrGauge);
+//        afrTextOverlay = findViewById(R.id.afrTextOverlay);
+
+        fuelTrimGauge = findViewById(R.id.fuelTrimGauge);
+        fuelTrimTextOverlay = findViewById(R.id.fuelTrimTextOverlay);
 
         hamburgerButton.setOnClickListener(view -> {
             if (!isMenuOpen) {
@@ -156,6 +172,8 @@ public class DigitalDash extends AppCompatActivity {
 //            coolantTempGauge.setText("Coolant Temperature C°: " + 2);
             updateCoolantTemperature(75);
             updateAirIntakeTemperature(35);
+//            updateAfr(75);
+            updateFuelTrim(35);
             textTempSimple.setText("75");
 
         } else {
@@ -248,6 +266,13 @@ public class DigitalDash extends AppCompatActivity {
             case R.id.gaugeOptionCoolant:
                 toggleGaugeVisibility(coolantTempGauge);
                 break;
+//            case R.id.gaugeOptionAfr:
+//                toggleGaugeVisibility(afr);
+//                break;
+            case R.id.gaugeOptionFuelTrim:
+                toggleGaugeVisibility(fuelTrim);
+                break;
+
             // Add cases for more gauge options
         }
     }
@@ -313,17 +338,41 @@ public class DigitalDash extends AppCompatActivity {
 
     /**
      * This function will check and see what PIDs are available for the selected ECU
+     *
+     * @return
      */
     private int[] avaliablePIDs() {
+
         return null;
     }
 
+    /**
+     * This class is used to retrive the value that is at the given pid
+     *
+     * @param pidToRetrive
+     * @return
+     */
+    private int getPID(int pidToRetrive) {     // should make this generic
+
+        return -1;
+    }
+
+    /**
+     * Updates intake temp
+     *
+     * @param temperature
+     */
     private void updateAirIntakeTemperature(int temperature) {
         intakeTemperatureGauge.setProgress(temperature);
         intakeTemperatureTextOverlay.setText(String.valueOf(temperature) + " °C");
         intakeTemperatureGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge));
     }
 
+    /**
+     * Handles coolant logo and flashing effects when coolant temp hits certian target temps
+     *
+     * @param temperature
+     */
     private void updateCoolantTemperature(int temperature) {
         // Implement the logic to update coolant temperature gauge and UI based on temperature
         // This will replace the updateGaugeColor method from Settings class
@@ -364,19 +413,44 @@ public class DigitalDash extends AppCompatActivity {
         coolantTemperatureTextOverlay.setText(String.valueOf(temperature) + " °C");
     }
 
+//    private void updateAfr(int temperature) {
+//        afrGauge.setProgress(temperature);
+//        afrTextOverlay.setText(String.valueOf(temperature));
+//        afrGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge));
+//    }
+
+    /**
+     * Updates fuel trim value
+     *
+     * @param temperature
+     */
+    private void updateFuelTrim(int temperature) {
+        fuelTrimGauge.setProgress(temperature);
+        fuelTrimTextOverlay.setText(String.valueOf(temperature));
+        fuelTrimGauge.setProgressDrawable(getResources().getDrawable(R.drawable.horizontal_gauge));
+    }
 
 
+    /**
+     * This method starts the flashing effect on coolant temp
+     */
     private void startFlashingEffect() {
         isFlashing = true;
         flashCount = 0;
         handler.postDelayed(flashingRunnable, 500); // Start flashing every 500ms
     }
 
+    /**
+     * This method stops the flashing effect on the coolant temp
+     */
     private void stopFlashingEffect() {
         isFlashing = false;
         handler.removeCallbacks(flashingRunnable); // Stop the flashing effect
     }
 
+    /**
+     * This method is used to create the actual flashing of the coolant variable
+     */
     private Runnable flashingRunnable = new Runnable() {
         @Override
         public void run() {
@@ -412,12 +486,15 @@ public class DigitalDash extends AppCompatActivity {
             List<ObdCommand> commandsToRun = new ArrayList<>();
             commandsToRun.add(new EngineCoolantTemperatureCommand());
             commandsToRun.add(new AirIntakeTemperatureCommand());
+            commandsToRun.add(new FuelTrimCommand());
 
             String coolantTempResult = null;
             String intakeTempResult = null;
+            String fuelTrimResult = null;
+
 
             // Execute commands in a single request
-            //  adding a counter so we know how what request we are on
+            // adding a counter so we know how what request we are on
             int counter = 0;
 
             for (ObdCommand command : commandsToRun) {
@@ -436,6 +513,8 @@ public class DigitalDash extends AppCompatActivity {
                             coolantTempResult = numericPart;
                         } else if (counter == 1) {
                             intakeTempResult = numericPart;
+                        } else if (counter == 2) {
+                            fuelTrimResult = numericPart;
                         }
                         counter++;
                     } catch (NumberFormatException e) {
@@ -446,97 +525,29 @@ public class DigitalDash extends AppCompatActivity {
 
             }
 
-            // This will actually set our values in the UI need to test first.
-            // Get results
+            // This will actually set our values in the UI.
+            // Get results.
             // Update the coolant temperature gauge
             if (coolantTempResult != null) {
                 int coolantTemp = Integer.parseInt(coolantTempResult);
                 updateCoolantTemperature(coolantTemp);
             }
 
-
             if (intakeTempResult != null) {
                 int intakeTemp = Integer.parseInt(intakeTempResult);
                 updateAirIntakeTemperature(intakeTemp);
             }
 
-//            updateCoolantTemperature(coolantTemp);
-//            updateAirIntakeTemperature(intakeTemp);
+            if (fuelTrimResult != null) {
+                int fuelTrimResultVal = Integer.parseInt(fuelTrimResult);
+                updateFuelTrim(fuelTrimResultVal);
+            }
 
-//            Log.d("Coolant Temp", coolantTempResult);
-//            Log.d("Intake Temp", intakeTempResult);
-
-
-            // ... Add more OBD2 commands here ...
+            // ... Add more OBD2 commands here when needed ...
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        finally {
-//            try {
-//                socket.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-        long endTime = System.currentTimeMillis();
-        double elapsedTimeSeconds = (endTime - startTime) / 1000.0;
-        Log.d("Execution Time", "Total execution time: " + elapsedTimeSeconds + " seconds");
-    }
-
-//    private void obd2CommandsToCall() {
-//        try {
-//            // Initialize OBD2 communication
-//            new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-//            new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-//            new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
-//            new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
-//
-//            // Initialize the OBD2 commands
-//            EngineCoolantTemperatureCommand coolantTempCommand = new EngineCoolantTemperatureCommand();
-//            AirIntakeTemperatureCommand intakeTempCommand = new AirIntakeTemperatureCommand();
-//
-//            // Execute the OBD2 commands
-//            coolantTempCommand.run(socket.getInputStream(), socket.getOutputStream());
-//            intakeTempCommand.run(socket.getInputStream(), socket.getOutputStream());
-//
-//            // Get the results from the commands
-//            String coolantTempResult = coolantTempCommand.getFormattedResult();
-//            String intakeTempResult = intakeTempCommand.getFormattedResult();
-//
-//            if (coolantTempResult != null && intakeTempResult != null) {
-//                int coolantTemp = Integer.parseInt(coolantTempResult);
-//                int intakeTemp = Integer.parseInt(intakeTempResult);
-//
-//                // Update UI based on OBD2 data
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        updateCoolantTemperature(coolantTemp);
-//                        updateAirIntakeTemperature(intakeTemp);
-//
-//                        // Update the values in the DraggableGaugeView instances
-//                        rpmGauge.setText("Intake Temp: " + intakeTemp);
-//                        coolantTempGauge.setText("Coolant Temperature C°: " + coolantTemp);
-//                    }
-//                });
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
-    private int getUpdatedCoolantTemperature() {
-        // Simulated coolant temperature (replace this with your OBD2 logic)
-        return generateRandomNumber(100);
-    }
-
-    private int getUpdatedIntakeTemperature() {
-        // Simulated intake temperature (replace this with your OBD2 logic)
-        return generateRandomNumber(100);
     }
 
     /**
